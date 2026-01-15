@@ -20,7 +20,7 @@ public class UsuarioService {
 
     public void cadastrarUsuario(String nome, String login, String senha, UsuarioRole role) {
 
-        if (usuarioRepository.findByLoginAndDeletadoFalse(login) != null) {
+        if (usuarioRepository.findByLoginAndDeletadoFalse(login).isPresent()) {
             throw new IllegalArgumentException("Já existe um usuário com esse login.");
         }
 

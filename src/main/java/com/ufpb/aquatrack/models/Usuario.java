@@ -32,12 +32,7 @@ public class Usuario {
 
     private String urlFoto;
 
-    @OneToMany(
-            mappedBy = "usuario",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    @NotNull
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Fazenda> fazendas;
 
     @Column(nullable = false)
