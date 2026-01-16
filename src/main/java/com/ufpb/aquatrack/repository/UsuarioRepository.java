@@ -9,9 +9,16 @@ import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
+    // Verifica se existe algum usuário com o papel informado
     boolean existsByRole(UsuarioRole usuarioRole);
 
+    // Busca um usuário pelo login apenas se ele não estiver deletado
     Optional<Usuario> findByLoginAndDeletadoFalse(String login);
+
+    // Retorna a lista de todos os usuários que não estão deletados
     List<Usuario> findByDeletadoFalse();
+
+    // Busca um usuário pelo ID apenas se ele não estiver deletado
     Optional<Usuario> findByIdAndDeletadoFalse(Long id);
+
 }
