@@ -2,6 +2,7 @@ package com.ufpb.aquatrack.controlers;
 
 import com.ufpb.aquatrack.models.Fazenda;
 import com.ufpb.aquatrack.models.Usuario;
+import com.ufpb.aquatrack.services.EstoqueRacaoService;
 import com.ufpb.aquatrack.services.FazendaService;
 import com.ufpb.aquatrack.services.ViveiroService;
 import jakarta.servlet.http.HttpSession;
@@ -12,15 +13,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
+
 @Controller
 public class FazendaController {
 
     private final FazendaService fazendaService;
     private final ViveiroService viveiroService;
+    private final EstoqueRacaoService estoqueRacaoService;
 
-    public FazendaController(FazendaService fazendaService, ViveiroService viveiroService) {
+    public FazendaController(FazendaService fazendaService, ViveiroService viveiroService, EstoqueRacaoService estoqueRacaoService) {
         this.fazendaService = fazendaService;
         this.viveiroService = viveiroService;
+        this.estoqueRacaoService = estoqueRacaoService;
     }
 
     @GetMapping("/fazendas")
@@ -65,9 +70,19 @@ public class FazendaController {
         model.addAttribute("fazenda", fazenda);
         model.addAttribute("viveiros", viveiroService.listarViveiros(id, usuario));
 
-        // dados temporários
-        model.addAttribute("estoqueEngorda", 0.0);
-        model.addAttribute("estoqueCrescimento", 0.0);
+        model.addAttribute("estoques", estoqueRacaoService.listarEstoqueDaFazenda(id, usuario));
+
+        BigDecimal valorTotalEstoque = estoqueRacaoService
+                .listarEstoqueDaFazenda(id, usuario)
+                .stream()
+                .map(estoque ->
+                        estoque.getTipoRacao()
+                                .getValorPorSaco()
+                                .multiply(BigDecimal.valueOf(estoque.getQuantidadeSacos()))
+                )
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        model.addAttribute("valorTotalEstoque", valorTotalEstoque);
 
         return "fazendas/pagina_fazenda";
     }

@@ -45,36 +45,66 @@
                     </div>
                 </form>
             </div>
+
             <div class="col-md-6">
-                <div class="col d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center">
                     <h3><strong>Estoque de Ração</strong></h3>
+                    <a th:href="@{/fazenda/{id}/abastecer-racao(id=${fazenda.id})}"
+                       class="btn btn-success btn-sm">
+                        Abastecer
+                    </a>
                 </div>
+
                 <br>
-                <table class="table table-bordered">
-                    <thead>
+
+                <!-- Caso não exista nenhum estoque -->
+                <div th:if="${#lists.isEmpty(estoques)}"
+                     class="alert alert-secondary text-center">
+                    Nenhum estoque de ração cadastrado ainda.
+                </div>
+
+                <a th:href="@{/racoes}"
+                   class="btn btn-outline-primary btn-sm">
+                    Gerenciar tipos de ração
+                </a>
+
+                <!-- Tabela de estoque -->
+                <table th:if="${!#lists.isEmpty(estoques)}"
+                       class="table table-striped table-bordered align-middle">
+                    <thead class="table-light">
                     <tr>
-                        <th>Tipo de Ração</th>
-                        <th>Quantidade</th>
+                        <th>Ração</th>
+                        <th>Fabricante</th>
+                        <th class="text-center">Sacos</th>
+                        <th class="text-center">Total (Kg)</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>Engorda</td>
-                        <td><span th:text="${estoqueEngorda} + ' Kg'"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Crescimento</td>
-                        <td><span th:text="${estoqueCrescimento} + ' Kg'"></span></td>
+                    <tr th:each="estoque : ${estoques}">
+                        <td th:text="${estoque.tipoRacao.nome}"></td>
+                        <td th:text="${estoque.tipoRacao.fabricante}"></td>
+                        <td class="text-center">
+                <span class="fw-bold"
+                      th:text="${estoque.quantidadeSacos}"></span>
+                        </td>
+                        <td class="text-center text-muted">
+                <span th:text="${estoque.quantidadeSacos * estoque.tipoRacao.kgPorSaco}">
+                </span> Kg
+                        </td>
                     </tr>
                     </tbody>
                 </table>
 
-                <!-- Botão Gerenciar -->
-                <div class="text-end">
-                    <a th:href="@{/fazenda/{id}/abastecer-racao(id=${fazenda.id})}" class="btn btn-success">
-                        Abastecer
-                    </a>
+                <div th:if="${!#lists.isEmpty(estoques)}"
+                     class="text-end mt-2">
+    <span class="text-muted">
+        Valor total estimado em estoque:
+    </span>
+                    <strong>
+                        R$ <span th:text="${#numbers.formatDecimal(valorTotalEstoque, 1, 'POINT', 2, 'COMMA')}"></span>
+                    </strong>
                 </div>
+
             </div>
 
             <!-- Viveiros -->
