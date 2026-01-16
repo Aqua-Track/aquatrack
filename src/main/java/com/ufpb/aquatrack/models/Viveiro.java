@@ -36,7 +36,7 @@ public class Viveiro {
     private boolean cicloAtivo; //Isso é só para testar por agora, sairá no futuro
 
     protected Viveiro() {
-        this.deletado = false;
+
     }
 
     public Viveiro(String tag, double area) {

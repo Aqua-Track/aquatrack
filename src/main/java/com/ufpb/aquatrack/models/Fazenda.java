@@ -39,6 +39,8 @@ public class Fazenda {
     @Column(nullable = false)
     private boolean deletado;
 
+    protected Fazenda() { }
+
     public Fazenda(Usuario usuario) {
         this.usuario = usuario;
         this.deletado = false;

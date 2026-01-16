@@ -25,7 +25,7 @@ public class ViveiroService {
     public Viveiro criarViveiro(Long fazendaId, String tag, double area, Usuario usuario) {
         Fazenda fazenda = fazendaService.buscarFazendaPorId(fazendaId);
 
-        if (!fazenda.getUsuario().equals(usuario)) {
+        if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
             throw new IllegalArgumentException("Acesso negado");
         }
 
@@ -42,7 +42,7 @@ public class ViveiroService {
     public List<Viveiro> listarViveiros(Long fazendaId, Usuario usuario) {
         Fazenda fazenda = fazendaService.buscarFazendaPorId(fazendaId);
 
-        if (!fazenda.getUsuario().equals(usuario)) {
+        if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
             throw new IllegalArgumentException("Acesso negado");
         }
 
@@ -59,7 +59,7 @@ public class ViveiroService {
 
         Fazenda fazenda = viveiro.getFazenda();
 
-        if (!fazenda.getUsuario().equals(usuario)) {
+        if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
             throw new IllegalArgumentException("Acesso negado");
         }
 
@@ -71,7 +71,7 @@ public class ViveiroService {
         Viveiro viveiro = buscarViveiroPorId(viveiroId);
         Fazenda fazenda = viveiro.getFazenda();
 
-        if (!fazenda.getUsuario().equals(usuario)) {
+        if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
             throw new IllegalArgumentException("Acesso negado");
         }
 
