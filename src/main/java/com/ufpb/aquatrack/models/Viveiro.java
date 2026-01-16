@@ -1,7 +1,11 @@
 package com.ufpb.aquatrack.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(
         uniqueConstraints = {
@@ -26,4 +30,19 @@ public class Viveiro {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fazenda_id", nullable = false)
     private Fazenda fazenda;
+
+    public Viveiro() {
+        this.deletado = false;
+    }
+
+    public Viveiro(String tag, double area, Fazenda fazenda) {
+        this.tag = tag;
+        this.area = area;
+        this.deletado = false;
+        this.fazenda = fazenda;
+    }
+
+    public void marcarComoDeletado() {
+        this.deletado = true;
+    }
 }

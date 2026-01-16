@@ -44,13 +44,10 @@ public class UsuarioService {
     }
 
     public void removerUsuario(Long id) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+        Usuario usuario = buscarUsuarioPorId(id);
 
-        if (usuarioRepository.existsById(usuario.getId()) && !usuario.isDeletado()) {
-            usuario.setDeletado(true);
-            usuarioRepository.save(usuario);
-        }
+        usuario.setDeletado(true);
+        usuarioRepository.save(usuario);
         //lançar uma exceptuon especifica pra quando ele nn conseguir deletar
     }
 

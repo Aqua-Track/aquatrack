@@ -33,7 +33,7 @@ public class Usuario {
     private String urlFoto;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Fazenda> fazendas;
+    private List<Fazenda> fazendas = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean deletado;
@@ -49,13 +49,11 @@ public class Usuario {
         this.senha = senha;
         this.role = role;
         this.deletado = false;
-        this.fazendas = new ArrayList<>();
         this.urlFoto = "/images/default-user.png";
     }
 
     public Usuario() {
         this.deletado = false;
-        this.fazendas = new ArrayList<>();
         this.urlFoto = "/images/default-user.png";
     }
 }
