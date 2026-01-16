@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+@Entity
 @Getter
 @Setter
-@Entity
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"fazenda_id", "tag"})
@@ -16,10 +16,10 @@ public class Viveiro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // ID técnico
+    private Long id;
 
     @Column(nullable = false)
-    private String tag; // ID de negócio (usuário define)
+    private String tag;
 
     @Column(nullable = false)
     private double area;
@@ -31,15 +31,19 @@ public class Viveiro {
     @JoinColumn(name = "fazenda_id", nullable = false)
     private Fazenda fazenda;
 
-    public Viveiro() {
+
+    @Column(nullable = false)
+    private boolean cicloAtivo; //Isso é só para testar por agora, sairá no futuro
+
+    protected Viveiro() {
         this.deletado = false;
     }
 
-    public Viveiro(String tag, double area, Fazenda fazenda) {
+    public Viveiro(String tag, double area) {
         this.tag = tag;
         this.area = area;
         this.deletado = false;
-        this.fazenda = fazenda;
+        this.cicloAtivo = false;
     }
 
     public void marcarComoDeletado() {
