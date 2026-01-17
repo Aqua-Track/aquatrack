@@ -1,8 +1,8 @@
-package com.ufpb.aquatrack.controlers;
+package com.ufpb.aquatrack.controllers;
 
-import com.ufpb.aquatrack.enums.UsuarioRole;
-import com.ufpb.aquatrack.models.Usuario;
-import com.ufpb.aquatrack.services.UsuarioService;
+import com.ufpb.aquatrack.usuario.UsuarioRole;
+import com.ufpb.aquatrack.usuario.Usuario;
+import com.ufpb.aquatrack.usuario.UsuarioService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,4 +1,4 @@
-package com.ufpb.aquatrack.enums;
+package com.ufpb.aquatrack.usuario;
 
 public enum UsuarioRole {
     MASTER,

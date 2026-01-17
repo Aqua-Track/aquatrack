@@ -1,7 +1,5 @@
-package com.ufpb.aquatrack.services;
+package com.ufpb.aquatrack.usuario;
 
-import com.ufpb.aquatrack.enums.UsuarioRole;
-import com.ufpb.aquatrack.models.Usuario;
 import com.ufpb.aquatrack.repository.UsuarioRepository;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -44,13 +42,10 @@ public class UsuarioService {
     }
 
     public void removerUsuario(Long id) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+        Usuario usuario = buscarUsuarioPorId(id);
 
-        if (usuarioRepository.existsById(usuario.getId()) && !usuario.isDeletado()) {
-            usuario.setDeletado(true);
-            usuarioRepository.save(usuario);
-        }
+        usuario.setDeletado(true);
+        usuarioRepository.save(usuario);
         //lançar uma exceptuon especifica pra quando ele nn conseguir deletar
     }
 

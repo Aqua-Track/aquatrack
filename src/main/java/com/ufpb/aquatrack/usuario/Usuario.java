@@ -1,6 +1,6 @@
-package com.ufpb.aquatrack.models;
+package com.ufpb.aquatrack.usuario;
 
-import com.ufpb.aquatrack.enums.UsuarioRole;
+import com.ufpb.aquatrack.fazenda.Fazenda;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,7 +33,7 @@ public class Usuario {
     private String urlFoto;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Fazenda> fazendas;
+    private List<Fazenda> fazendas = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean deletado;
@@ -49,13 +49,11 @@ public class Usuario {
         this.senha = senha;
         this.role = role;
         this.deletado = false;
-        this.fazendas = new ArrayList<>();
         this.urlFoto = "/images/default-user.png";
     }
 
     public Usuario() {
         this.deletado = false;
-        this.fazendas = new ArrayList<>();
         this.urlFoto = "/images/default-user.png";
     }
 }

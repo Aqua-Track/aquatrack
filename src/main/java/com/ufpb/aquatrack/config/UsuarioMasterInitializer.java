@@ -1,7 +1,7 @@
 package com.ufpb.aquatrack.config;
 
-import com.ufpb.aquatrack.enums.UsuarioRole;
-import com.ufpb.aquatrack.models.Usuario;
+import com.ufpb.aquatrack.usuario.UsuarioRole;
+import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.repository.UsuarioRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCrypt;
