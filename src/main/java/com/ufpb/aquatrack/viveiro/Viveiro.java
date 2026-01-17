@@ -1,5 +1,6 @@
-package com.ufpb.aquatrack.models;
+package com.ufpb.aquatrack.viveiro;
 
+import com.ufpb.aquatrack.fazenda.Fazenda;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

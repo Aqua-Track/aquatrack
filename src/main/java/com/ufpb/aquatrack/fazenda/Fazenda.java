@@ -1,5 +1,7 @@
-package com.ufpb.aquatrack.models;
+package com.ufpb.aquatrack.fazenda;
 
+import com.ufpb.aquatrack.usuario.Usuario;
+import com.ufpb.aquatrack.viveiro.Viveiro;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

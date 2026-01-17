@@ -1,6 +1,6 @@
-package com.ufpb.aquatrack.models;
+package com.ufpb.aquatrack.usuario;
 
-import com.ufpb.aquatrack.enums.UsuarioRole;
+import com.ufpb.aquatrack.fazenda.Fazenda;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

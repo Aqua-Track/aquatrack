@@ -1,7 +1,7 @@
 package com.ufpb.aquatrack.repository;
 
-import com.ufpb.aquatrack.enums.UsuarioRole;
-import com.ufpb.aquatrack.models.Usuario;
+import com.ufpb.aquatrack.usuario.UsuarioRole;
+import com.ufpb.aquatrack.usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

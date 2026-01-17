@@ -1,7 +1,5 @@
-package com.ufpb.aquatrack.services;
+package com.ufpb.aquatrack.usuario;
 
-import com.ufpb.aquatrack.enums.UsuarioRole;
-import com.ufpb.aquatrack.models.Usuario;
 import com.ufpb.aquatrack.repository.UsuarioRepository;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;

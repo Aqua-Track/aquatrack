@@ -1,6 +1,6 @@
 package com.ufpb.aquatrack.interceptors;
 
-import com.ufpb.aquatrack.models.Usuario;
+import com.ufpb.aquatrack.usuario.Usuario;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

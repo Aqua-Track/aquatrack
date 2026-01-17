@@ -1,10 +1,8 @@
-package com.ufpb.aquatrack.controlers;
+package com.ufpb.aquatrack.fazenda;
 
-import com.ufpb.aquatrack.models.Fazenda;
-import com.ufpb.aquatrack.models.Usuario;
-import com.ufpb.aquatrack.services.EstoqueRacaoService;
-import com.ufpb.aquatrack.services.FazendaService;
-import com.ufpb.aquatrack.services.ViveiroService;
+import com.ufpb.aquatrack.usuario.Usuario;
+import com.ufpb.aquatrack.estoqueRacao.EstoqueRacaoService;
+import com.ufpb.aquatrack.viveiro.ViveiroService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -73,14 +71,14 @@ public class FazendaController {
         model.addAttribute("estoques", estoqueRacaoService.listarEstoqueDaFazenda(id, usuario));
 
         BigDecimal valorTotalEstoque = estoqueRacaoService
-                .listarEstoqueDaFazenda(id, usuario)
+                .listarEstoqueDaFazenda(id, usuario)//retorna uma lista de estoques de ração da fazenda
                 .stream()
                 .map(estoque ->
-                        estoque.getTipoRacao()
-                                .getValorPorSaco()
-                                .multiply(BigDecimal.valueOf(estoque.getQuantidadeSacos()))
+                        estoque.getTipoRacao()//Pega o tipo de ração
+                                .getValorPorSaco()//Pega o valor de um saco de ração
+                                .multiply(BigDecimal.valueOf(estoque.getQuantidadeSacos()))//Multiplica pela quantidade de sacos
                 )
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add);//Soma todos os valores
 
         model.addAttribute("valorTotalEstoque", valorTotalEstoque);
 

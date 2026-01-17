@@ -1,7 +1,6 @@
-package com.ufpb.aquatrack.controlers;
+package com.ufpb.aquatrack.tipoRacao;
 
-import com.ufpb.aquatrack.models.Usuario;
-import com.ufpb.aquatrack.services.TipoRacaoService;
+import com.ufpb.aquatrack.usuario.Usuario;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

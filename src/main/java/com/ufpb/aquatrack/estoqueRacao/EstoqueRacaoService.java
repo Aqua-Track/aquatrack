@@ -1,7 +1,11 @@
-package com.ufpb.aquatrack.services;
+package com.ufpb.aquatrack.estoqueRacao;
 
-import com.ufpb.aquatrack.models.*;
+import com.ufpb.aquatrack.fazenda.Fazenda;
 import com.ufpb.aquatrack.repository.EstoqueRacaoRepository;
+import com.ufpb.aquatrack.fazenda.FazendaService;
+import com.ufpb.aquatrack.tipoRacao.TipoRacaoService;
+import com.ufpb.aquatrack.tipoRacao.TipoRacao;
+import com.ufpb.aquatrack.usuario.Usuario;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

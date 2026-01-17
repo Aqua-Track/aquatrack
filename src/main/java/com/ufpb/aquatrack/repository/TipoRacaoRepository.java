@@ -1,7 +1,7 @@
 package com.ufpb.aquatrack.repository;
 
-import com.ufpb.aquatrack.models.TipoRacao;
-import com.ufpb.aquatrack.models.Usuario;
+import com.ufpb.aquatrack.tipoRacao.TipoRacao;
+import com.ufpb.aquatrack.usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

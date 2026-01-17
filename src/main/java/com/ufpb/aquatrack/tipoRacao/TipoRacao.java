@@ -1,5 +1,6 @@
-package com.ufpb.aquatrack.models;
+package com.ufpb.aquatrack.tipoRacao;
 
+import com.ufpb.aquatrack.usuario.Usuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

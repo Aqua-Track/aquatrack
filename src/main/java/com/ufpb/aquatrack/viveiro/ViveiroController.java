@@ -1,9 +1,8 @@
-package com.ufpb.aquatrack.controlers;
+package com.ufpb.aquatrack.viveiro;
 
-import com.ufpb.aquatrack.models.Fazenda;
-import com.ufpb.aquatrack.models.Usuario;
-import com.ufpb.aquatrack.services.FazendaService;
-import com.ufpb.aquatrack.services.ViveiroService;
+import com.ufpb.aquatrack.fazenda.Fazenda;
+import com.ufpb.aquatrack.usuario.Usuario;
+import com.ufpb.aquatrack.fazenda.FazendaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

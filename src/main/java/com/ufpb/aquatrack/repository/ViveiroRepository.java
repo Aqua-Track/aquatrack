@@ -1,7 +1,7 @@
 package com.ufpb.aquatrack.repository;
 
-import com.ufpb.aquatrack.models.Fazenda;
-import com.ufpb.aquatrack.models.Viveiro;
+import com.ufpb.aquatrack.fazenda.Fazenda;
+import com.ufpb.aquatrack.viveiro.Viveiro;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

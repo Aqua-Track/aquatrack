@@ -1,15 +1,16 @@
-package com.ufpb.aquatrack.controlers;
+package com.ufpb.aquatrack.estoqueRacao;
 
-import com.ufpb.aquatrack.models.EstoqueRacao;
-import com.ufpb.aquatrack.models.TipoRacao;
-import com.ufpb.aquatrack.models.Usuario;
-import com.ufpb.aquatrack.services.EstoqueRacaoService;
-import com.ufpb.aquatrack.services.TipoRacaoService;
+import com.ufpb.aquatrack.tipoRacao.TipoRacao;
+import com.ufpb.aquatrack.usuario.Usuario;
+import com.ufpb.aquatrack.tipoRacao.TipoRacaoService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller

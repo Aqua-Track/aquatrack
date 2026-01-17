@@ -1,8 +1,6 @@
-package com.ufpb.aquatrack.services;
+package com.ufpb.aquatrack.fazenda;
 
-import com.ufpb.aquatrack.models.Fazenda;
-import com.ufpb.aquatrack.models.Usuario;
-import com.ufpb.aquatrack.models.Viveiro;
+import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.repository.FazendaRepository;
 import org.springframework.stereotype.Service;
 

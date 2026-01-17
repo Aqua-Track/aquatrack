@@ -1,9 +1,22 @@
-package com.ufpb.aquatrack.models;
+package com.ufpb.aquatrack.estoqueRacao;
 
+import com.ufpb.aquatrack.fazenda.Fazenda;
+import com.ufpb.aquatrack.tipoRacao.TipoRacao;
+import com.ufpb.aquatrack.usuario.Usuario;
+import com.ufpb.aquatrack.tipoRacao.TipoRacaoService;
 import jakarta.persistence.*;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -45,11 +58,7 @@ public class EstoqueRacao {
         this.deletado = false;
     }
 
-    public EstoqueRacao(
-            Fazenda fazenda,
-            TipoRacao tipoRacao,
-            int quantidadeSacos
-    ) {
+    public EstoqueRacao(Fazenda fazenda, TipoRacao tipoRacao, int quantidadeSacos) {
         this.fazenda = fazenda;
         this.tipoRacao = tipoRacao;
         this.quantidadeSacos = quantidadeSacos;
