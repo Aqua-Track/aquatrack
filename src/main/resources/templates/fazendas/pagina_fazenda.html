@@ -98,7 +98,7 @@
 
                     <!-- Botões -->
                     <div class="d-flex gap-2">
-                        <a th:href="@{/racoes}"
+                        <a th:href="@{/fazenda/{id}/racoes(id=${fazenda.id})}"
                            class="btn btn-secondary btn-sm">
                             Gerenciar tipos de ração
                         </a>
@@ -112,8 +112,6 @@
                 </div>
 
             </div>
-
-
 
             <!-- Viveiros -->
             <div>

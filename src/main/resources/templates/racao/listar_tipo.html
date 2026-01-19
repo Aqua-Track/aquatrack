@@ -42,13 +42,14 @@
                 R$ <span th:text="${racao.valorPorSaco}"></span>
             </td>
             <td class="text-center">
-                <form th:action="@{/racoes/{id}/remover(id=${racao.id})}"
+                <form th:action="@{/fazenda/{fid}/racoes/{id}/remover(fid=${idFazenda}, id=${racao.id})}"
                       method="post" class="d-inline">
                     <button type="submit"
                             class="btn btn-outline-danger btn-sm">
                         Remover
                     </button>
                 </form>
+
             </td>
         </tr>
         </tbody>
@@ -56,10 +57,12 @@
 
     <!-- Botões -->
     <div class="d-flex justify-content-end gap-2 mb-3">
-        <a th:href="@{/racoes/nova}" class="btn btn-success">
+        <a th:href="@{/fazenda/{id}/racoes/nova(id=${idFazenda})}"
+           class="btn btn-success">
             Adicionar tipo de ração
         </a>
-        <a th:href="@{/fazendas}" class="btn btn-danger">
+        <a th:href="@{/fazenda/{id}(id=${idFazenda})}"
+           class="btn btn-danger">
             Voltar
         </a>
     </div>
