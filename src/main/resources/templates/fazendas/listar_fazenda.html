@@ -30,7 +30,7 @@
                     <div class="card-body">
                         <h5 class="card-title" th:text="${fazenda.nome}">Nome da Fazenda</h5>
                         <p class="card-text">
-                            <span class="fs-7 text-muted bg-light p-1 rounded" th:text="${fazenda.id}"></span>
+                            <span class="fs-7 text-muted bg-light p-1 rounded" th:text="${fazenda.codigo}"></span>
                         </p>
                         <p class="card-text mb-0">
                             <span th:text="${fazenda.localizacao}"></span>
@@ -41,7 +41,7 @@
                         </p>
                     </div>
                     <div class="card-footer text-center">
-                        <a th:href="@{/fazenda/{id}(id=${fazenda.id})}" class="btn btn-info">
+                        <a th:href="@{/fazenda/{codigo}(codigo=${fazenda.codigo})}" class="btn btn-info">
                         Gerenciar Fazenda
                         </a>
                     </div>

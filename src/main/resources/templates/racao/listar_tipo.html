@@ -39,9 +39,9 @@
                 R$ <span th:text="${racao.valorPorSaco}"></span>
             </td>
             <td class="text-center">
-                <form th:action="@{/fazenda/{fid}/racoes/{id}/remover(fid=${idFazenda}, id=${racao.id})}"
+                <form th:action="@{/fazenda/{codigo}/racoes/{id}/remover(codigo=${codigo}, id=${racao.id})}"
                       method="post" class="d-inline">
-                    <a th:href="@{/fazenda/{fid}/racoes/{id}/editar(fid=${idFazenda}, id=${racao.id})}"
+                    <a th:href="@{/fazenda/{codigo}/racoes/{id}/editar(codigo=${codigo}, id=${racao.id})}"
                        class="btn btn-outline-primary btn-sm">
                         Editar
                     </a>
@@ -56,11 +56,11 @@
     </table>
 
     <div class="d-flex justify-content-end gap-2 mb-3">
-        <a th:href="@{/fazenda/{id}(id=${idFazenda})}"
+        <a th:href="@{/fazenda/{codigo}(codigo=${codigo})}"
            class="btn btn-danger">
             Voltar
         </a>
-        <a th:href="@{/fazenda/{id}/racoes/nova(id=${idFazenda})}"
+        <a th:href="@{/fazenda/{codigo}/racoes/nova(codigo=${codigo})}"
            class="btn btn-success">
             Adicionar tipo de ração
         </a>

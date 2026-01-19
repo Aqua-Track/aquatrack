@@ -19,6 +19,9 @@ public class Fazenda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, updatable = false)
+    private String codigo;
+
     @NotBlank
     @Column(nullable = false)
     private String nome;
@@ -41,17 +44,14 @@ public class Fazenda {
     @Column(nullable = false)
     private boolean deletado;
 
-    protected Fazenda() { }
-
-    public Fazenda(Usuario usuario) {
-        this.usuario = usuario;
-        this.deletado = false;
+    protected Fazenda() {
     }
 
-    public Fazenda(String nome, String localizacao, Usuario usuario) {
+    public Fazenda(String nome, String localizacao, Usuario usuario, String codigo) {
         this.nome = nome;
         this.localizacao = localizacao;
         this.usuario = usuario;
+        this.codigo = codigo;
         this.deletado = false;
     }
 

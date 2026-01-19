@@ -23,7 +23,7 @@
         </div>
 
         <!-- Formulário -->
-        <form th:action="@{/fazenda/{id}/cadastrar-viveiro(id=${idFazenda})}" method="post">
+        <form th:action="@{/fazenda/{codigo}/cadastrar-viveiro(codigo=${codigo})}" method="post">
             <div class="mb-3">
                 <label for="area" class="form-label">Área do viveiro (m²)</label>
                 <input type="number" class="form-control" id="area" name="area"
@@ -43,7 +43,7 @@
             </div>
 
             <div class="text-end">
-                <a th:href="@{/fazenda/{id}(id=${idFazenda})}" class="btn btn-danger">Cancelar</a>
+                <a th:href="@{/fazenda/{codigo}(codigo=${codigo})}" class="btn btn-danger">Cancelar</a>
                 <button type="submit" class="btn btn-success">Cadastrar</button>
             </div>
         </form>

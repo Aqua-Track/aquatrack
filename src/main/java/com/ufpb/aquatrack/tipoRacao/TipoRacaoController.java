@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 
 @Controller
-@RequestMapping("/fazenda/{fazendaId}/racoes")
+@RequestMapping("/fazenda/{codigo}/racoes")
 public class TipoRacaoController {
 
     private final TipoRacaoService tipoRacaoService;
@@ -20,27 +20,26 @@ public class TipoRacaoController {
 
 
     @GetMapping
-    public String listar(@PathVariable Long fazendaId, HttpSession session, Model model
-    ) {
+    public String listar(@PathVariable String codigo, HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         model.addAttribute("racoes", tipoRacaoService.listarRacoesDoUsuario(usuario));
-        model.addAttribute("idFazenda", fazendaId);
+        model.addAttribute("codigo", codigo);
 
         return "racao/listar_tipo";
     }
 
 
     @GetMapping("/nova")
-    public String nova(@PathVariable Long fazendaId, Model model) {
-        model.addAttribute("idFazenda", fazendaId);
+    public String nova(@PathVariable String codigo, Model model) {
+        model.addAttribute("codigo", codigo);
         return "racao/formulario_tipo";
     }
 
 
     @PostMapping("/criar")
     public String criar(
-            @PathVariable Long fazendaId, @RequestParam String nome,
+            @PathVariable String codigo, @RequestParam String nome,
             @RequestParam String fabricante, @RequestParam Double kgPorSaco,
             @RequestParam BigDecimal valorPorSaco, HttpSession session, Model model
     ) {
@@ -49,38 +48,38 @@ public class TipoRacaoController {
         try {
             tipoRacaoService.cadastrarRacao(nome, fabricante, kgPorSaco, valorPorSaco, usuario);
 
-            return "redirect:/fazenda/" + fazendaId + "/racoes";
+            return "redirect:/fazenda/" + codigo + "/racoes";
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("erro", e.getMessage());
-            model.addAttribute("idFazenda", fazendaId);
+            model.addAttribute("codigo", codigo);
             return "racao/formulario_tipo";
         }
     }
 
     @PostMapping("/{id}/remover")
-    public String remover(@PathVariable Long fazendaId, @PathVariable Long id, HttpSession session) {
+    public String remover(@PathVariable String codigo, @PathVariable Long id, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         tipoRacaoService.removerRacao(id, usuario);
 
-        return "redirect:/fazenda/" + fazendaId + "/racoes";
+        return "redirect:/fazenda/" + codigo + "/racoes";
     }
 
     @GetMapping("/{id}/editar")
-    public String editarForm(@PathVariable Long fazendaId, @PathVariable Long id, HttpSession session, Model model) {
+    public String editarForm(@PathVariable String codigo, @PathVariable Long id, HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         TipoRacao racao = tipoRacaoService.buscarRacaoPorId(id, usuario);
 
         model.addAttribute("racao", racao);
-        model.addAttribute("idFazenda", fazendaId);
+        model.addAttribute("codigo", codigo);
         return "racao/formulario_tipo"; //O mesmo form de adicionar serve para editar
     }
 
     @PostMapping("/{id}/editar")
     public String editar(
-            @PathVariable Long fazendaId, @PathVariable Long id, @RequestParam String nome,
+            @PathVariable String codigo, @PathVariable Long id, @RequestParam String nome,
             @RequestParam String fabricante, @RequestParam Double kgPorSaco, @RequestParam BigDecimal valorPorSaco,
             HttpSession session, Model model
     ) {
@@ -88,11 +87,11 @@ public class TipoRacaoController {
 
         try {
             tipoRacaoService.editarRacao(id, nome, fabricante, kgPorSaco, valorPorSaco, usuario);
-            return "redirect:/fazenda/" + fazendaId + "/racoes";
+            return "redirect:/fazenda/" + codigo + "/racoes";
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("erro", e.getMessage());
-            model.addAttribute("idFazenda", fazendaId);
+            model.addAttribute("codigo", codigo);
             model.addAttribute("racao", tipoRacaoService.buscarRacaoPorId(id, usuario));
             return "racao/formulario_tipo";
         }

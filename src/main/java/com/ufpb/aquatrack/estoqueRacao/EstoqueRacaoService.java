@@ -28,12 +28,12 @@ public class EstoqueRacaoService {
     }
 
 
-    public void abastecerEstoque(Long fazendaId, Long tipoRacaoId, int quantidadeSacos, Usuario usuario) {
+    public void abastecerEstoque(String codigo, Long tipoRacaoId, int quantidadeSacos, Usuario usuario) {
         if (quantidadeSacos <= 0) {
             throw new IllegalArgumentException("Quantidade deve ser maior que zero");
         }
 
-        Fazenda fazenda = fazendaService.buscarFazendaPorId(fazendaId);
+        Fazenda fazenda = fazendaService.buscarFazendaPorCodigo(codigo);
 
         if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
             throw new IllegalArgumentException("Acesso negado");

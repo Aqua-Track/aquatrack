@@ -82,33 +82,26 @@
                     </tbody>
                 </table>
 
-                <!-- Linha inferior: valor + botões -->
+                <!-- Linha inferior: valor total -->
                 <div th:if="${!#lists.isEmpty(estoques)}"
-                     class="d-flex justify-content-between align-items-center mt-2">
-
-                    <div>
-                        <span class="mb-0 me-2 text-muted">
-                            Valor total estimado em estoque:
-                        </span>
-                            <strong class="mt-0">
-                                R$ <span th:text="${#numbers.formatDecimal(valorTotalEstoque, 1, 'POINT', 2, 'COMMA')}"></span>
-                            </strong>
+                     class="d-flex justify-content-between align-items-center mt-2"><div>
+                    <span class="mb-0 me-2 text-muted">Valor total estimado em estoque:</span>
+                        <strong class="mt-0">
+                            R$ <span th:text="${#numbers.formatDecimal(valorTotalEstoque, 1, 'POINT', 2, 'COMMA')}"></span>
+                        </strong>
                     </div>
+                </div>
 
+                <div class="d-flex justify-content-end gap-2 mt-2">
+                    <a th:href="@{/fazenda/{codigo}/racoes(codigo=${fazenda.codigo})}"
+                       class="btn btn-secondary btn-sm">
+                        Gerenciar tipos de ração
+                    </a>
 
-                    <!-- Botões -->
-                    <div class="d-flex gap-2">
-                        <a th:href="@{/fazenda/{id}/racoes(id=${fazenda.id})}"
-                           class="btn btn-secondary btn-sm">
-                            Gerenciar tipos de ração
-                        </a>
-
-                        <a th:href="@{/fazenda/{id}/abastecer-racao(id=${fazenda.id})}"
-                           class="btn btn-success btn-sm">
-                            Abastecer
-                        </a>
-                    </div>
-
+                    <a th:href="@{/fazenda/{codigo}/abastecer-racao(codigo=${fazenda.codigo})}"
+                       class="btn btn-success btn-sm">
+                        Abastecer
+                    </a>
                 </div>
 
             </div>
@@ -118,7 +111,7 @@
                 <br>
                 <div class="d-flex justify-content-between align-items-center">
                     <h3><strong>Viveiros da fazenda</strong></h3>
-                    <a th:href="@{/fazenda/{id}/cadastrar-viveiro(id=${fazenda.id})}" class="btn btn-success">
+                    <a th:href="@{/fazenda/{codigo}/cadastrar-viveiro(codigo=${fazenda.codigo})}" class="btn btn-success">
                         Adicionar viveiro
                     </a>
                 </div>
@@ -152,7 +145,7 @@
                                 <span th:if="${!viveiro.cicloAtivo}" class="text-danger">❌</span>
                             </td>
                             <td class="text-center align-middle">
-                                <a th:href="@{/fazenda/{id}/viveiro/{idViveiro}/abrirViveiro(id=${fazenda.id}, idViveiro=${viveiro.id})}"
+                                <a th:href="@{/fazenda/{codigo}/viveiro/{idViveiro}/abrirViveiro(codigo=${fazenda.codigo}, idViveiro=${viveiro.id})}"
                                    class="btn btn-outline-success btn-sm">
                                     Abrir
                                 </a>
@@ -185,12 +178,12 @@
                 </div>
                 <div class="modal-body">
                     Tem certeza que deseja remover a fazenda
-                    <strong th:text="${fazenda.nome}"></strong> (ID: <span th:text="${fazenda.id}"></span>)?
+                    <strong th:text="${fazenda.nome}"></strong> (Código: <span th:text="${fazenda.codigo}"></span>)?
                     <br><small class="text-muted">Esta ação não poderá ser revertida.</small>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <form th:action="@{/fazenda/{id}/remover(id=${fazenda.id})}" method="post">
+                    <form th:action="@{/fazenda/{codigo}/remover(codigo=${fazenda.codigo})}" method="post">
                         <button type="submit" class="btn btn-danger">Remover</button>
                     </form>
                 </div>
@@ -214,7 +207,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <form th:action="@{/fazenda/{id}/viveiro/{idViveiro}/remover(id=${fazenda.id}, idViveiro=${viveiro.id})}"
+                        <form th:action="@{/fazenda/{codigo}/viveiro/{idViveiro}/remover(codigo=${fazenda.codigo}, idViveiro=${viveiro.id})}"
                               method="post">
                             <button type="submit" class="btn btn-danger">Remover</button>
                         </form>

@@ -19,7 +19,7 @@
         </div>
 
         <!-- Formulário -->
-        <form th:action="@{/fazenda/{id}/abastecer-racao(id=${idFazenda})}" method="post">
+        <form th:action="@{/fazenda/{codigo}/abastecer-racao(codigo=${codigo})}" method="post">
             <div class="row">
                 <!-- Coluna esquerda -->
                 <div class="col-md-6">
@@ -71,7 +71,7 @@
 
             <!-- Botões -->
             <div class="d-flex justify-content-end gap-2">
-                <a th:href="@{/fazenda/{id}(id=${idFazenda})}"
+                <a th:href="@{/fazenda/{codigo}(codigo=${codigo})}"
                    class="btn btn-danger">
                     Cancelar
                 </a>

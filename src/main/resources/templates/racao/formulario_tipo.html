@@ -35,8 +35,8 @@
         <!-- O action decide automaticamente se o formulário vai criar ou editar a ração,
         mudando a URL de envio conforme a variável *racao* exista ou não no model.-->
         <form th:action="${racao != null} ?
-                @{/fazenda/{fid}/racoes/{id}/editar(fid=${idFazenda}, id=${racao.id})} :
-                @{/fazenda/{fid}/racoes/criar(fid=${idFazenda})}"
+                @{/fazenda/{codigo}/racoes/{id}/editar(codigo=${codigo}, id=${racao.id})} :
+                @{/fazenda/{codigo}/racoes/criar(codigo=${codigo})}"
               method="post">
 
             <div class="mb-3">
@@ -71,7 +71,7 @@
             </div>
 
             <div class="d-flex justify-content-end gap-2 mt-4">
-                <a th:href="@{/fazenda/{id}/racoes(id=${idFazenda})}"
+                <a th:href="@{/fazenda/{codigo}/racoes(codigo=${codigo})}"
                    class="btn btn-danger">
                     Cancelar
                 </a>

@@ -22,8 +22,8 @@ public class ViveiroService {
         this.fazendaService = fazendaService;
     }
 
-    public Viveiro criarViveiro(Long fazendaId, String tag, double area, Usuario usuario) {
-        Fazenda fazenda = fazendaService.buscarFazendaPorId(fazendaId);
+    public Viveiro criarViveiro(String codigo, String tag, double area, Usuario usuario) {
+        Fazenda fazenda = fazendaService.buscarFazendaPorCodigo(codigo);
 
         if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
             throw new IllegalArgumentException("Acesso negado");

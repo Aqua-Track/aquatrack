@@ -56,38 +56,48 @@ public class FazendaController {
         }
     }
 
-    @GetMapping("/fazenda/{id}")
-    public String abrirFazenda(@PathVariable Long id, HttpSession session, Model model) {
+    @GetMapping("/fazenda/{codigo}")
+    public String abrirFazenda(@PathVariable String codigo, HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
-        Fazenda fazenda = fazendaService.buscarFazendaPorId(id);
+
+        Fazenda fazenda = fazendaService.buscarFazendaPorCodigo(codigo);
 
         if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
             throw new IllegalArgumentException("Acesso negado");
         }
 
         model.addAttribute("fazenda", fazenda);
-        model.addAttribute("viveiros", viveiroService.listarViveiros(id, usuario));
+        Long fazendaId = fazenda.getId(); // ID técnico só para uso interno
 
-        model.addAttribute("estoques", estoqueRacaoService.listarEstoqueDaFazenda(id, usuario));
+        model.addAttribute("viveiros", viveiroService.listarViveiros(fazendaId, usuario));
+        model.addAttribute("estoques", estoqueRacaoService.listarEstoqueDaFazenda(fazendaId, usuario));
 
         BigDecimal valorTotalEstoque = estoqueRacaoService
-                .listarEstoqueDaFazenda(id, usuario)//retorna uma lista de estoques de ração da fazenda
+                .listarEstoqueDaFazenda(fazendaId, usuario)
                 .stream()
                 .map(estoque ->
-                        estoque.getTipoRacao()//Pega o tipo de ração
-                                .getValorPorSaco()//Pega o valor de um saco de ração
-                                .multiply(BigDecimal.valueOf(estoque.getQuantidadeSacos()))//Multiplica pela quantidade de sacos
+                        estoque.getTipoRacao()
+                                .getValorPorSaco()
+                                .multiply(BigDecimal.valueOf(estoque.getQuantidadeSacos()))
                 )
-                .reduce(BigDecimal.ZERO, BigDecimal::add);//Soma todos os valores
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         model.addAttribute("valorTotalEstoque", valorTotalEstoque);
 
         return "fazendas/pagina_fazenda";
     }
 
-    @PostMapping("/fazenda/{id}/remover")
-    public String removerFazenda(@PathVariable Long id) {
-        fazendaService.deletarFazenda(id);
+
+    @PostMapping("/fazenda/{codigo}/remover")
+    public String removerFazenda(@PathVariable String codigo, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Fazenda fazenda = fazendaService.buscarFazendaPorCodigo(codigo);
+
+        if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
+            throw new IllegalArgumentException("Acesso negado");
+        }
+
+        fazendaService.deletarFazenda(fazenda.getId());
         return "redirect:/fazendas";
     }
 }

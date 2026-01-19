@@ -5,6 +5,7 @@ import com.ufpb.aquatrack.repository.FazendaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class FazendaService {
@@ -21,7 +22,8 @@ public class FazendaService {
         if (total >= 3) {
             throw new IllegalArgumentException("Usuário já atingiu o limite de 3 fazendas");
         }
-        Fazenda fazenda = new Fazenda(nome, localizacao, usuario);
+        String codigo = gerarCodigoFazenda();
+        Fazenda fazenda = new Fazenda(nome, localizacao, usuario, codigo);
         return fazendaRepository.save(fazenda);
     }
 
@@ -41,6 +43,13 @@ public class FazendaService {
                 .orElseThrow(() -> new IllegalArgumentException("Fazenda não encontrada"));
     }
 
+    public Fazenda buscarFazendaPorCodigo(String codigo) {
+        return fazendaRepository
+                .findByCodigoAndDeletadoFalse(codigo)
+                .orElseThrow(() -> new IllegalArgumentException("Fazenda não encontrada"));
+    }
+
+
     public void editarFazenda(Long id, String nome, String localizacao){
         Fazenda fazenda = buscarFazendaPorId(id);
 
@@ -49,4 +58,15 @@ public class FazendaService {
 
         fazendaRepository.save(fazenda);
     }
+
+    private String gerarCodigoFazenda() {
+        String codigo;
+        do {
+            int numero = ThreadLocalRandom.current().nextInt(1000, 9999);
+            codigo = "F-" + numero;
+        } while (fazendaRepository.existsByCodigo(codigo));
+
+        return codigo;
+    }
+
 }
