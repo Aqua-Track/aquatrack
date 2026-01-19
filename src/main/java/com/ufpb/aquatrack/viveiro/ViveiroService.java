@@ -4,6 +4,7 @@ import com.ufpb.aquatrack.fazenda.Fazenda;
 import com.ufpb.aquatrack.fazenda.FazendaService;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.repository.ViveiroRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,18 +55,19 @@ public class ViveiroService {
                 .orElseThrow(() -> new IllegalArgumentException("Viveiro não encontrado"));
     }
 
-    public void apagarViveiro(Long viveiroId, Usuario usuario) {
-        Viveiro viveiro = buscarViveiroPorId(viveiroId);
+    @Transactional
+    public void removerViveiro(Long viveiroId, Usuario usuario) {
+        Viveiro viveiro = viveiroRepository
+                .findByIdAndDeletadoFalse(viveiroId)
+                .orElseThrow(() -> new IllegalArgumentException("Viveiro não encontrado"));
 
-        Fazenda fazenda = viveiro.getFazenda();
-
-        if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
+        if (!viveiro.getFazenda().getUsuario().getId().equals(usuario.getId())) {
             throw new IllegalArgumentException("Acesso negado");
         }
 
         viveiro.marcarComoDeletado();
-        viveiroRepository.save(viveiro);
     }
+
 
     public void editarViveiro(Long viveiroId, String tag, double area, Usuario usuario) {
         Viveiro viveiro = buscarViveiroPorId(viveiroId);

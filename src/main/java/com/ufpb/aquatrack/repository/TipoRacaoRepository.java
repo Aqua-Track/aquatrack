@@ -19,9 +19,5 @@ public interface TipoRacaoRepository extends JpaRepository<TipoRacao, Long> {
     boolean existsByUsuarioAndNomeAndDeletadoFalse(Usuario usuario, String nome);
 
     //Verifica se já existe outra ração, com o mesmo nome do mesmo usuário, ignorando a ração que está sendo editada
-    boolean existsByUsuarioAndNomeAndIdNotAndDeletadoFalse(
-            Usuario usuario,
-            String nome,
-            Long id
-    );
+    boolean existsByUsuarioAndNomeAndIdNotAndDeletadoFalse(Usuario usuario, String nome, Long id);
 }

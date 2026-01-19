@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Dados do Viveiro</title>
+</head>
+
+<body>
+<section class="container mt-5 pb-5">
+
+    <!-- Cabeçalho -->
+    <div class="row my-5">
+        <div class="col">
+            <h1 class="text-center mb-0">Perfil do Viveiro</h1>
+            <p class="text-center mt-0">
+                Gerencie as informações e o ciclo produtivo deste viveiro.
+            </p>
+        </div>
+    </div>
+
+    <!-- Botão Voltar -->
+    <div class="text-end mb-4">
+        <a th:href="@{/fazenda/{codigo}(codigo=${fazenda.codigo})}"
+           class="btn btn-danger btn-sm">
+            Voltar
+        </a>
+    </div>
+
+    <!-- Informações Básicas -->
+    <div class="mb-4">
+        <h3>Informações Básicas</h3>
+        <hr>
+        <form class="d-flex gap-3">
+            <div>
+                <label class="form-label">Viveiro</label>
+                <input type="text"
+                       class="form-control"
+                       th:value="${viveiro.tag}"
+                       readonly>
+            </div>
+
+            <div>
+                <label class="form-label">Área (m²)</label>
+                <input type="text"
+                       class="form-control"
+                       th:value="${viveiro.area}"
+                       readonly>
+            </div>
+        </form>
+    </div>
+
+    <!-- Ciclo do Viveiro -->
+    <div class="row">
+        <div class="col d-flex">
+            <div class="card h-100 w-100 shadow-sm">
+
+                <div class="card-header bg-info text-white">
+                    Ciclo do Viveiro
+                </div>
+
+                <div class="card-body">
+
+                    <!-- SEM CICLO ATIVO -->
+                    <div th:if="${ciclo == null}">
+                        <h5 class="text-center mt-2">
+                            Este viveiro não possui ciclo ativo
+                        </h5>
+                        <p class="text-center text-muted">
+                            Inicie um novo ciclo para começar o acompanhamento produtivo.
+                        </p>
+                    </div>
+
+                    <!-- COM CICLO ATIVO -->
+                    <div th:if="${ciclo != null}">
+                        <p>
+                            <strong>Laboratório:</strong>
+                            <span th:text="${ciclo.laboratorio}"></span>
+                        </p>
+                        <p>
+                            <strong>Data de povoamento:</strong>
+                            <span th:text="${#temporals.format(ciclo.dataPovoamento, 'dd/MM/yyyy')}"></span>
+                        </p>
+                        <p>
+                            <strong>Quantidade povoada:</strong>
+                            <span th:text="${ciclo.quantidadePovoada}"></span>
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- AÇÕES -->
+                <div class="card-footer d-flex justify-content-end gap-2">
+
+                    <!-- Iniciar ciclo -->
+                    <a th:if="${ciclo == null}"
+                       th:href="@{/fazenda/{codigo}/viveiro/{id}/ciclo/novo( codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                       class="btn btn-sm btn-info text-white">
+                        Iniciar Ciclo
+                    </a>
+
+                    <!-- Encerrar ciclo -->
+                    <form th:if="${ciclo != null}"
+                          th:action="@{/fazenda/{codigo}/viveiro/{id}/ciclo/encerrar( codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                          method="post">
+                        <button type="submit"
+                                class="btn btn-sm btn-danger">
+                            Encerrar Ciclo
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+</body>
+</html>

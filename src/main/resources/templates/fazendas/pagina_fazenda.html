@@ -141,8 +141,8 @@
                             <td th:text="${viveiro.area}" class="text-center align-middle"></td>
 
                             <td class="text-center align-middle">
-                                <span th:if="${viveiro.cicloAtivo}" class="text-success">✔️</span>
-                                <span th:if="${!viveiro.cicloAtivo}" class="text-danger">❌</span>
+                                <span th:if="${statusCiclo[viveiro.id]}" class="text-success">✔️</span>
+                                <span th:if="${!statusCiclo[viveiro.id]}" class="text-danger">❌</span>
                             </td>
                             <td class="text-center align-middle">
                                 <a th:href="@{/fazenda/{codigo}/viveiro/{idViveiro}/abrirViveiro(codigo=${fazenda.codigo}, idViveiro=${viveiro.id})}"

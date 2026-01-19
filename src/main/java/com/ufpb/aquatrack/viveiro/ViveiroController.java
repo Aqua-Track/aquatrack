@@ -1,5 +1,7 @@
 package com.ufpb.aquatrack.viveiro;
 
+import com.ufpb.aquatrack.ciclo.Ciclo;
+import com.ufpb.aquatrack.ciclo.CicloService;
 import com.ufpb.aquatrack.fazenda.Fazenda;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.fazenda.FazendaService;
@@ -16,10 +18,12 @@ public class ViveiroController {
 
     private final ViveiroService viveiroService;
     private final FazendaService fazendaService;
+    private final CicloService cicloService;
 
-    public ViveiroController(ViveiroService viveiroService, FazendaService fazendaService) {
+    public ViveiroController(ViveiroService viveiroService, FazendaService fazendaService, CicloService cicloService) {
         this.viveiroService = viveiroService;
         this.fazendaService = fazendaService;
+        this.cicloService = cicloService;
     }
 
 
@@ -59,4 +63,35 @@ public class ViveiroController {
             return "viveiros/formulario_viveiro";
         }
     }
+
+    @GetMapping("/fazenda/{codigo}/viveiro/{viveiroId}/abrirViveiro")
+    public String abrirViveiro(@PathVariable String codigo, @PathVariable Long viveiroId, HttpSession session, Model model) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+
+        Fazenda fazenda = fazendaService.buscarFazendaPorCodigo(codigo);
+        if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
+            throw new IllegalArgumentException("Acesso negado");
+        }
+
+        Viveiro viveiro = viveiroService.buscarViveiroPorId(viveiroId);
+
+        Ciclo cicloAtivo = cicloService.buscarCicloAtivo(viveiroId, usuario);
+
+        model.addAttribute("fazenda", fazenda);
+        model.addAttribute("viveiro", viveiro);
+        model.addAttribute("ciclo", cicloAtivo);
+
+        return "viveiros/pagina_viveiro";
+    }
+
+    @PostMapping("/fazenda/{codigo}/viveiro/{idViveiro}/remover")
+    public String removerViveiro(@PathVariable String codigo, @PathVariable Long idViveiro, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        viveiroService.removerViveiro(idViveiro, usuario);
+
+        return "redirect:/fazenda/" + codigo;
+    }
+
+
 }
