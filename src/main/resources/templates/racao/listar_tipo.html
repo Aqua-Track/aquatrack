@@ -7,7 +7,6 @@
 <body>
 <section class="container mt-5">
 
-    <!-- Título -->
     <div class="text-center mb-1">
         <h1>Tipos de Ração</h1>
         <p class="text-muted mb-5">
@@ -15,13 +14,11 @@
         </p>
     </div>
 
-    <!-- Estado vazio -->
     <div th:if="${#lists.isEmpty(racoes)}"
          class="alert alert-secondary text-center">
         Nenhum tipo de ração cadastrado ainda.
     </div>
 
-    <!-- Tabela -->
     <table th:if="${!#lists.isEmpty(racoes)}"
            class="table table-striped table-bordered align-middle">
         <thead class="table-light">
@@ -44,26 +41,28 @@
             <td class="text-center">
                 <form th:action="@{/fazenda/{fid}/racoes/{id}/remover(fid=${idFazenda}, id=${racao.id})}"
                       method="post" class="d-inline">
+                    <a th:href="@{/fazenda/{fid}/racoes/{id}/editar(fid=${idFazenda}, id=${racao.id})}"
+                       class="btn btn-outline-primary btn-sm">
+                        Editar
+                    </a>
                     <button type="submit"
                             class="btn btn-outline-danger btn-sm">
                         Remover
                     </button>
                 </form>
-
             </td>
         </tr>
         </tbody>
     </table>
 
-    <!-- Botões -->
     <div class="d-flex justify-content-end gap-2 mb-3">
-        <a th:href="@{/fazenda/{id}/racoes/nova(id=${idFazenda})}"
-           class="btn btn-success">
-            Adicionar tipo de ração
-        </a>
         <a th:href="@{/fazenda/{id}(id=${idFazenda})}"
            class="btn btn-danger">
             Voltar
+        </a>
+        <a th:href="@{/fazenda/{id}/racoes/nova(id=${idFazenda})}"
+           class="btn btn-success">
+            Adicionar tipo de ração
         </a>
     </div>
 

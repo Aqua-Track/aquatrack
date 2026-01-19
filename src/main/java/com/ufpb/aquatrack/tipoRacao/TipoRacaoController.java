@@ -58,7 +58,6 @@ public class TipoRacaoController {
         }
     }
 
-
     @PostMapping("/{id}/remover")
     public String remover(@PathVariable Long fazendaId, @PathVariable Long id, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
@@ -67,4 +66,36 @@ public class TipoRacaoController {
 
         return "redirect:/fazenda/" + fazendaId + "/racoes";
     }
+
+    @GetMapping("/{id}/editar")
+    public String editarForm(@PathVariable Long fazendaId, @PathVariable Long id, HttpSession session, Model model) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        TipoRacao racao = tipoRacaoService.buscarRacaoPorId(id, usuario);
+
+        model.addAttribute("racao", racao);
+        model.addAttribute("idFazenda", fazendaId);
+        return "racao/formulario_tipo"; //O mesmo form de adicionar serve para editar
+    }
+
+    @PostMapping("/{id}/editar")
+    public String editar(
+            @PathVariable Long fazendaId, @PathVariable Long id, @RequestParam String nome,
+            @RequestParam String fabricante, @RequestParam Double kgPorSaco, @RequestParam BigDecimal valorPorSaco,
+            HttpSession session, Model model
+    ) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        try {
+            tipoRacaoService.editarRacao(id, nome, fabricante, kgPorSaco, valorPorSaco, usuario);
+            return "redirect:/fazenda/" + fazendaId + "/racoes";
+
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("erro", e.getMessage());
+            model.addAttribute("idFazenda", fazendaId);
+            model.addAttribute("racao", tipoRacaoService.buscarRacaoPorId(id, usuario));
+            return "racao/formulario_tipo";
+        }
+    }
+
 }
