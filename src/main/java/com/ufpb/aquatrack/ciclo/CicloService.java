@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CicloService {
@@ -82,5 +84,14 @@ public class CicloService {
         }
 
         return viveiro;
+    }
+
+    public Map<Long, Boolean> obterStatusCicloPorViveiro(List<Viveiro> viveiros, Usuario usuario) {
+        Map<Long, Boolean> statusCicloPorViveiro = new HashMap<>();
+        for (Viveiro viveiro : viveiros) {
+            boolean temCicloAtivo = existeCicloAtivo(viveiro.getId(), usuario);
+            statusCicloPorViveiro.put(viveiro.getId(), temCicloAtivo);
+        }
+        return statusCicloPorViveiro;
     }
 }

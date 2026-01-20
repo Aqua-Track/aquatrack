@@ -57,9 +57,7 @@ public class ViveiroService {
 
     @Transactional
     public void removerViveiro(Long viveiroId, Usuario usuario) {
-        Viveiro viveiro = viveiroRepository
-                .findByIdAndDeletadoFalse(viveiroId)
-                .orElseThrow(() -> new IllegalArgumentException("Viveiro não encontrado"));
+        Viveiro viveiro = buscarViveiroPorId(viveiroId);
 
         if (!viveiro.getFazenda().getUsuario().getId().equals(usuario.getId())) {
             throw new IllegalArgumentException("Acesso negado");

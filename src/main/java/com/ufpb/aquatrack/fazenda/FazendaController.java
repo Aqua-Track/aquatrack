@@ -76,33 +76,16 @@ public class FazendaController {
         }
 
         model.addAttribute("fazenda", fazenda);
-        Long fazendaId = fazenda.getId(); // ID técnico só para uso interno
-        List<Viveiro> viveiros = viveiroService.listarViveiros(fazendaId, usuario);
+        List<Viveiro> viveiros = viveiroService.listarViveiros(fazenda.getId(), usuario);
 
         model.addAttribute("viveiros", viveiros);
-        model.addAttribute("estoques", estoqueRacaoService.listarEstoqueDaFazenda(fazendaId, usuario));
+        model.addAttribute("estoques", estoqueRacaoService.listarEstoqueDaFazenda(fazenda.getId(), usuario));
 
-        BigDecimal valorTotalEstoque = estoqueRacaoService
-                .listarEstoqueDaFazenda(fazendaId, usuario)
-                .stream()
-                .map(estoque ->
-                        estoque.getTipoRacao()
-                                .getValorPorSaco()
-                                .multiply(BigDecimal.valueOf(estoque.getQuantidadeSacos()))
-                )
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
+        BigDecimal valorTotalEstoque = estoqueRacaoService.totalEstoque(fazenda.getId(), usuario);
         model.addAttribute("valorTotalEstoque", valorTotalEstoque);
 
-        Map<Long, Boolean> statusCicloPorViveiro = new HashMap<>();
-
-        for (Viveiro viveiro : viveiros) {
-            boolean temCicloAtivo = cicloService.existeCicloAtivo(viveiro.getId(), usuario);
-            statusCicloPorViveiro.put(viveiro.getId(), temCicloAtivo);
-        }
-
+        Map<Long, Boolean> statusCicloPorViveiro = cicloService.obterStatusCicloPorViveiro(viveiros, usuario);
         model.addAttribute("statusCiclo", statusCicloPorViveiro);
-
 
         return "fazendas/pagina_fazenda";
     }

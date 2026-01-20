@@ -8,6 +8,7 @@ import com.ufpb.aquatrack.tipoRacao.TipoRacao;
 import com.ufpb.aquatrack.usuario.Usuario;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -55,6 +56,18 @@ public class EstoqueRacaoService {
         estoqueRacaoRepository.save(estoque);
     }
 
+    public BigDecimal totalEstoque(Long fazendaId, Usuario usuario){
+       return listarEstoqueDaFazenda(fazendaId, usuario) // Busca a lista de estoques da fazenda para o usuário informado
+                .stream()// Transforma a lista em um stream para poder processar os dados
+                .map(estoque -> // Para cada item do estoque:
+                estoque.getTipoRacao()
+                .getValorPorSaco()// Pega o valor do saco da ração
+                .multiply(BigDecimal.valueOf(estoque.getQuantidadeSacos()))// Multiplica pelo número de sacos em estoque
+                )
+                // Soma todos os valores calculados, começando do zero
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    }
 
     public List<EstoqueRacao> listarEstoqueDaFazenda(Long fazendaId, Usuario usuario) {
         Fazenda fazenda = fazendaService.buscarFazendaPorId(fazendaId);
