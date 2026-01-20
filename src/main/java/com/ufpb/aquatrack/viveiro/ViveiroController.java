@@ -2,6 +2,8 @@ package com.ufpb.aquatrack.viveiro;
 
 import com.ufpb.aquatrack.ciclo.Ciclo;
 import com.ufpb.aquatrack.ciclo.CicloService;
+import com.ufpb.aquatrack.consumo.ConsumoRacao;
+import com.ufpb.aquatrack.consumo.ConsumoRacaoService;
 import com.ufpb.aquatrack.fazenda.Fazenda;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.fazenda.FazendaService;
@@ -13,17 +15,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
 @Controller
 public class ViveiroController {
 
     private final ViveiroService viveiroService;
     private final FazendaService fazendaService;
     private final CicloService cicloService;
+    private final ConsumoRacaoService consumoRacaoService;
 
-    public ViveiroController(ViveiroService viveiroService, FazendaService fazendaService, CicloService cicloService) {
+    public ViveiroController(ViveiroService viveiroService, FazendaService fazendaService,
+                             CicloService cicloService, ConsumoRacaoService consumoRacaoService) {
         this.viveiroService = viveiroService;
         this.fazendaService = fazendaService;
         this.cicloService = cicloService;
+        this.consumoRacaoService = consumoRacaoService;
     }
 
 
@@ -78,6 +87,17 @@ public class ViveiroController {
 
         Ciclo cicloAtivo = cicloService.buscarCicloAtivo(viveiroId, usuario);
 
+        List<ConsumoRacao> consumos = null;
+
+        if (cicloAtivo != null) {
+            consumos = consumoRacaoService.listarConsumosDoCiclo(viveiroId, usuario);
+        }
+        BigDecimal consumoTotal = consumoRacaoService.calcularConsumoTotal(consumos);
+        Map<String, BigDecimal> consumoPorTipo = consumoRacaoService.calcularConsumoPorTipo(consumos);
+
+        model.addAttribute("consumos", consumos);
+        model.addAttribute("consumoTotal", consumoTotal);
+        model.addAttribute("consumoPorTipo", consumoPorTipo);
         model.addAttribute("fazenda", fazenda);
         model.addAttribute("viveiro", viveiro);
         model.addAttribute("ciclo", cicloAtivo);

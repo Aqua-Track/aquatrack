@@ -49,28 +49,23 @@
         </form>
     </div>
 
-    <!-- Ciclo do Viveiro -->
-    <div class="row">
+    <!-- Linha: Ciclo | Consumo -->
+    <div th:class="|row g-4 mb-2 ${ciclo != null ? 'row-cols-1 row-cols-md-2' : 'row-cols-1'}|">
+        <!-- CICLO DO VIVEIRO -->
         <div class="col d-flex">
             <div class="card h-100 w-100 shadow-sm">
-
                 <div class="card-header bg-info text-white">
                     Ciclo do Viveiro
                 </div>
-
                 <div class="card-body">
-
-                    <!-- SEM CICLO ATIVO -->
                     <div th:if="${ciclo == null}">
-                        <h5 class="text-center mt-2">
+                        <h5 class="text-center mb-1 mt-2">
                             Este viveiro não possui ciclo ativo
                         </h5>
-                        <p class="text-center text-muted">
-                            Inicie um novo ciclo para começar o acompanhamento produtivo.
-                        </p>
+                        <span class="d-block text-center text-muted mt-1">
+                        Inicie um novo ciclo para começar o acompanhamento produtivo
+                    </span>
                     </div>
-
-                    <!-- COM CICLO ATIVO -->
                     <div th:if="${ciclo != null}">
                         <p>
                             <strong>Laboratório:</strong>
@@ -85,33 +80,71 @@
                             <span th:text="${ciclo.quantidadePovoada}"></span>
                         </p>
                     </div>
-
                 </div>
 
                 <!-- AÇÕES -->
-                <div class="card-footer d-flex justify-content-end gap-2">
-
+                <div class="card-footer d-flex justify-content-end mt-auto">
                     <!-- Iniciar ciclo -->
                     <a th:if="${ciclo == null}"
-                       th:href="@{/fazenda/{codigo}/viveiro/{id}/ciclo/novo( codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                       th:href="@{/fazenda/{codigo}/viveiro/{id}/ciclo/novo(codigo=${fazenda.codigo},id=${viveiro.id})}"
                        class="btn btn-sm btn-info text-white">
                         Iniciar Ciclo
                     </a>
 
                     <!-- Encerrar ciclo -->
                     <form th:if="${ciclo != null}"
-                          th:action="@{/fazenda/{codigo}/viveiro/{id}/ciclo/encerrar( codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                          th:action="@{/fazenda/{codigo}/viveiro/{id}/ciclo/encerrar(codigo=${fazenda.codigo}, id=${viveiro.id})}"
                           method="post">
-                        <button type="submit"
-                                class="btn btn-sm btn-danger">
+                        <button type="submit" class="btn btn-sm btn-danger">
                             Encerrar Ciclo
                         </button>
                     </form>
-
                 </div>
             </div>
         </div>
+
+        <!-- CONSUMO DE RAÇÃO (somente com ciclo ativo) -->
+        <div class="col d-flex" th:if="${ciclo != null}">
+            <div class="card h-100 w-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    Consumo de Ração
+                </div>
+                <div class="card-body">
+                    <div th:if="${consumos == null or consumos.isEmpty()}"
+                         class="text-center text-muted">
+                        Nenhum consumo registrado ainda.
+                    </div>
+                    <!-- Tabela de consumo -->
+                    <table class="table table-bordered table-striped align-middle text-center mb-3">
+                        <tbody>
+
+                        <!-- Consumo por tipo -->
+                        <tr th:each="entry : ${consumoPorTipo}">
+                            <th th:text="${entry.key}"></th>
+                            <td th:text="${entry.value} + ' Kg'"></td>
+                        </tr>
+
+                        <!-- Total -->
+                        <tr class="table-secondary fw-bold">
+                            <th>Consumo Total</th>
+                            <td th:text="${consumoTotal} + ' Kg'"></td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="card-footer d-flex justify-content-end mt-auto">
+                    <a th:href="@{/fazenda/{codigo}/viveiro/{id}/consumo-racao/novo(codigo=${fazenda.codigo},id=${viveiro.id})}"
+                       class="btn btn-sm btn-primary">
+                        Registrar Consumo
+                    </a>
+                </div>
+            </div>
+        </div>
+
     </div>
+
 
 </section>
 </body>

@@ -18,7 +18,7 @@ public class TipoRacaoService {
 
     public TipoRacao cadastrarRacao(
             String nome, String fabricante,
-            Double kgPorSaco, BigDecimal valorPorSaco, Usuario usuario
+            BigDecimal kgPorSaco, BigDecimal valorPorSaco, Usuario usuario
     ) {
         if (tipoRacaoRepository.existsByUsuarioAndNomeAndDeletadoFalse(usuario, nome)) {
             throw new IllegalArgumentException("Já existe uma ração com esse nome");
@@ -41,7 +41,7 @@ public class TipoRacaoService {
 
     public void editarRacao(
             Long id, String nome, String fabricante,
-            Double kgPorSaco, BigDecimal valorPorSaco, Usuario usuario
+            BigDecimal kgPorSaco, BigDecimal valorPorSaco, Usuario usuario
     ) {
         TipoRacao racao = buscarRacaoPorId(id, usuario);
 

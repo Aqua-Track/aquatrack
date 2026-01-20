@@ -6,9 +6,12 @@ import com.ufpb.aquatrack.fazenda.FazendaService;
 import com.ufpb.aquatrack.tipoRacao.TipoRacaoService;
 import com.ufpb.aquatrack.tipoRacao.TipoRacao;
 import com.ufpb.aquatrack.usuario.Usuario;
+import com.ufpb.aquatrack.viveiro.Viveiro;
+import com.ufpb.aquatrack.viveiro.ViveiroService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -17,19 +20,21 @@ public class EstoqueRacaoService {
     private final EstoqueRacaoRepository estoqueRacaoRepository;
     private final FazendaService fazendaService;
     private final TipoRacaoService tipoRacaoService;
+    private final ViveiroService viveiroService;
 
     public EstoqueRacaoService(
-            EstoqueRacaoRepository estoqueRacaoRepository,
-            FazendaService fazendaService,
-            TipoRacaoService tipoRacaoService
+            EstoqueRacaoRepository estoqueRacaoRepository, FazendaService fazendaService,
+            TipoRacaoService tipoRacaoService, ViveiroService viveiroService
     ) {
         this.estoqueRacaoRepository = estoqueRacaoRepository;
         this.fazendaService = fazendaService;
         this.tipoRacaoService = tipoRacaoService;
+        this.viveiroService = viveiroService;
     }
 
 
     public void abastecerEstoque(String codigo, Long tipoRacaoId, int quantidadeSacos, Usuario usuario) {
+
         if (quantidadeSacos <= 0) {
             throw new IllegalArgumentException("Quantidade deve ser maior que zero");
         }
@@ -40,34 +45,37 @@ public class EstoqueRacaoService {
             throw new IllegalArgumentException("Acesso negado");
         }
 
-        TipoRacao tipoRacao = tipoRacaoService.buscarRacaoPorId(tipoRacaoId, usuario); //Analisa se existe o tipo
-        EstoqueRacao estoque = estoqueRacaoRepository //Pega o estoque do tipo que será abastecido
+        TipoRacao tipoRacao = tipoRacaoService.buscarRacaoPorId(tipoRacaoId, usuario);
+
+        // converte sacos -> KG
+        BigDecimal kgParaAdicionar = tipoRacao.getKgPorSaco().multiply(BigDecimal.valueOf(quantidadeSacos));
+        EstoqueRacao estoque = estoqueRacaoRepository
                 .findByFazendaAndTipoRacaoAndDeletadoFalse(fazenda, tipoRacao)
                 .orElse(null);
 
-        if (estoque == null) { //Se não existir estoque é criado um
-            estoque = new EstoqueRacao(fazenda, tipoRacao, quantidadeSacos);
+        if (estoque == null) {
+            estoque = new EstoqueRacao(fazenda, tipoRacao, kgParaAdicionar);
         } else {
-            estoque.setQuantidadeSacos(
-                    estoque.getQuantidadeSacos() + quantidadeSacos //Adiciona a nova quantidade á quant anterior
-            );
+            estoque.adicionarKg(kgParaAdicionar);
         }
 
         estoqueRacaoRepository.save(estoque);
     }
 
-    public BigDecimal totalEstoque(Long fazendaId, Usuario usuario){
-       return listarEstoqueDaFazenda(fazendaId, usuario) // Busca a lista de estoques da fazenda para o usuário informado
-                .stream()// Transforma a lista em um stream para poder processar os dados
-                .map(estoque -> // Para cada item do estoque:
-                estoque.getTipoRacao()
-                .getValorPorSaco()// Pega o valor do saco da ração
-                .multiply(BigDecimal.valueOf(estoque.getQuantidadeSacos()))// Multiplica pelo número de sacos em estoque
-                )
-                // Soma todos os valores calculados, começando do zero
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+    public BigDecimal totalEstoque(Long fazendaId, Usuario usuario) {
+        //Calcula quanto custa, em dinheiro, toda a ração disponível no estoque da fazenda.
+        return listarEstoqueDaFazenda(fazendaId, usuario)
+                .stream()
+                .map(estoque -> {
+                    BigDecimal custoKg = estoque.getTipoRacao()
+                            .getValorPorSaco()
+                            .divide(estoque.getTipoRacao().getKgPorSaco(), 2, RoundingMode.HALF_UP);
+                    return custoKg.multiply(estoque.getQuantidadeKg());
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
 
     public List<EstoqueRacao> listarEstoqueDaFazenda(Long fazendaId, Usuario usuario) {
         Fazenda fazenda = fazendaService.buscarFazendaPorId(fazendaId);
@@ -94,5 +102,9 @@ public class EstoqueRacaoService {
         estoqueRacaoRepository.save(estoque);
     }
 
-    //Não foi feito o metodo de consumir por conta q isso é relacionado ao ciclo, e não existe ciclo ainda
+    public List<EstoqueRacao> listarEstoqueDaFazendaPorViveiro(Long viveiroId) {
+        Viveiro viveiro = viveiroService.buscarViveiroPorId(viveiroId);
+        return estoqueRacaoRepository.findByFazendaAndDeletadoFalse(viveiro.getFazenda());
+    }
+
 }
