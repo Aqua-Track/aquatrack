@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Primeiro login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous">
+</head>
+<body>
+<section class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-body p-4">
+
+                    <!-- título -->
+                    <h1 class="text-center mb-1">
+                        <span class="ms-1"> Conta não verificada</span>
+                    </h1>
+                    <!-- alertas -->
+                    <div th:if="${info}" class="alert alert-success mb-3" th:text="${info}"></div>
+                    <div th:if="${erro}" class="alert alert-danger mb-3" th:text="${erro}"></div>
+
+                    <p class="text-center mt-2 mb-4">
+                    Sua conta foi criada mas ainda não está ativa<br>
+                        Acesse o link que enviamos para seu email para verificar sua conta e ativa-la criando uma nova senha
+                    </p>
+
+                    <p class="text-center text-muted mt-2 mb-4">
+                        ⚠️ Atenção: O token é válido por 7 dias desde a data de recebimento, caso expire, entre em contato para enviarmos outro.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+</html>
