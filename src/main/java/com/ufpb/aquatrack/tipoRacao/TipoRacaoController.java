@@ -40,7 +40,7 @@ public class TipoRacaoController {
     @PostMapping("/criar")
     public String criar(
             @PathVariable String codigo, @RequestParam String nome,
-            @RequestParam String fabricante, @RequestParam Double kgPorSaco,
+            @RequestParam String fabricante, @RequestParam BigDecimal kgPorSaco,
             @RequestParam BigDecimal valorPorSaco, HttpSession session, Model model
     ) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
@@ -80,7 +80,7 @@ public class TipoRacaoController {
     @PostMapping("/{id}/editar")
     public String editar(
             @PathVariable String codigo, @PathVariable Long id, @RequestParam String nome,
-            @RequestParam String fabricante, @RequestParam Double kgPorSaco, @RequestParam BigDecimal valorPorSaco,
+            @RequestParam String fabricante, @RequestParam BigDecimal kgPorSaco, @RequestParam BigDecimal valorPorSaco,
             HttpSession session, Model model
     ) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
