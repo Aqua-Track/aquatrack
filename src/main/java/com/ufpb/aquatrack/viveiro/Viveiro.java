@@ -34,7 +34,7 @@ public class Viveiro {
 
 
     @Column(nullable = false)
-    private boolean cicloAtivo; //Isso é só para testar por agora, sairá no futuro
+    private boolean cicloAtivo;
 
     protected Viveiro() {
 

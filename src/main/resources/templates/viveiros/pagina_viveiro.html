@@ -142,8 +142,57 @@
                 </div>
             </div>
         </div>
-
     </div>
+
+    <!-- Biometria -->
+    <div class="col d-flex" th:if="${ciclo != null}">
+        <div class="card h-100 w-100 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                Biometria
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered align-middle">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th class="text-center">Última</th>
+                        <th class="text-center">Anterior</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th>Data</th>
+                        <td th:text="${ultimaBiometria != null ? ultimaBiometria.dataBiometria : '---'}"></td>
+                        <td th:text="${penultimaBiometria != null ? penultimaBiometria.dataBiometria : '---'}"></td>
+                    </tr>
+                    <tr>
+                        <th>Quantidade</th>
+                        <td th:text="${ultimaBiometria != null ? ultimaBiometria.quantidadeAmostrada : '---'}"></td>
+                        <td th:text="${penultimaBiometria != null ? penultimaBiometria.quantidadeAmostrada : '---'}"></td>
+                    </tr>
+                    <tr>
+                        <th>Peso Médio (g)</th>
+                        <td th:text="${ultimaBiometria != null ? ultimaBiometria.pesoMedio : '---'}"></td>
+                        <td th:text="${penultimaBiometria != null ? penultimaBiometria.pesoMedio : '---'}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-footer d-flex justify-content-end gap-2">
+                <a th:href="@{/fazenda/{codigo}/viveiro/{id}/biometria/historico(codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                   class="btn btn-dark btn-sm">
+                    Histórico
+                </a>
+                <a th:href="@{/fazenda/{codigo}/viveiro/{id}/biometria/nova(codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                   class="btn btn-primary btn-sm">
+                    Registrar Biometria
+                </a>
+            </div>
+        </div>
+    </div>
+
 
 
 </section>

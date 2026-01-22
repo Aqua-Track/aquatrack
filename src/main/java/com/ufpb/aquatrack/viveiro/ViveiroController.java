@@ -1,5 +1,7 @@
 package com.ufpb.aquatrack.viveiro;
 
+import com.ufpb.aquatrack.biometria.Biometria;
+import com.ufpb.aquatrack.biometria.BiometriaService;
 import com.ufpb.aquatrack.ciclo.Ciclo;
 import com.ufpb.aquatrack.ciclo.CicloService;
 import com.ufpb.aquatrack.consumo.ConsumoRacao;
@@ -26,13 +28,17 @@ public class ViveiroController {
     private final FazendaService fazendaService;
     private final CicloService cicloService;
     private final ConsumoRacaoService consumoRacaoService;
+    private final BiometriaService biometriaService;
+
 
     public ViveiroController(ViveiroService viveiroService, FazendaService fazendaService,
-                             CicloService cicloService, ConsumoRacaoService consumoRacaoService) {
+                             CicloService cicloService, ConsumoRacaoService consumoRacaoService,
+                             BiometriaService biometriaService ) {
         this.viveiroService = viveiroService;
         this.fazendaService = fazendaService;
         this.cicloService = cicloService;
         this.consumoRacaoService = consumoRacaoService;
+        this.biometriaService = biometriaService;
     }
 
 
@@ -74,9 +80,13 @@ public class ViveiroController {
     }
 
     @GetMapping("/fazenda/{codigo}/viveiro/{viveiroId}/abrirViveiro")
-    public String abrirViveiro(@PathVariable String codigo, @PathVariable Long viveiroId, HttpSession session, Model model) {
+    public String abrirViveiro(
+            @PathVariable String codigo,
+            @PathVariable Long viveiroId,
+            HttpSession session,
+            Model model
+    ) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
-
 
         Fazenda fazenda = fazendaService.buscarFazendaPorCodigo(codigo);
         if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
@@ -84,26 +94,39 @@ public class ViveiroController {
         }
 
         Viveiro viveiro = viveiroService.buscarViveiroPorId(viveiroId);
-
         Ciclo cicloAtivo = cicloService.buscarCicloAtivo(viveiroId, usuario);
 
-        List<ConsumoRacao> consumos = null;
+        //Biometria
+        if (cicloAtivo != null) {
+            List<Biometria> biometrias = biometriaService.listarBiometriasDoCiclo(cicloAtivo);
+            int total = biometrias.size();
+            if (total > 0) {
+                model.addAttribute("ultimaBiometria", biometrias.get(total - 1));
+            }
+            if (total > 1) {
+                model.addAttribute("penultimaBiometria", biometrias.get(total - 2));
+            }
+        }
 
+        //Consumo Ração
+        List<ConsumoRacao> consumos = null;
         if (cicloAtivo != null) {
             consumos = consumoRacaoService.listarConsumosDoCiclo(viveiroId, usuario);
         }
+
         BigDecimal consumoTotal = consumoRacaoService.calcularConsumoTotal(consumos);
         Map<String, BigDecimal> consumoPorTipo = consumoRacaoService.calcularConsumoPorTipo(consumos);
 
-        model.addAttribute("consumos", consumos);
-        model.addAttribute("consumoTotal", consumoTotal);
-        model.addAttribute("consumoPorTipo", consumoPorTipo);
         model.addAttribute("fazenda", fazenda);
         model.addAttribute("viveiro", viveiro);
         model.addAttribute("ciclo", cicloAtivo);
+        model.addAttribute("consumos", consumos);
+        model.addAttribute("consumoTotal", consumoTotal);
+        model.addAttribute("consumoPorTipo", consumoPorTipo);
 
         return "viveiros/pagina_viveiro";
     }
+
 
     @PostMapping("/fazenda/{codigo}/viveiro/{idViveiro}/remover")
     public String removerViveiro(@PathVariable String codigo, @PathVariable Long idViveiro, HttpSession session) {
