@@ -193,8 +193,116 @@
         </div>
     </div>
 
+    <!-- Qualidade da Água -->
+    <div class="col d-flex" th:if="${ciclo != null}">
+        <div class="card h-100 w-100 shadow-sm">
+            <div class="card-header bg-info text-white">
+                Qualidade da Água
+            </div>
+
+            <table class="table table-bordered text-center"
+                   th:if="${resumoAgua != null}">
+                <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Última</th>
+                    <th>Anterior</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${#temporals.format(resumoAgua.ultimaData, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <button class="btn btn-outline-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalUltimaAgua">
+                            Ver mais
+                        </button>
+                    </td>
+                    <td>
+                        <button th:if="${resumoAgua.penultima != null}"
+                                class="btn btn-outline-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalPenultimaAgua">
+                            Ver mais
+                        </button>
+                        <span th:if="${resumoAgua.penultima == null}">---</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div th:if="${resumoAgua == null}" class="text-muted text-center">
+                Nenhuma análise registrada
+            </div>
 
 
+            <div class="card-footer d-flex justify-content-between gap-2">
+                <a th:href="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua/parametros(
+                   codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                   class="btn btn-outline-secondary btn-sm">
+                    Catálogo de Parâmetros
+                </a>
+                <div class="d-flex gap-2">
+                    <a th:href="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua/historico(
+                        codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                       class="btn btn-dark btn-sm">
+                        Histórico
+                    </a>
+                    <a th:href="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua/nova(
+                        codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                       class="btn btn-info btn-sm text-white">
+                        Nova Análise
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAIS DA QUALIDADE DA ÁGUA -->
+    <div class="modal fade" id="modalUltimaAgua" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        Qualidade da Água —
+                        <span th:text="${#temporals.format(resumoAgua.ultimaData, 'dd/MM/yyyy')}"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div th:each="m : ${resumoAgua.ultima}">
+                        <p class="mb-1">
+                            <strong th:text="${m.parametro.nome}"></strong>:
+                            <span th:text="${m.valor}"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalPenultimaAgua" tabindex="-1" th:if="${resumoAgua.penultima != null}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        Qualidade da Água —
+                        <span th:text="${#temporals.format(resumoAgua.penultimaData, 'dd/MM/yyyy')}"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div th:each="m : ${resumoAgua.penultima}">
+                        <p class="mb-1">
+                            <strong th:text="${m.parametro.nome}"></strong>:
+                            <span th:text="${m.valor}"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 </body>
 </html>

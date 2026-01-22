@@ -7,6 +7,9 @@ import com.ufpb.aquatrack.ciclo.CicloService;
 import com.ufpb.aquatrack.consumo.ConsumoRacao;
 import com.ufpb.aquatrack.consumo.ConsumoRacaoService;
 import com.ufpb.aquatrack.fazenda.Fazenda;
+import com.ufpb.aquatrack.qualidadeAgua.MedicaoQualidadeAgua;
+import com.ufpb.aquatrack.qualidadeAgua.QualidadeAguaService;
+import com.ufpb.aquatrack.qualidadeAgua.ResumoQualidadeAgua;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.fazenda.FazendaService;
 import jakarta.servlet.http.HttpSession;
@@ -18,8 +21,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Controller
 public class ViveiroController {
@@ -29,16 +36,18 @@ public class ViveiroController {
     private final CicloService cicloService;
     private final ConsumoRacaoService consumoRacaoService;
     private final BiometriaService biometriaService;
+    private final QualidadeAguaService qualidadeAguaService;
 
 
     public ViveiroController(ViveiroService viveiroService, FazendaService fazendaService,
                              CicloService cicloService, ConsumoRacaoService consumoRacaoService,
-                             BiometriaService biometriaService ) {
+                             BiometriaService biometriaService, QualidadeAguaService qualidadeAguaService ) {
         this.viveiroService = viveiroService;
         this.fazendaService = fazendaService;
         this.cicloService = cicloService;
         this.consumoRacaoService = consumoRacaoService;
         this.biometriaService = biometriaService;
+        this.qualidadeAguaService = qualidadeAguaService;
     }
 
 
@@ -105,6 +114,14 @@ public class ViveiroController {
             }
             if (total > 1) {
                 model.addAttribute("penultimaBiometria", biometrias.get(total - 2));
+            }
+        }
+
+        //Qualidade de Água
+        if (cicloAtivo != null) {
+            ResumoQualidadeAgua resumoAgua = qualidadeAguaService.obterResumoDoCiclo(viveiroId, usuario);
+            if (resumoAgua != null) {
+                model.addAttribute("resumoAgua", resumoAgua);
             }
         }
 
