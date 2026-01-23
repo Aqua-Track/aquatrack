@@ -22,7 +22,7 @@ public class UsuarioMasterInitializer implements CommandLineRunner {
 
         if (!existeMaster) {
             Usuario master = new Usuario();
-            master.setLogin("master@gmail.com");
+            master.setLogin("aquatrackpb@gmail.com");
             master.setSenha(BCrypt.hashpw("track0123", BCrypt.gensalt()));
             master.setNome("Administrador");
             master.setRole(UsuarioRole.MASTER);
