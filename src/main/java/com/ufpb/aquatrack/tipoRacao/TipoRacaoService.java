@@ -1,5 +1,6 @@
 package com.ufpb.aquatrack.tipoRacao;
 
+import com.ufpb.aquatrack.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.repository.TipoRacaoRepository;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class TipoRacaoService {
     public TipoRacao buscarRacaoPorId(Long id, Usuario usuario) {
         return tipoRacaoRepository
                 .findByIdAndUsuarioAndDeletadoFalse(id, usuario)
-                .orElseThrow(() -> new IllegalArgumentException("Ração não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Ração não encontrada"));
     }
 
     public void editarRacao(

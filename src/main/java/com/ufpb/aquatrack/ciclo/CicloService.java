@@ -1,5 +1,6 @@
 package com.ufpb.aquatrack.ciclo;
 
+import com.ufpb.aquatrack.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.repository.CicloRepository;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.viveiro.Viveiro;
@@ -76,7 +77,7 @@ public class CicloService {
         Viveiro viveiro = viveiroRepository
                 .findByIdAndDeletadoFalse(viveiroId)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("Viveiro não encontrado.")
+                        new RecursoNaoEncontradoException("Viveiro não encontrado.")
                 );
 
         if (!viveiro.getFazenda().getUsuario().getId().equals(usuario.getId())) {

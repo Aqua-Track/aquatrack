@@ -2,6 +2,7 @@ package com.ufpb.aquatrack.qualidadeAgua;
 
 import com.ufpb.aquatrack.ciclo.Ciclo;
 import com.ufpb.aquatrack.ciclo.CicloService;
+import com.ufpb.aquatrack.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.parametroQualidadeAgua.ParametroQualidadeAgua;
 import com.ufpb.aquatrack.repository.MedicaoQualidadeAguaRepository;
 import com.ufpb.aquatrack.repository.ParametroQualidadeAguaRepository;
@@ -125,7 +126,7 @@ public class QualidadeAguaService {
     public ParametroQualidadeAgua buscarParametroPorId(Long id, Usuario usuario) {
         ParametroQualidadeAgua parametro = parametroRepository.findById(id)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("Parâmetro não encontrado.")
+                        new RecursoNaoEncontradoException("Parâmetro não encontrado.")
                 );
 
         if (!parametro.getUsuario().getId().equals(usuario.getId())) {

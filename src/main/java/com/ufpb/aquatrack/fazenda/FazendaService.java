@@ -1,5 +1,6 @@
 package com.ufpb.aquatrack.fazenda;
 
+import com.ufpb.aquatrack.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.repository.FazendaRepository;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class FazendaService {
 
     public Fazenda buscarFazendaPorId(Long id) {
         return fazendaRepository.findByIdAndDeletadoFalse(id)
-                .orElseThrow(() -> new IllegalArgumentException("Fazenda não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Fazenda não encontrada"));
     }
 
     public Fazenda buscarFazendaPorCodigo(String codigo) {

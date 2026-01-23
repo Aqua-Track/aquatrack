@@ -1,5 +1,6 @@
 package com.ufpb.aquatrack.viveiro;
 
+import com.ufpb.aquatrack.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.fazenda.Fazenda;
 import com.ufpb.aquatrack.fazenda.FazendaService;
 import com.ufpb.aquatrack.usuario.Usuario;
@@ -52,7 +53,7 @@ public class ViveiroService {
 
     public Viveiro buscarViveiroPorId(Long id){
         return viveiroRepository.findByIdAndDeletadoFalse(id)
-                .orElseThrow(() -> new IllegalArgumentException("Viveiro não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Viveiro não encontrado"));
     }
 
     @Transactional
