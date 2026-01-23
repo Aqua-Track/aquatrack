@@ -260,7 +260,10 @@
     </div>
 
     <!-- MODAIS DA QUALIDADE DA ÁGUA -->
-    <div class="modal fade" id="modalUltimaAgua" tabindex="-1">
+    <div class="modal fade"
+         id="modalUltimaAgua"
+         tabindex="-1"
+         th:if="${resumoAgua != null}">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
@@ -282,7 +285,11 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalPenultimaAgua" tabindex="-1" th:if="${resumoAgua.penultima != null}">
+    <!-- MODAL PENÚLTIMA MEDIÇÃO -->
+    <div class="modal fade"
+         id="modalPenultimaAgua"
+         tabindex="-1"
+         th:if="${resumoAgua != null and resumoAgua.penultima != null}">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
@@ -303,6 +310,7 @@
             </div>
         </div>
     </div>
+
 </section>
 </body>
 </html>
