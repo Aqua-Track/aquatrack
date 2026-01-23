@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Iniciar Ciclo do Viveiro</title>
+</head>
+
+<body>
+<section class="d-flex justify-content-center mt-5 mb-5">
+    <div class="card shadow-sm p-4 col-12 col-md-8 col-lg-6">
+
+        <h2 class="mb-2">Iniciar Ciclo do Viveiro</h2>
+        <p class="text-muted">
+            Informe os dados iniciais do ciclo produtivo.
+        </p>
+
+        <form th:action="@{/fazenda/{codigo}/viveiro/{id}/ciclo/iniciar(codigo=${codigoFazenda}, id=${viveiroId})}" method="post">
+
+            <div class="mb-3">
+                <label for="laboratorio" class="form-label">Laboratório</label>
+                <input type="text" class="form-control" id="laboratorio" name="laboratorio" required minlength="3" maxlength="50">
+            </div>
+
+            <div class="mb-3">
+                <label for="quantidadePovoada" class="form-label">
+                    Quantidade povoada
+                </label>
+                <input type="number" class="form-control" id="quantidadePovoada" name="quantidadePovoada" min="1" step="1" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="dataPovoamento" class="form-label">
+                    Data de povoamento
+                </label>
+                <input type="date" class="form-control" id="dataPovoamento" name="dataPovoamento" required>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <a th:href="@{/fazenda/{codigo}/viveiro/{id}/abrirViveiro(codigo=${codigoFazenda}, id=${viveiroId})}"
+                   class="btn btn-secondary">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="btn btn-info text-white">
+                    Iniciar Ciclo
+                </button>
+            </div>
+
+        </form>
+    </div>
+</section>
+</body>
+</html>

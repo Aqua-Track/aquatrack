@@ -3,7 +3,6 @@ package com.ufpb.aquatrack.repository;
 import com.ufpb.aquatrack.tipoRacao.TipoRacao;
 import com.ufpb.aquatrack.usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -19,9 +18,8 @@ public interface TipoRacaoRepository extends JpaRepository<TipoRacao, Long> {
     boolean existsByUsuarioAndNomeAndDeletadoFalse(Usuario usuario, String nome);
 
     //Verifica se já existe outra ração, com o mesmo nome do mesmo usuário, ignorando a ração que está sendo editada
-    boolean existsByUsuarioAndNomeAndIdNotAndDeletadoFalse(
-            Usuario usuario,
-            String nome,
-            Long id
-    );
+    boolean existsByUsuarioAndNomeAndIdNotAndDeletadoFalse(Usuario usuario, String nome, Long id);
+
+    Optional<TipoRacao> findByIdAndDeletadoFalse(Long tipoRacaoId);
 }
+

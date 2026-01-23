@@ -1,5 +1,8 @@
 package com.ufpb.aquatrack.usuario;
 
+import com.ufpb.aquatrack.infra.verify.email.EmailService;
+import com.ufpb.aquatrack.infra.verify.email.tokens.TokenService;
+import com.ufpb.aquatrack.infra.verify.email.tokens.TokenUsuario;
 import com.ufpb.aquatrack.repository.UsuarioRepository;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -11,9 +14,13 @@ import java.util.Optional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final TokenService tokenService;
+    private final EmailService emailService;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, TokenService tokenService, EmailService emailService) {
         this.usuarioRepository = usuarioRepository;
+        this.tokenService = tokenService;
+        this.emailService = emailService;
     }
 
     public void cadastrarUsuario(String nome, String login, String senha, UsuarioRole role) {
@@ -27,7 +34,17 @@ public class UsuarioService {
         usuario.setLogin(login);
         usuario.setSenha(BCrypt.hashpw(senha, BCrypt.gensalt()));
         usuario.setRole(role);
+        usuario.setContaVerificada(Boolean.FALSE); //Define o novo usuário como "Não ativado"
         usuarioRepository.save(usuario);
+
+        TokenUsuario tokenUsuario = tokenService.gerarToken(usuario);
+
+        // Enviar o e-mail de ativação
+        emailService.enviarEmailAtivacao(usuario.getLogin(), tokenUsuario.getToken());
+    }
+
+    public Usuario atualizarUsuario(Usuario usuario) {
+        return usuarioRepository.save(usuario);
     }
 
 
@@ -82,6 +99,10 @@ public class UsuarioService {
         }
 
         usuarioRepository.save(usuario);
+    }
+
+    public void definirSenha(Usuario usuario, String senha) {
+        usuario.setSenha(BCrypt.hashpw(senha, BCrypt.gensalt()));
     }
 
 }

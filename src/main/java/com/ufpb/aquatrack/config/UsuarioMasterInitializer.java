@@ -26,9 +26,9 @@ public class UsuarioMasterInitializer implements CommandLineRunner {
             master.setSenha(BCrypt.hashpw("track0123", BCrypt.gensalt()));
             master.setNome("Administrador");
             master.setRole(UsuarioRole.MASTER);
+            master.setContaVerificada(Boolean.TRUE);
 
             usuarioRepository.save(master);
-
         }
     }
 }

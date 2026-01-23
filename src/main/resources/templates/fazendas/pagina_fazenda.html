@@ -27,36 +27,36 @@
 
         <!-- Dados da Fazenda -->
         <div class="row">
+            <!-- Informações básicas -->
             <div class="col-md-6">
                 <h3><strong>Informações Básicas</strong></h3>
                 <form>
                     <div class="mb-3">
-                        <label for="nomeFazenda" class="form-label">Nome da Fazenda:</label>
-                        <input type="text" class="form-control" id="nomeFazenda" th:value="${fazenda.nome}" readonly>
+                        <label class="form-label">Nome da Fazenda:</label>
+                        <input type="text" class="form-control"
+                               th:value="${fazenda.nome}" readonly>
                     </div>
                     <div class="mb-3">
-                        <label for="localizacao" class="form-label">Localização:</label>
-                        <input type="text" class="form-control" id="localizacao" th:value="${fazenda.localizacao}" readonly>
+                        <label class="form-label">Localização:</label>
+                        <input type="text" class="form-control"
+                               th:value="${fazenda.localizacao}" readonly>
                     </div>
                     <div class="mb-3">
-                        <label for="quantidade-viveiros" class="form-label">Viveiros cadastrados:</label>
-                        <input type="text" class="form-control" id="quantidade-viveiros"
+                        <label class="form-label">Viveiros cadastrados:</label>
+                        <input type="text" class="form-control"
                                th:value="${viveiros.size()}" readonly>
                     </div>
                 </form>
             </div>
 
+            <!-- Estoque -->
             <div class="col-md-6">
-
-                <!-- Título -->
                 <h3 class="mb-3"><strong>Estoque de Ração</strong></h3>
-
-                <!-- Caso não exista estoque -->
+                <!-- Sem estoque -->
                 <div th:if="${#lists.isEmpty(estoques)}"
                      class="alert alert-secondary text-center">
                     Nenhum estoque de ração cadastrado ainda.
                 </div>
-
                 <!-- Tabela -->
                 <table th:if="${!#lists.isEmpty(estoques)}"
                        class="table table-striped table-bordered text-center">
@@ -64,7 +64,7 @@
                     <tr>
                         <th>Ração</th>
                         <th>Fabricante</th>
-                        <th class="text-center">Sacos</th>
+                        <th class="text-center">Sacos (aprox.)</th>
                         <th class="text-center">Total (Kg)</th>
                     </tr>
                     </thead>
@@ -72,38 +72,42 @@
                     <tr th:each="estoque : ${estoques}">
                         <td th:text="${estoque.tipoRacao.nome}"></td>
                         <td th:text="${estoque.tipoRacao.fabricante}"></td>
+                        <!-- Sacos: apenas exibição -->
                         <td class="text-center fw-bold"
                             th:text="${estoque.quantidadeSacos}">
                         </td>
+                        <!-- KG: unidade real -->
                         <td class="text-center text-muted">
-                            <span th:text="${estoque.quantidadeSacos * estoque.tipoRacao.kgPorSaco}"></span> Kg
+                            <span th:text="${#numbers.formatDecimal(estoque.quantidadeKg, 1, 'POINT', 2, 'COMMA')}"></span> Kg
                         </td>
                     </tr>
                     </tbody>
                 </table>
 
-                <!-- Linha inferior: valor total -->
+                <!-- Valor total -->
                 <div th:if="${!#lists.isEmpty(estoques)}"
-                     class="d-flex justify-content-between align-items-center mt-2"><div>
-                    <span class="mb-0 me-2 text-muted">Valor total estimado em estoque:</span>
-                        <strong class="mt-0">
-                            R$ <span th:text="${#numbers.formatDecimal(valorTotalEstoque, 1, 'POINT', 2, 'COMMA')}"></span>
+                     class="d-flex justify-content-between align-items-center mt-2">
+                    <div>
+                        <span class="text-muted me-2">Valor total estimado em estoque:</span>
+                        <strong>
+                            R$
+                            <span th:text="${#numbers.formatDecimal(valorTotalEstoque, 1, 'POINT', 2, 'COMMA')}">
+                            </span>
                         </strong>
                     </div>
                 </div>
 
+                <!-- Ações -->
                 <div class="d-flex justify-content-end gap-2 mt-2">
                     <a th:href="@{/fazenda/{codigo}/racoes(codigo=${fazenda.codigo})}"
                        class="btn btn-secondary btn-sm">
                         Gerenciar tipos de ração
                     </a>
-
                     <a th:href="@{/fazenda/{codigo}/abastecer-racao(codigo=${fazenda.codigo})}"
                        class="btn btn-success btn-sm">
                         Abastecer
                     </a>
                 </div>
-
             </div>
 
             <!-- Viveiros -->
@@ -141,8 +145,8 @@
                             <td th:text="${viveiro.area}" class="text-center align-middle"></td>
 
                             <td class="text-center align-middle">
-                                <span th:if="${viveiro.cicloAtivo}" class="text-success">✔️</span>
-                                <span th:if="${!viveiro.cicloAtivo}" class="text-danger">❌</span>
+                                <span th:if="${statusCiclo[viveiro.id]}" class="text-success">✔️</span>
+                                <span th:if="${!statusCiclo[viveiro.id]}" class="text-danger">❌</span>
                             </td>
                             <td class="text-center align-middle">
                                 <a th:href="@{/fazenda/{codigo}/viveiro/{idViveiro}/abrirViveiro(codigo=${fazenda.codigo}, idViveiro=${viveiro.id})}"

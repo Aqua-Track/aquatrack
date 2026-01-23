@@ -36,7 +36,7 @@ public class TipoRacao {
 
     @NotNull
     @Column(nullable = false)
-    private Double kgPorSaco;
+    private BigDecimal kgPorSaco;
 
     @Column(nullable = false)
     private BigDecimal valorPorSaco;
@@ -52,7 +52,7 @@ public class TipoRacao {
         this.deletado = false;
     }
 
-    public TipoRacao(String nome, String fabricante, Double kgPorSaco, BigDecimal valorPorSaco, Usuario usuario) {
+    public TipoRacao(String nome, String fabricante, BigDecimal kgPorSaco, BigDecimal valorPorSaco, Usuario usuario) {
         this.nome = nome;
         this.fabricante = fabricante;
         this.kgPorSaco = kgPorSaco;

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Histórico de Qualidade da Água</title>
+</head>
+
+<body>
+<section class="container mt-5">
+
+    <!-- Cabeçalho -->
+    <div class="row my-5">
+        <div class="col text-center">
+            <h2>Histórico de Qualidade da Água</h2>
+            <p class="text-muted">
+                Selecione uma data para visualizar os parâmetros analisados
+            </p>
+        </div>
+    </div>
+
+    <!-- Tabela de datas -->
+    <div class="card shadow-sm p-4">
+
+        <table class="table table-bordered table-striped text-center">
+            <thead>
+            <tr>
+                <th>Data</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="entry, iter : ${medicoesPorData}">
+                <td th:text="${#temporals.format(entry.key, 'dd/MM/yyyy')}"></td>
+                <td>
+                    <button class="btn btn-sm btn-info text-white"
+                            data-bs-toggle="modal"
+                            th:attr="data-bs-target='#modalQualidade' + ${iter.index}">
+                        Ver Detalhes
+                    </button>
+                </td>
+            </tr>
+
+            <tr th:if="${medicoesPorData.isEmpty()}">
+                <td colspan="2">Nenhuma análise registrada</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modais -->
+    <div th:each="entry, iter : ${medicoesPorData}">
+        <div class="modal fade"
+             th:id="'modalQualidade' + ${iter.index}"
+             tabindex="-1"
+             aria-hidden="true">
+
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title">
+                            Qualidade da Água –
+                            <span th:text="${#temporals.format(entry.key, 'dd/MM/yyyy')}"></span>
+                        </h5>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div th:each="m : ${entry.value}">
+                            <p>
+                                <strong th:text="${m.parametro.nome}"></strong>:
+                                <span th:text="${m.valor}"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Fechar
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-end mt-3">
+        <a th:href="@{/fazenda/{codigo}/viveiro/{id}/abrirViveiro(codigo=${codigo}, id=${viveiroId})}"
+           class="btn btn-danger btn-sm">
+            Voltar
+        </a>
+    </div>
+
+</section>
+</body>
+</html>

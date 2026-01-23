@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Registrar Consumo de Ração</title>
+</head>
+
+<body>
+<section class="d-flex justify-content-center mt-5 mb-5">
+
+    <div class="card shadow-sm p-4 col-12 col-md-8 col-lg-6">
+
+        <h2 class="mb-3">Registrar Consumo de Ração</h2>
+
+        <!-- Erro -->
+        <div th:if="${erro}" class="alert alert-danger">
+            <p th:text="${erro}"></p>
+        </div>
+
+        <form th:action="@{/fazenda/{codigo}/viveiro/{id}/consumo-racao/registrar( codigo=${codigoFazenda}, id=${viveiroId})}"
+              method="post">
+
+            <div class="mb-3">
+                <label class="form-label">Tipo de ração</label>
+                <select class="form-select" name="tipoRacaoId" required>
+                    <option value="" disabled selected>
+                        Selecione o tipo de ração
+                    </option>
+
+                    <option th:each="estoque : ${estoques}"
+                            th:value="${estoque.tipoRacao.id}"
+                            th:text="${estoque.tipoRacao.nome + ' (' +estoque.quantidadeSacos + ' sacos)'}">
+                    </option>
+                </select>
+            </div>
+
+            <!-- Quantidade -->
+            <div class="mb-3">
+                <label class="form-label">Quantidade consumida (kg)</label>
+                <input type="number" class="form-control" name="quantidadeKg" min="0.01" step="0.01" required>
+            </div>
+
+            <!-- Data -->
+            <div class="mb-4">
+                <label class="form-label">Data do consumo</label>
+                <input type="date" class="form-control" name="dataConsumo" th:value="${dataHoje}" required>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <a th:href="@{/fazenda/{codigo}/viveiro/{id}/abrirViveiro( codigo=${codigoFazenda}, id=${viveiroId})}"
+                   class="btn btn-secondary">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn btn-success">
+                    Registrar
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</section>
+</body>
+</html>

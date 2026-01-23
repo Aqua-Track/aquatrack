@@ -43,6 +43,9 @@ public class Usuario {
     @Column(nullable = false)
     private UsuarioRole role;
 
+    @Column(nullable = false)
+    private boolean contaVerificada;
+
     public Usuario(String login, String nome, String senha, UsuarioRole role) {
         this.login = login;
         this.nome = nome;
@@ -50,6 +53,7 @@ public class Usuario {
         this.role = role;
         this.deletado = false;
         this.urlFoto = "/images/default-user.png";
+        this.contaVerificada = false;
     }
 
     public Usuario() {

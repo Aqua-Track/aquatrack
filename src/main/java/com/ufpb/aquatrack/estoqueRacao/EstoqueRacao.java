@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Getter
@@ -23,10 +25,8 @@ import java.util.List;
 @Entity
 @Table(
         name = "estoque_racao",
-        uniqueConstraints = { //Uma fazenda não pode ter dois estoques da mesma ração
-                @UniqueConstraint(
-                        columnNames = {"fazenda_id", "tipo_racao_id"}
-                )
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"fazenda_id", "tipo_racao_id"})
         }
 )
 public class EstoqueRacao {
@@ -35,13 +35,8 @@ public class EstoqueRacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * Quantidade de sacos disponíveis na fazenda.
-     * Unidade inteira, sem decimais.
-     */
-    @Min(0)
-    @Column(nullable = false)
-    private int quantidadeSacos;
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal quantidadeKg;
 
     @Column(nullable = false)
     private boolean deletado;
@@ -56,12 +51,38 @@ public class EstoqueRacao {
 
     protected EstoqueRacao() {
         this.deletado = false;
+        this.quantidadeKg = BigDecimal.ZERO;
     }
 
-    public EstoqueRacao(Fazenda fazenda, TipoRacao tipoRacao, int quantidadeSacos) {
+    public EstoqueRacao(Fazenda fazenda, TipoRacao tipoRacao, BigDecimal quantidadeKg) {
         this.fazenda = fazenda;
         this.tipoRacao = tipoRacao;
-        this.quantidadeSacos = quantidadeSacos;
+        this.quantidadeKg = quantidadeKg;
         this.deletado = false;
     }
+
+    public void adicionarKg(BigDecimal kg) {
+        if (kg.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Quantidade inválida");
+        }
+        this.quantidadeKg = this.quantidadeKg.add(kg);
+    }
+
+    public void consumirKg(BigDecimal kg) {
+        if (kg.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Quantidade inválida");
+        }
+
+        if (this.quantidadeKg.compareTo(kg) < 0) {
+            throw new IllegalStateException("Estoque insuficiente");
+        }
+
+        this.quantidadeKg = this.quantidadeKg.subtract(kg);
+    }
+
+
+    public BigDecimal getQuantidadeSacos() {
+        return quantidadeKg.divide(tipoRacao.getKgPorSaco(), 2, RoundingMode.HALF_UP);
+    }
 }
+
