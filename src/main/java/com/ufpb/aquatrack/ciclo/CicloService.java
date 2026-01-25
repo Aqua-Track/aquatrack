@@ -101,7 +101,8 @@ public class CicloService {
     }
 
     public BigDecimal calcularSobrevivencia(Biometria biometria, Ciclo ciclo, ConsumoRacao consumoRacao) {
-
+        if (consumoRacao == null) return null;
+        else {
         BigDecimal quantidadePovoada = BigDecimal.valueOf(ciclo.getQuantidadePovoada());
         BigDecimal pesoMedioGrama = biometria.getPesoMedio();
         BigDecimal taxaArracoamento = BigDecimal.valueOf(0.04);
@@ -123,22 +124,28 @@ public class CicloService {
         //Ajusta a sobrevivência estimada
         ciclo.setSobrevivenciaAtual(sobrevivenciaCalculada);
 
-        // Retorna com 1 casa decimal
-        return sobrevivenciaCalculada.setScale(1, RoundingMode.HALF_UP);
+        //Transforma em valor melhor para porcetagem
+        BigDecimal sobrevivenciaPercentual =
+                    sobrevivenciaCalculada.multiply(BigDecimal.valueOf(100)).setScale(1, RoundingMode.HALF_UP);
+
+        return sobrevivenciaPercentual;
+        }
     }
 
     public BigDecimal calcularBiomassaKg(Biometria biometria, Ciclo ciclo) {
-
-        BigDecimal quantidadePovoada = BigDecimal.valueOf(ciclo.getQuantidadePovoada());
-        BigDecimal sobrevivenciaAtual = ciclo.getSobrevivenciaAtual();
         BigDecimal pesoMedioGrama = biometria.getPesoMedio();
-        BigDecimal populacaoEstimada = quantidadePovoada.multiply(sobrevivenciaAtual);
+        if (pesoMedioGrama == null) return null;
+        else {
+            BigDecimal quantidadePovoada = BigDecimal.valueOf(ciclo.getQuantidadePovoada());
+            BigDecimal sobrevivenciaAtual = ciclo.getSobrevivenciaAtual();
+            BigDecimal populacaoEstimada = quantidadePovoada.multiply(sobrevivenciaAtual);
 
-        // Biomassa em kg
-        BigDecimal biomassaKg =
-                populacaoEstimada.multiply(pesoMedioGrama).divide(BigDecimal.valueOf(1000), 6, RoundingMode.HALF_UP);
+            // Biomassa em kg
+            BigDecimal biomassaKg =
+                    populacaoEstimada.multiply(pesoMedioGrama).divide(BigDecimal.valueOf(1000), 6, RoundingMode.HALF_UP);
 
-        return biomassaKg;
+            return biomassaKg;
+        }
     }
 
 }

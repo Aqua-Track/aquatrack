@@ -99,17 +99,18 @@ public class ViveiroController {
 
         Viveiro viveiro = viveiroService.buscarViveiroPorId(viveiroId);
         Ciclo cicloAtivo = cicloService.buscarCicloAtivo(viveiroId, usuario);
+        BigDecimal biomassa = null;
+        BigDecimal sobrevivencia = null;
+        List<ConsumoRacao> consumos = null;
 
         //Biometria
-        if (cicloAtivo != null) {
-            List<Biometria> biometrias = biometriaService.listarBiometriasDoCiclo(cicloAtivo);
-            int total = biometrias.size();
-            if (total > 0) {
-                model.addAttribute("ultimaBiometria", biometrias.get(total - 1));
-            }
-            if (total > 1) {
-                model.addAttribute("penultimaBiometria", biometrias.get(total - 2));
-            }
+        List<Biometria> biometrias = biometriaService.listarBiometrias(viveiroId, usuario);
+        int total = biometrias.size();
+        if (total > 0) {
+            model.addAttribute("ultimaBiometria", biometrias.get(total - 1));
+        }
+        if (total > 1) {
+            model.addAttribute("penultimaBiometria", biometrias.get(total - 2));
         }
 
         // Qualidade da Água
@@ -121,18 +122,31 @@ public class ViveiroController {
             model.addAttribute("penultimaAgua", penultimaAgua);
         }
 
-        //Consumo Ração
-        List<ConsumoRacao> consumos = null;
+
+        //Consumo Ração e Biomassa/Sobrevivência
         if (cicloAtivo != null) {
             consumos = consumoRacaoService.listarConsumosDoCiclo(viveiroId, usuario);
+            if (!biometrias.isEmpty()) {
+                Biometria ultimaBiometria = biometrias.getLast();
+
+                biomassa = cicloService.calcularBiomassaKg(ultimaBiometria, cicloAtivo);
+
+                if (!consumos.isEmpty()) {
+                    sobrevivencia = cicloService.calcularSobrevivencia(
+                            ultimaBiometria, cicloAtivo, consumos.getFirst());
+                }
+            }
         }
 
         BigDecimal consumoTotal = consumoRacaoService.calcularConsumoTotal(consumos);
         Map<String, BigDecimal> consumoPorTipo = consumoRacaoService.calcularConsumoPorTipo(consumos);
 
+
         model.addAttribute("fazenda", fazenda);
         model.addAttribute("viveiro", viveiro);
         model.addAttribute("ciclo", cicloAtivo);
+        model.addAttribute("biomassa", biomassa);
+        model.addAttribute("sobrevivencia", sobrevivencia);
         model.addAttribute("consumos", consumos);
         model.addAttribute("consumoTotal", consumoTotal);
         model.addAttribute("consumoPorTipo", consumoPorTipo);

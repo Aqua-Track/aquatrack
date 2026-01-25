@@ -72,12 +72,20 @@
                             <span th:text="${ciclo.laboratorio}"></span>
                         </p>
                         <p>
-                            <strong>Data de povoamento:</strong>
+                            <strong>Data de Povoamento:</strong>
                             <span th:text="${#temporals.format(ciclo.dataPovoamento, 'dd/MM/yyyy')}"></span>
                         </p>
                         <p>
-                            <strong>Quantidade povoada:</strong>
+                            <strong>Quantidade Povoada:</strong>
                             <span th:text="${ciclo.quantidadePovoada}"></span>
+                        </p>
+                        <p>
+                            <strong>Biomassa Atual (Kg):</strong>
+                            <span th:text="${biomassa != null ? biomassa.setScale(0, T(java.math.RoundingMode).HALF_UP) : '---'}"></span>
+                        </p>
+                        <p>
+                            <strong>Sobrevivência:</strong>
+                            <span th:text="${sobrevivencia != null ? sobrevivencia + ' %' : '---'}"></span>
                         </p>
                     </div>
                 </div>
