@@ -86,6 +86,26 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+	<!-- Flyway starter (auto-config do Spring) -->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-flyway</artifactId>
+	</dependency>
+
+
+	<!-- Flyway core -->
+	<dependency>
+		<groupId>org.flywaydb</groupId>
+		<artifactId>flyway-core</artifactId>
+		<version>11.18.0</version>
+	</dependency>
+
+	<!-- 🚨 ISSO AQUI É O QUE FALTAVA 🚨 -->
+	<dependency>
+		<groupId>org.flywaydb</groupId>
+		<artifactId>flyway-database-postgresql</artifactId>
+		<version>11.18.0</version>
+	</dependency>
 	</dependencies>
 
 	<build>

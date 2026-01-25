@@ -19,7 +19,7 @@ public class Usuario {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String login;
 
     @NotBlank
