@@ -8,11 +8,6 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"fazenda_id", "tag"})
-        }
-)
 public class Viveiro {
 
     @Id
