@@ -1,95 +1,97 @@
 package com.ufpb.aquatrack.qualidadeAgua;
 
-import com.ufpb.aquatrack.parametroQualidadeAgua.ParametroQualidadeAgua;
+import com.ufpb.aquatrack.ciclo.Ciclo;
+import com.ufpb.aquatrack.ciclo.CicloService;
+import com.ufpb.aquatrack.fazenda.Fazenda;
+import com.ufpb.aquatrack.fazenda.FazendaService;
 import com.ufpb.aquatrack.usuario.Usuario;
+import com.ufpb.aquatrack.viveiro.Viveiro;
+import com.ufpb.aquatrack.viveiro.ViveiroService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/fazenda/{codigo}/viveiro/{viveiroId}/qualidade-agua")
+@RequestMapping("/fazenda/{codigo}/viveiro/{viveiroId}")
 public class QualidadeAguaController {
 
-    private final QualidadeAguaService qualidadeAguaService;
+    private final FazendaService fazendaService;
+    private final ViveiroService viveiroService;
+    private final CicloService cicloService;
+    private final QualidadeAguaService service;
 
-    public QualidadeAguaController(QualidadeAguaService qualidadeAguaService) {
-        this.qualidadeAguaService = qualidadeAguaService;
+    public QualidadeAguaController(
+            FazendaService fazendaService,
+            ViveiroService viveiroService,
+            CicloService cicloService,
+            QualidadeAguaService service
+    ) {
+        this.fazendaService = fazendaService;
+        this.viveiroService = viveiroService;
+        this.cicloService = cicloService;
+        this.service = service;
     }
 
-    @GetMapping("/nova")
-    public String formulario(@PathVariable String codigo, @PathVariable Long viveiroId, HttpSession session, Model model) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-
-        List<ParametroQualidadeAgua> parametros = qualidadeAguaService.listarParametrosDoUsuario(usuario);
-
+    @GetMapping("/qualidade-agua/novo")
+    public String formulario(
+            @PathVariable String codigo,
+            @PathVariable Long viveiroId,
+            HttpSession session,
+            Model model
+    ) {
+        validarAcesso(codigo, viveiroId, session);
         model.addAttribute("codigo", codigo);
         model.addAttribute("viveiroId", viveiroId);
-        model.addAttribute("parametros", parametros);
-
         return "qualidadeAgua/formulario_qualidade_agua";
     }
 
-    @PostMapping("/registrar")
+    @PostMapping("/qualidade-agua")
     public String salvar(
             @PathVariable String codigo, @PathVariable Long viveiroId,
-            @RequestParam LocalDate dataMedicao, @RequestParam Map<String, String> requestParams,
-            HttpSession session, Model model) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+            @RequestParam LocalDate dataColeta, @RequestParam double amonia,
+            @RequestParam double nitrito, @RequestParam double ph, @RequestParam double alcalinidade,
+            @RequestParam double salinidade, @RequestParam double oxigenio, HttpSession session
+    ) {
+        validarAcesso(codigo, viveiroId, session);
 
-        Map<Long, BigDecimal> valoresPorParametro = new HashMap<>();
+        Ciclo ciclo = cicloService.buscarCicloAtivo(viveiroId, (Usuario) session.getAttribute("usuario"));
 
-        // Converte inputs do formulário para o Map<Long, BigDecimal>, isso é tratato para ser salvo no Service!
-        for (String key : requestParams.keySet()) {
-            if (key.startsWith("parametro_")) {
-                Long parametroId = Long.valueOf(key.replace("parametro_", ""));
-                String valorStr = requestParams.get(key);
+        service.cadastrar(ciclo, dataColeta, amonia, nitrito, ph, alcalinidade, salinidade, oxigenio);
 
-                if (valorStr != null && !valorStr.isBlank()) {
-                    valoresPorParametro.put(parametroId, new BigDecimal(valorStr));
-                }
-            }
-        }
-
-        try {
-            qualidadeAguaService.registrarMedicoes(viveiroId, usuario, dataMedicao, valoresPorParametro);
-
-            return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/abrirViveiro";
-
-        } catch (RuntimeException e) {
-            model.addAttribute("erro", e.getMessage());
-            model.addAttribute("codigo", codigo);
-            model.addAttribute("viveiroId", viveiroId);
-            model.addAttribute("parametros", qualidadeAguaService.listarParametrosDoUsuario(usuario));
-            return "qualidadeAgua/formulario_qualidade_agua";
-        }
+        return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/abrirViveiro";
     }
 
-    @GetMapping("/historico")
-    public String historico(@PathVariable String codigo, @PathVariable Long viveiroId, HttpSession session, Model model) {
+
+    @GetMapping("/qualidade-agua/historico")
+    public String historico(
+            @PathVariable String codigo,
+            @PathVariable Long viveiroId,
+            HttpSession session,
+            Model model
+    ) {
+        validarAcesso(codigo, viveiroId, session);
+
         Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Ciclo ciclo = cicloService.buscarCicloAtivo(viveiroId, usuario);
 
-        List<MedicaoQualidadeAgua> medicoes = qualidadeAguaService.listarMedicoesDoCiclo(viveiroId, usuario);
+        List<QualidadeAgua> historico = service.listarHistorico(ciclo);
 
-        Map<LocalDate, List<MedicaoQualidadeAgua>> medicoesPorData =
-                medicoes.stream()
-                        .collect(Collectors.groupingBy(MedicaoQualidadeAgua::getDataMedicao, LinkedHashMap::new,
-                                Collectors.toList()
-                        ));
-
-        model.addAttribute("medicoesPorData", medicoesPorData);
+        model.addAttribute("historicoQualidade", historico);
         model.addAttribute("codigo", codigo);
         model.addAttribute("viveiroId", viveiroId);
 
         return "qualidadeAgua/historico_qualidade_agua";
     }
-
+    private void validarAcesso(String codigo, Long viveiroId, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Fazenda fazenda = fazendaService.buscarFazendaPorCodigo(codigo);
+        if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
+            throw new IllegalArgumentException("Acesso negado");
+        }
+        Viveiro viveiro = viveiroService.buscarViveiroPorId(viveiroId);
+    }
 }

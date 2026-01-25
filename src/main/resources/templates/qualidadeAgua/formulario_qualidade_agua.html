@@ -19,30 +19,65 @@
 
     <div class="card shadow-sm p-4 col-md-8 mx-auto">
 
-        <!-- Erro -->
         <div th:if="${erro}" class="alert alert-danger">
             <span th:text="${erro}"></span>
         </div>
 
-        <form th:action="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua/registrar(codigo=${codigo}, id=${viveiroId})}"
+        <form th:action="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua(codigo=${codigo}, id=${viveiroId})}"
               method="post">
 
-        <div class="mb-4">
-                <label class="form-label">Data da Medição</label>
-                <input type="date" name="dataMedicao" class="form-control" required>
+            <div class="mb-4">
+                <label class="form-label">Data da Coleta</label>
+                <input type="date"
+                       name="dataColeta"
+                       class="form-control"
+                       required>
             </div>
 
             <div class="row">
-                <div class="col-md-6 mb-3"
-                     th:each="p : ${parametros}">
-                    <label class="form-label">
-                        <span th:text="${p.nome}"></span>
-                    </label>
-                    <input type="number"
-                           step="0.01"
-                           class="form-control"
-                           th:name="'parametro_' + ${p.id}">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Amônia (mg/L)</label>
+                    <input type="number" step="0.01" min="0"
+                           name="amonia"
+                           class="form-control">
                 </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nitrito (mg/L)</label>
+                    <input type="number" step="0.01" min="0"
+                           name="nitrito"
+                           class="form-control">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">pH</label>
+                    <input type="number" step="0.01" min="0" max="14"
+                           name="ph"
+                           class="form-control">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Alcalinidade (mg/L)</label>
+                    <input type="number" step="0.1" min="0"
+                           name="alcalinidade"
+                           class="form-control">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Salinidade (mg/L)</label>
+                    <input type="number" step="0.01" min="0"
+                           name="salinidade"
+                           class="form-control">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Oxigênio (mg/L)</label>
+                    <input type="number" step="0.01" min="0"
+                           name="oxigenio"
+                           class="form-control">
+                </div>
+
             </div>
 
             <div class="d-flex justify-content-end gap-2 mt-3">

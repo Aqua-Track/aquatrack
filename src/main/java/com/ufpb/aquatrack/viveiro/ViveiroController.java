@@ -7,9 +7,8 @@ import com.ufpb.aquatrack.ciclo.CicloService;
 import com.ufpb.aquatrack.consumo.ConsumoRacao;
 import com.ufpb.aquatrack.consumo.ConsumoRacaoService;
 import com.ufpb.aquatrack.fazenda.Fazenda;
-import com.ufpb.aquatrack.qualidadeAgua.MedicaoQualidadeAgua;
+import com.ufpb.aquatrack.qualidadeAgua.QualidadeAgua;
 import com.ufpb.aquatrack.qualidadeAgua.QualidadeAguaService;
-import com.ufpb.aquatrack.qualidadeAgua.ResumoQualidadeAgua;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.fazenda.FazendaService;
 import jakarta.servlet.http.HttpSession;
@@ -113,12 +112,13 @@ public class ViveiroController {
             }
         }
 
-        //Qualidade de Água
+        // Qualidade da Água
         if (cicloAtivo != null) {
-            ResumoQualidadeAgua resumoAgua = qualidadeAguaService.obterResumoDoCiclo(viveiroId, usuario);
-            if (resumoAgua != null) {
-                model.addAttribute("resumoAgua", resumoAgua);
-            }
+            QualidadeAgua ultimaAgua = qualidadeAguaService.buscarUltima(cicloAtivo);
+            QualidadeAgua penultimaAgua = qualidadeAguaService.buscarPenultima(cicloAtivo);
+
+            model.addAttribute("ultimaAgua", ultimaAgua);
+            model.addAttribute("penultimaAgua", penultimaAgua);
         }
 
         //Consumo Ração
