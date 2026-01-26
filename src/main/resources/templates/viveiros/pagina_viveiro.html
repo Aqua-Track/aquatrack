@@ -173,6 +173,11 @@
                             <td th:text="${penultimaBiometria != null ? #temporals.format(penultimaBiometria.dataBiometria,'dd/MM/yyyy') : '---'}"></td>
                         </tr>
                         <tr>
+                            <th>Peso Total (g)</th>
+                            <td th:text="${ultimaBiometria != null ? ultimaBiometria.pesoTotalAmostra : '---'}"></td>
+                            <td th:text="${penultimaBiometria != null ? penultimaBiometria.pesoTotalAmostra : '---'}"></td>
+                        </tr>
+                        <tr>
                             <th>Quantidade</th>
                             <td th:text="${ultimaBiometria != null ? ultimaBiometria.quantidadeAmostrada : '---'}"></td>
                             <td th:text="${penultimaBiometria != null ? penultimaBiometria.quantidadeAmostrada : '---'}"></td>
