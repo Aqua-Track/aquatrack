@@ -109,7 +109,40 @@ public class ConsumoRacaoService {
         return consumoPorTipo;
     }
 
-    public ConsumoRacao ultimoConsumo(Long viveiroId, Usuario usuario){
-        return listarConsumosDoCiclo(viveiroId, usuario).getFirst();
+    @Transactional
+    public void excluirConsumo(Long consumoId, Usuario usuario) {
+
+        ConsumoRacao consumo = consumoRepository.findById(consumoId)
+                .orElseThrow(() -> new IllegalArgumentException("Consumo não encontrado."));
+
+        if (consumo.isDeletado()) {
+            throw new IllegalStateException("Este consumo já foi excluído.");
+        }
+
+        Ciclo ciclo = consumo.getCiclo();
+        if (ciclo == null || !cicloService
+                .buscarCicloAtivo(ciclo.getViveiro().getId(), usuario)
+                .getId()
+                .equals(ciclo.getId())) {
+
+            throw new IllegalStateException("Consumo não pertence ao ciclo ativo.");
+        }
+
+        //Devolve para o estoque
+        EstoqueRacao estoque = estoqueRacaoRepository
+                .findByFazendaAndTipoRacaoAndDeletadoFalse(
+                        ciclo.getViveiro().getFazenda(),
+                        consumo.getTipoRacao()
+                )
+                .orElseThrow(() ->
+                        new IllegalStateException("Estoque da ração não encontrado.")
+                );
+
+        estoque.adicionarKg(consumo.getQuantidadeKg());
+
+        //Marca o consumo como deletado, logicamente
+        consumo.marcarComoDeletado();
+        consumoRepository.save(consumo);
     }
+
 }

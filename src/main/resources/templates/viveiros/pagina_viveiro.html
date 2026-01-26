@@ -142,7 +142,11 @@
                     </table>
 
                 </div>
-                <div class="card-footer d-flex justify-content-end mt-auto">
+                <div class="card-footer d-flex justify-content-end gap-2">
+                    <a th:href="@{/fazenda/{codigo}/viveiro/{id}/consumo-racao/historico(codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                       class="btn btn-dark btn-sm">
+                        Histórico
+                    </a>
                     <a th:href="@{/fazenda/{codigo}/viveiro/{id}/consumo-racao/novo(codigo=${fazenda.codigo},id=${viveiro.id})}"
                        class="btn btn-sm btn-primary">
                         Registrar Consumo
