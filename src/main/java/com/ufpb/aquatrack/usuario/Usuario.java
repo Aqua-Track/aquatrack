@@ -32,8 +32,8 @@ public class Usuario {
 
     private String urlFoto;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Fazenda> fazendas = new ArrayList<>();
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Fazenda fazenda;
 
     @Column(nullable = false)
     private boolean deletado;

@@ -3,6 +3,7 @@ package com.ufpb.aquatrack.fazenda;
 import com.ufpb.aquatrack.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.repository.FazendaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,22 +19,24 @@ public class FazendaService {
     }
 
     public Fazenda criarFazenda(String nome, String localizacao, Usuario usuario) {
-        long total = fazendaRepository.countByUsuarioAndDeletadoFalse(usuario);
 
-        if (total >= 3) {
-            throw new IllegalArgumentException("Usuário já atingiu o limite de 3 fazendas");
+        if (usuario.getFazenda() != null) {
+            throw new IllegalStateException("Usuário já possui uma fazenda cadastrada.");
         }
         String codigo = gerarCodigoFazenda();
         Fazenda fazenda = new Fazenda(nome, localizacao, usuario, codigo);
+        usuario.setFazenda(fazenda); //Vincula fazenda ao usuario
+
         return fazendaRepository.save(fazenda);
     }
 
-    public List<Fazenda> listarFazendasDoUsuario(Usuario usuario) {
-        return fazendaRepository.findByUsuarioAndDeletadoFalse(usuario);
-    }
-
+    @Transactional
     public void deletarFazenda(Long id){
         Fazenda fazenda = buscarFazendaPorId(id);
+        Usuario usuario = fazenda.getUsuario();
+
+        usuario.setFazenda(null);
+        fazenda.setUsuario(null);
 
         fazenda.setDeletado(true);
         fazendaRepository.save(fazenda);
