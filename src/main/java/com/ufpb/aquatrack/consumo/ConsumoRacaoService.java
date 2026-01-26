@@ -109,5 +109,7 @@ public class ConsumoRacaoService {
         return consumoPorTipo;
     }
 
-
+    public ConsumoRacao ultimoConsumo(Long viveiroId, Usuario usuario){
+        return listarConsumosDoCiclo(viveiroId, usuario).getFirst();
+    }
 }

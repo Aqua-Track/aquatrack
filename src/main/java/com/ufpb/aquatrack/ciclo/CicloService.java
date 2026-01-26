@@ -1,5 +1,8 @@
 package com.ufpb.aquatrack.ciclo;
 
+import com.ufpb.aquatrack.biometria.Biometria;
+import com.ufpb.aquatrack.consumo.ConsumoRacao;
+import com.ufpb.aquatrack.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.repository.CicloRepository;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.viveiro.Viveiro;
@@ -7,6 +10,8 @@ import com.ufpb.aquatrack.repository.ViveiroRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +81,7 @@ public class CicloService {
         Viveiro viveiro = viveiroRepository
                 .findByIdAndDeletadoFalse(viveiroId)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("Viveiro não encontrado.")
+                        new RecursoNaoEncontradoException("Viveiro não encontrado.")
                 );
 
         if (!viveiro.getFazenda().getUsuario().getId().equals(usuario.getId())) {
@@ -94,4 +99,53 @@ public class CicloService {
         }
         return statusCicloPorViveiro;
     }
+
+    public BigDecimal calcularSobrevivencia(Biometria biometria, Ciclo ciclo, ConsumoRacao consumoRacao) {
+        if (consumoRacao == null) return null;
+        else {
+        BigDecimal quantidadePovoada = BigDecimal.valueOf(ciclo.getQuantidadePovoada());
+        BigDecimal pesoMedioGrama = biometria.getPesoMedio();
+        BigDecimal taxaArracoamento = BigDecimal.valueOf(0.04);
+        BigDecimal sobrevivenciaAtual = ciclo.getSobrevivenciaAtual();
+
+        // População estimada
+        BigDecimal populacaoEstimada = quantidadePovoada.multiply(sobrevivenciaAtual);
+
+        // Biomassa em kg = (população * peso médio g) / 1000
+        BigDecimal biomassaKg =
+                populacaoEstimada.multiply(pesoMedioGrama).divide(BigDecimal.valueOf(1000), 6, RoundingMode.HALF_UP);
+
+        // Ração esperada
+        BigDecimal racaoEsperadaKg = biomassaKg.multiply(taxaArracoamento);
+
+        // Sobrevivência calculada
+        BigDecimal sobrevivenciaCalculada = (consumoRacao.getQuantidadeKg()).divide(racaoEsperadaKg, 6, RoundingMode.HALF_UP);
+
+        //Ajusta a sobrevivência estimada
+        ciclo.setSobrevivenciaAtual(sobrevivenciaCalculada);
+
+        //Transforma em valor melhor para porcetagem
+        BigDecimal sobrevivenciaPercentual =
+                    sobrevivenciaCalculada.multiply(BigDecimal.valueOf(100)).setScale(1, RoundingMode.HALF_UP);
+
+        return sobrevivenciaPercentual;
+        }
+    }
+
+    public BigDecimal calcularBiomassaKg(Biometria biometria, Ciclo ciclo) {
+        BigDecimal pesoMedioGrama = biometria.getPesoMedio();
+        if (pesoMedioGrama == null) return null;
+        else {
+            BigDecimal quantidadePovoada = BigDecimal.valueOf(ciclo.getQuantidadePovoada());
+            BigDecimal sobrevivenciaAtual = ciclo.getSobrevivenciaAtual();
+            BigDecimal populacaoEstimada = quantidadePovoada.multiply(sobrevivenciaAtual);
+
+            // Biomassa em kg
+            BigDecimal biomassaKg =
+                    populacaoEstimada.multiply(pesoMedioGrama).divide(BigDecimal.valueOf(1000), 6, RoundingMode.HALF_UP);
+
+            return biomassaKg;
+        }
+    }
+
 }

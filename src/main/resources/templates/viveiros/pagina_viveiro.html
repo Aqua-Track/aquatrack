@@ -72,12 +72,20 @@
                             <span th:text="${ciclo.laboratorio}"></span>
                         </p>
                         <p>
-                            <strong>Data de povoamento:</strong>
+                            <strong>Data de Povoamento:</strong>
                             <span th:text="${#temporals.format(ciclo.dataPovoamento, 'dd/MM/yyyy')}"></span>
                         </p>
                         <p>
-                            <strong>Quantidade povoada:</strong>
+                            <strong>Quantidade Povoada:</strong>
                             <span th:text="${ciclo.quantidadePovoada}"></span>
+                        </p>
+                        <p>
+                            <strong>Biomassa Atual (Kg):</strong>
+                            <span th:text="${biomassa != null ? biomassa.setScale(0, T(java.math.RoundingMode).HALF_UP) : '---'}"></span>
+                        </p>
+                        <p>
+                            <strong>Sobrevivência:</strong>
+                            <span th:text="${sobrevivencia != null ? sobrevivencia + ' %' : '100%'}"></span>
                         </p>
                     </div>
                 </div>
@@ -144,169 +152,123 @@
         </div>
     </div>
 
-    <!-- Biometria -->
-    <div class="col d-flex" th:if="${ciclo != null}">
-        <div class="card h-100 w-100 shadow-sm">
-            <div class="card-header bg-primary text-white">
-                Biometria
-            </div>
+    <div class="row row-cols-1 row-cols-md-2 g-4" th:if="${ciclo != null}">
+        <!-- Biometria -->
+        <div class="col d-flex" th:if="${ciclo != null}">
+            <div class="card h-100 w-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    Biometria
+                </div>
 
-            <div class="card-body">
-                <table class="table table-bordered align-middle">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th class="text-center">Última</th>
-                        <th class="text-center">Anterior</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th>Data</th>
-                        <td th:text="${ultimaBiometria != null ? ultimaBiometria.dataBiometria : '---'}"></td>
-                        <td th:text="${penultimaBiometria != null ? penultimaBiometria.dataBiometria : '---'}"></td>
-                    </tr>
-                    <tr>
-                        <th>Quantidade</th>
-                        <td th:text="${ultimaBiometria != null ? ultimaBiometria.quantidadeAmostrada : '---'}"></td>
-                        <td th:text="${penultimaBiometria != null ? penultimaBiometria.quantidadeAmostrada : '---'}"></td>
-                    </tr>
-                    <tr>
-                        <th>Peso Médio (g)</th>
-                        <td th:text="${ultimaBiometria != null ? ultimaBiometria.pesoMedio : '---'}"></td>
-                        <td th:text="${penultimaBiometria != null ? penultimaBiometria.pesoMedio : '---'}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+                <div class="card-body">
+                    <table class="table table-bordered align-middle">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th class="text-center">Última</th>
+                            <th class="text-center">Anterior</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th>Data</th>
+                            <td th:text="${ultimaBiometria != null ? #temporals.format(ultimaBiometria.dataBiometria,'dd/MM/yyyy') : '---'}"></td>
+                            <td th:text="${penultimaBiometria != null ? #temporals.format(penultimaBiometria.dataBiometria,'dd/MM/yyyy') : '---'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Quantidade</th>
+                            <td th:text="${ultimaBiometria != null ? ultimaBiometria.quantidadeAmostrada : '---'}"></td>
+                            <td th:text="${penultimaBiometria != null ? penultimaBiometria.quantidadeAmostrada : '---'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Peso Médio (g)</th>
+                            <td th:text="${ultimaBiometria != null ? ultimaBiometria.pesoMedio : '---'}"></td>
+                            <td th:text="${penultimaBiometria != null ? penultimaBiometria.pesoMedio : '---'}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <div class="card-footer d-flex justify-content-end gap-2">
-                <a th:href="@{/fazenda/{codigo}/viveiro/{id}/biometria/historico(codigo=${fazenda.codigo}, id=${viveiro.id})}"
-                   class="btn btn-dark btn-sm">
-                    Histórico
-                </a>
-                <a th:href="@{/fazenda/{codigo}/viveiro/{id}/biometria/nova(codigo=${fazenda.codigo}, id=${viveiro.id})}"
-                   class="btn btn-primary btn-sm">
-                    Registrar Biometria
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Qualidade da Água -->
-    <div class="col d-flex" th:if="${ciclo != null}">
-        <div class="card h-100 w-100 shadow-sm">
-            <div class="card-header bg-info text-white">
-                Qualidade da Água
-            </div>
-
-            <table class="table table-bordered text-center"
-                   th:if="${resumoAgua != null}">
-                <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Última</th>
-                    <th>Anterior</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td th:text="${#temporals.format(resumoAgua.ultimaData, 'dd/MM/yyyy')}"></td>
-                    <td>
-                        <button class="btn btn-outline-primary btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalUltimaAgua">
-                            Ver mais
-                        </button>
-                    </td>
-                    <td>
-                        <button th:if="${resumoAgua.penultima != null}"
-                                class="btn btn-outline-primary btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalPenultimaAgua">
-                            Ver mais
-                        </button>
-                        <span th:if="${resumoAgua.penultima == null}">---</span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div th:if="${resumoAgua == null}" class="text-muted text-center">
-                Nenhuma análise registrada
-            </div>
-
-
-            <div class="card-footer d-flex justify-content-between gap-2">
-                <a th:href="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua/parametros(
-                   codigo=${fazenda.codigo}, id=${viveiro.id})}"
-                   class="btn btn-outline-secondary btn-sm">
-                    Catálogo de Parâmetros
-                </a>
-                <div class="d-flex gap-2">
-                    <a th:href="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua/historico(
-                        codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                <div class="card-footer d-flex justify-content-end gap-2">
+                    <a th:href="@{/fazenda/{codigo}/viveiro/{id}/biometria/historico(codigo=${fazenda.codigo}, id=${viveiro.id})}"
                        class="btn btn-dark btn-sm">
                         Histórico
                     </a>
-                    <a th:href="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua/nova(
-                        codigo=${fazenda.codigo}, id=${viveiro.id})}"
-                       class="btn btn-info btn-sm text-white">
-                        Nova Análise
+                    <a th:href="@{/fazenda/{codigo}/viveiro/{id}/biometria/nova(codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                       class="btn btn-primary btn-sm">
+                        Registrar Biometria
                     </a>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- MODAIS DA QUALIDADE DA ÁGUA -->
-    <div class="modal fade"
-         id="modalUltimaAgua"
-         tabindex="-1"
-         th:if="${resumoAgua != null}">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title">
-                        Qualidade da Água —
-                        <span th:text="${#temporals.format(resumoAgua.ultimaData, 'dd/MM/yyyy')}"></span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div th:each="m : ${resumoAgua.ultima}">
-                        <p class="mb-1">
-                            <strong th:text="${m.parametro.nome}"></strong>:
-                            <span th:text="${m.valor}"></span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        <!-- Qualidade da Água -->
+        <div class="col d-flex" th:if="${ciclo != null}">
+            <div class="card h-100 w-100 shadow-sm">
 
-    <!-- MODAL PENÚLTIMA MEDIÇÃO -->
-    <div class="modal fade"
-         id="modalPenultimaAgua"
-         tabindex="-1"
-         th:if="${resumoAgua != null and resumoAgua.penultima != null}">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title">
-                        Qualidade da Água —
-                        <span th:text="${#temporals.format(resumoAgua.penultimaData, 'dd/MM/yyyy')}"></span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="card-header bg-info text-white">
+                    Qualidade da Água
                 </div>
-                <div class="modal-body">
-                    <div th:each="m : ${resumoAgua.penultima}">
-                        <p class="mb-1">
-                            <strong th:text="${m.parametro.nome}"></strong>:
-                            <span th:text="${m.valor}"></span>
-                        </p>
-                    </div>
+
+                <div class="card-body">
+                    <table class="table table-bordered align-middle">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th class="text-center">Última</th>
+                            <th class="text-center">Anterior</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th>Data</th>
+                            <td th:text="${ultimaAgua != null ? #temporals.format(ultimaAgua.dataColeta,'dd/MM/yyyy') : '---'}"></td>
+                            <td th:text="${penultimaAgua != null ? #temporals.format(penultimaAgua.dataColeta,'dd/MM/yyyy') : '---'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Amônia</th>
+                            <td th:text="${ultimaAgua.amonia != null ? ultimaAgua.amonia : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.amonia != null ? penultimaAgua.amonia : 'Não coletado'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Nitrito</th>
+                            <td th:text="${ultimaAgua.nitrito != null ? ultimaAgua.nitrito : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.nitrito != null ? penultimaAgua.nitrito : 'Não coletado'}"></td>
+                        </tr>
+                        <tr>
+                            <th>pH</th>
+                            <td th:text="${ultimaAgua.ph != null ? ultimaAgua.ph : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.ph != null ? penultimaAgua.ph : 'Não coletado'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Alcalinidade</th>
+                            <td th:text="${ultimaAgua.alcalinidade != null ? ultimaAgua.alcalinidade : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.alcalinidade != null ? penultimaAgua.alcalinidade : 'Não coletado'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Salinidade</th>
+                            <td th:text="${ultimaAgua.salinidade != null ? ultimaAgua.salinidade : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.salinidade != null ? penultimaAgua.salinidade : 'Não coletado'}"></td>
+                        </tr>
+                        <tr>
+                            <th>Oxigênio</th>
+                            <td th:text="${ultimaAgua.oxigenio != null ? ultimaAgua.oxigenio : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.oxigenio != null ? penultimaAgua.oxigenio : 'Não coletado'}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
+                <div class="card-footer d-flex justify-content-end gap-2">
+                    <a th:href="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua/historico(codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                       class="btn btn-dark btn-sm">
+                        Histórico
+                    </a>
+                    <a th:href="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua/novo(codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                       class="btn btn-primary btn-sm">
+                        Nova Análise
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>

@@ -55,8 +55,4 @@ public class BiometriaService {
         return biometriaRepository.findByCicloAndDeletadoFalseOrderByDataBiometriaAsc(ciclo);
     }
 
-    public List<Biometria> listarBiometriasDoCiclo(Ciclo ciclo) {
-        return biometriaRepository.findByCicloAndDeletadoFalseOrderByDataBiometriaAsc(ciclo);
-    }
-
 }

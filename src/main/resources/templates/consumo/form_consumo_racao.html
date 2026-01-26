@@ -29,7 +29,7 @@
 
                     <option th:each="estoque : ${estoques}"
                             th:value="${estoque.tipoRacao.id}"
-                            th:text="${estoque.tipoRacao.nome + ' (' +estoque.quantidadeSacos + ' sacos)'}">
+                            th:text="${estoque.tipoRacao.nome + ' (' +estoque.quantidadeKg + ' Kg)'}">
                     </option>
                 </select>
             </div>

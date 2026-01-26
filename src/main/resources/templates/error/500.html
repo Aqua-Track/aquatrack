@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout-publico :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Erro interno | AquaTrack</title>
+</head>
+<body>
+
+<section class="d-flex justify-content-center align-items-center"
+         style="min-height: calc(85vh - 120px);">
+
+    <div class="text-center bg-white p-5 rounded shadow"
+         style="max-width: 560px; width: 100%;">
+
+        <img src="/images/logo.png"
+             alt="AquaTrack"
+             style="max-width: 200px;"
+             class="mb-4">
+
+        <h2 class="fw-bold text-primary mb-3">
+            Erro interno do sistema
+        </h2>
+
+        <p class="text-muted mb-4" style="font-size: 1.05rem;">
+            Ocorreu um problema inesperado ao processar sua solicitação.
+            <br>
+            Seus dados estão seguros e você pode tentar novamente.
+        </p>
+
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <button class="btn btn-outline-primary"
+                    onclick="history.back()">
+                Voltar
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+</body>
+</html>

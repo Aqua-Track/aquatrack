@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -42,6 +43,9 @@ public class Ciclo {
     @Column(nullable = true)
     private LocalDate dataEncerramento;
 
+    @Column(nullable = false, precision = 5, scale = 3)
+    private BigDecimal sobrevivenciaAtual;
+
     @Column(nullable = false)
     private boolean deletado;
 
@@ -54,6 +58,7 @@ public class Ciclo {
         this.quantidadePovoada = quantidadePovoada;
         this.laboratorio = laboratorio;
         this.ativo = true;
+        this.sobrevivenciaAtual = BigDecimal.ONE; // 100%
         this.deletado = false;
     }
 

@@ -1,5 +1,6 @@
 package com.ufpb.aquatrack.usuario;
 
+import com.ufpb.aquatrack.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.infra.verify.email.EmailService;
 import com.ufpb.aquatrack.infra.verify.email.tokens.TokenService;
 import com.ufpb.aquatrack.infra.verify.email.tokens.TokenUsuario;
@@ -72,7 +73,7 @@ public class UsuarioService {
 
     public Usuario buscarUsuarioPorId(Long id) {
         return usuarioRepository.findByIdAndDeletadoFalse(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
     }
 
     public void editarUsuario(
