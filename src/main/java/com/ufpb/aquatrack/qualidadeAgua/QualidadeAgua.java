@@ -42,8 +42,8 @@ public class QualidadeAgua {
 
     public QualidadeAgua(
             Ciclo ciclo, LocalDate dataColeta,
-            double amonia, double nitrito, double ph,
-            double alcalinidade, double salinidade, double oxigenio
+            Double amonia, Double nitrito, Double ph,
+            Double alcalinidade, Double salinidade, Double oxigenio
     ) {
         this.ciclo = ciclo;
         this.dataColeta = dataColeta;
@@ -57,8 +57,8 @@ public class QualidadeAgua {
 
     public void atualizar(
             LocalDate dataColeta,
-            double amonia, double nitrito, double ph,
-            double alcalinidade, double salinidade, double oxigenio
+            Double amonia, Double nitrito, Double ph,
+            Double alcalinidade, Double salinidade, Double oxigenio
     ) {
         this.dataColeta = dataColeta;
         this.amonia = amonia;

@@ -20,18 +20,15 @@ import java.util.List;
 public class QualidadeAguaController {
 
     private final FazendaService fazendaService;
-    private final ViveiroService viveiroService;
     private final CicloService cicloService;
     private final QualidadeAguaService service;
 
     public QualidadeAguaController(
             FazendaService fazendaService,
-            ViveiroService viveiroService,
             CicloService cicloService,
             QualidadeAguaService service
     ) {
         this.fazendaService = fazendaService;
-        this.viveiroService = viveiroService;
         this.cicloService = cicloService;
         this.service = service;
     }
@@ -43,28 +40,79 @@ public class QualidadeAguaController {
             HttpSession session,
             Model model
     ) {
-        validarAcesso(codigo, viveiroId, session);
+        validarAcesso(codigo, session);
         model.addAttribute("codigo", codigo);
         model.addAttribute("viveiroId", viveiroId);
         return "qualidadeAgua/formulario_qualidade_agua";
     }
 
-    @PostMapping("/qualidade-agua")
+    @PostMapping("/qualidade-agua/salvar")
     public String salvar(
-            @PathVariable String codigo, @PathVariable Long viveiroId,
-            @RequestParam LocalDate dataColeta, @RequestParam double amonia,
-            @RequestParam double nitrito, @RequestParam double ph, @RequestParam double alcalinidade,
-            @RequestParam double salinidade, @RequestParam double oxigenio, HttpSession session
+            @PathVariable String codigo,
+            @PathVariable Long viveiroId,
+
+            @RequestParam LocalDate dataColeta,
+
+            @RequestParam(required = false) Double amonia,
+            @RequestParam(required = false) Double nitrito,
+            @RequestParam(required = false) Double ph,
+            @RequestParam(required = false) Double alcalinidade,
+            @RequestParam(required = false) Double salinidade,
+            @RequestParam(required = false) Double oxigenio,
+
+            @RequestParam(required = false) Long id, // 🔥 diferença chave
+            HttpSession session,
+            Model model
     ) {
-        validarAcesso(codigo, viveiroId, session);
+        validarAcesso(codigo, session);
 
         Ciclo ciclo = cicloService.buscarCicloAtivo(viveiroId, (Usuario) session.getAttribute("usuario"));
 
-        service.cadastrar(ciclo, dataColeta, amonia, nitrito, ph, alcalinidade, salinidade, oxigenio);
+        try {
+            if (id == null) { //Criar
+                service.cadastrar(ciclo, dataColeta, amonia, nitrito, ph, alcalinidade, salinidade, oxigenio);
+            } else { //Editar
+                QualidadeAgua qualidade = service.buscarPorId(id);
+                service.atualizar(qualidade, dataColeta, amonia, nitrito, ph, alcalinidade, salinidade, oxigenio);
+            }
+            return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/abrirViveiro";
 
-        return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/abrirViveiro";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("erro", e.getMessage());
+            model.addAttribute("codigo", codigo);
+            model.addAttribute("viveiroId", viveiroId);
+            if (id != null) {
+                model.addAttribute("qualidade", service.buscarPorId(id));
+            }
+            return "qualidadeAgua/formulario_qualidade_agua";
+        }
     }
 
+
+    @GetMapping("/qualidade-agua/{id}/editar")
+    public String editarForm(
+            @PathVariable String codigo, @PathVariable Long viveiroId, @PathVariable Long id,
+            HttpSession session, Model model
+    ) {
+        validarAcesso(codigo, session);
+        QualidadeAgua qualidade = service.buscarPorId(id);
+        model.addAttribute("qualidade", qualidade);
+        model.addAttribute("codigo", codigo);
+        model.addAttribute("viveiroId", viveiroId);
+
+        return "qualidadeAgua/formulario_qualidade_agua";
+    }
+
+    @PostMapping("/qualidade-agua/{id}/excluir")
+    public String excluir(@PathVariable String codigo, @PathVariable Long viveiroId, @PathVariable Long id,
+                          HttpSession session
+    ) {
+        validarAcesso(codigo, session);
+        QualidadeAgua qualidade = service.buscarPorId(id);
+        service.excluir(qualidade);
+
+        return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/qualidade-agua/historico";
+    }
 
     @GetMapping("/qualidade-agua/historico")
     public String historico(
@@ -73,25 +121,26 @@ public class QualidadeAguaController {
             HttpSession session,
             Model model
     ) {
-        validarAcesso(codigo, viveiroId, session);
+        validarAcesso(codigo, session);
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");
         Ciclo ciclo = cicloService.buscarCicloAtivo(viveiroId, usuario);
 
         List<QualidadeAgua> historico = service.listarHistorico(ciclo);
-
+        if (historico == null) {
+            historico = List.of();
+        }
         model.addAttribute("historicoQualidade", historico);
         model.addAttribute("codigo", codigo);
         model.addAttribute("viveiroId", viveiroId);
 
         return "qualidadeAgua/historico_qualidade_agua";
     }
-    private void validarAcesso(String codigo, Long viveiroId, HttpSession session) {
+    private void validarAcesso(String codigo,  HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
         Fazenda fazenda = fazendaService.buscarFazendaPorCodigo(codigo);
         if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
             throw new IllegalArgumentException("Acesso negado");
         }
-        Viveiro viveiro = viveiroService.buscarViveiroPorId(viveiroId);
     }
 }

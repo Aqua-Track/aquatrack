@@ -1,95 +1,99 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
 <head>
-    <title>Nova Análise de Qualidade da Água</title>
+    <title th:text="${qualidade != null} ?
+            'Editar Análise de Qualidade da Água' :
+            'Nova Análise de Qualidade da Água'">
+        Qualidade da Água
+    </title>
 </head>
 
 <body>
 <section class="container mt-5 mb-5">
 
+    <!-- Cabeçalho -->
     <div class="row mb-4">
         <div class="col text-center">
-            <h2>Nova Análise de Qualidade da Água</h2>
-            <p class="text-muted">
-                Preencha apenas os parâmetros que foram analisados hoje.
+            <h2 th:text="${qualidade != null} ?
+                    'Editar Análise de Qualidade da Água' :
+                    'Nova Análise de Qualidade da Água'">
+                Qualidade da Água
+            </h2>
+
+            <p class="text-muted"
+               th:text="${qualidade != null} ?
+                    'Atualize apenas os parâmetros desejados.' :
+                    'Preencha apenas os parâmetros que foram analisados hoje.'">
             </p>
         </div>
     </div>
 
+    <!-- Card -->
     <div class="card shadow-sm p-4 col-md-8 mx-auto">
 
+        <!-- Erro -->
         <div th:if="${erro}" class="alert alert-danger">
             <span th:text="${erro}"></span>
         </div>
 
-        <form th:action="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua(codigo=${codigo}, id=${viveiroId})}"
+        <!-- Formulário -->
+        <form th:action="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua/salvar( codigo=${codigo}, id=${viveiroId})}"
               method="post">
+
+            <!-- ID oculto (define se é edição) -->
+            <input type="hidden" name="id" th:if="${qualidade != null}" th:value="${qualidade.id}"/>
 
             <div class="mb-4">
                 <label class="form-label">Data da Coleta</label>
-                <input type="date"
-                       name="dataColeta"
-                       class="form-control"
-                       required>
+                <input type="date" name="dataColeta" class="form-control" required
+                       th:value="${qualidade != null ? qualidade.dataColeta : ''}">
             </div>
-
             <div class="row">
-
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Amônia (mg/L)</label>
-                    <input type="number" step="0.01" min="0"
-                           name="amonia"
-                           class="form-control">
+                    <input type="number" step="0.01" min="0" name="amonia" class="form-control"
+                           th:value="${qualidade != null ? qualidade.amonia : ''}">
                 </div>
-
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Nitrito (mg/L)</label>
-                    <input type="number" step="0.01" min="0"
-                           name="nitrito"
-                           class="form-control">
+                    <input type="number" step="0.01" min="0" name="nitrito" class="form-control"
+                           th:value="${qualidade != null ? qualidade.nitrito : ''}">
                 </div>
-
                 <div class="col-md-6 mb-3">
                     <label class="form-label">pH</label>
-                    <input type="number" step="0.01" min="0" max="14"
-                           name="ph"
-                           class="form-control">
+                    <input type="number" step="0.01" min="0" max="14" name="ph" class="form-control"
+                           th:value="${qualidade != null ? qualidade.ph : ''}">
                 </div>
-
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Alcalinidade (mg/L)</label>
-                    <input type="number" step="0.1" min="0"
-                           name="alcalinidade"
-                           class="form-control">
+                    <input type="number" step="0.1" min="0" name="alcalinidade" class="form-control"
+                           th:value="${qualidade != null ? qualidade.alcalinidade : ''}">
                 </div>
-
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Salinidade (mg/L)</label>
-                    <input type="number" step="0.01" min="0"
-                           name="salinidade"
-                           class="form-control">
+                    <input type="number" step="0.01" min="0" name="salinidade" class="form-control"
+                           th:value="${qualidade != null ? qualidade.salinidade : ''}">
                 </div>
-
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Oxigênio (mg/L)</label>
-                    <input type="number" step="0.01" min="0"
-                           name="oxigenio"
-                           class="form-control">
+                    <input type="number" step="0.01" min="0" name="oxigenio" class="form-control"
+                           th:value="${qualidade != null ? qualidade.oxigenio : ''}">
                 </div>
-
             </div>
-
             <div class="d-flex justify-content-end gap-2 mt-3">
-                <a th:href="@{/fazenda/{codigo}/viveiro/{id}/abrirViveiro(codigo=${codigo}, id=${viveiroId})}"
+                <a th:href="@{/fazenda/{codigo}/viveiro/{id}/abrirViveiro(
+                        codigo=${codigo}, id=${viveiroId})}"
                    class="btn btn-danger">
                     Cancelar
                 </a>
-                <button class="btn btn-success">
+                <button type="submit"
+                        class="btn btn-success"
+                        th:text="${qualidade != null} ? 'Atualizar' : 'Salvar'">
                     Salvar
                 </button>
             </div>
-
         </form>
     </div>
 

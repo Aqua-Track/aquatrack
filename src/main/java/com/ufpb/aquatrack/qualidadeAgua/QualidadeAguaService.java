@@ -22,6 +22,10 @@ public class QualidadeAguaService {
             Double amonia, Double nitrito,
             Double ph, Double alcalinidade, Double salinidade, Double oxigenio
     ) {
+        if (todosParametrosNulos(amonia, nitrito, ph, alcalinidade, salinidade, oxigenio)) {
+            throw new IllegalArgumentException("Informe pelo menos um parâmetro da análise");
+        }
+
         validarValores(amonia, nitrito, ph, alcalinidade, salinidade, oxigenio);
 
         if (repository.existsByCicloAndDataColetaAndDeletadoFalse(ciclo, dataColeta)) {
@@ -97,4 +101,13 @@ public class QualidadeAguaService {
             throw new IllegalArgumentException("pH deve estar entre 0 e 14");
         }
     }
+
+    private boolean todosParametrosNulos(
+            Double amonia, Double nitrito, Double ph,
+            Double alcalinidade, Double salinidade, Double oxigenio
+    ) {
+        return amonia == null && nitrito == null && ph == null
+                && alcalinidade == null && salinidade == null && oxigenio == null;
+    }
+
 }

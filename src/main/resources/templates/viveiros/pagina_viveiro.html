@@ -172,8 +172,8 @@
                         <tbody>
                         <tr>
                             <th>Data</th>
-                            <td th:text="${ultimaBiometria != null ? ultimaBiometria.dataBiometria : '---'}"></td>
-                            <td th:text="${penultimaBiometria != null ? penultimaBiometria.dataBiometria : '---'}"></td>
+                            <td th:text="${ultimaBiometria != null ? #temporals.format(ultimaBiometria.dataBiometria,'dd/MM/yyyy') : '---'}"></td>
+                            <td th:text="${penultimaBiometria != null ? #temporals.format(penultimaBiometria.dataBiometria,'dd/MM/yyyy') : '---'}"></td>
                         </tr>
                         <tr>
                             <th>Quantidade</th>
@@ -227,35 +227,34 @@
                         </tr>
                         <tr>
                             <th>Amônia</th>
-                            <td th:text="${ultimaAgua != null ? ultimaAgua.amonia : '---'}"></td>
-                            <td th:text="${penultimaAgua != null ? penultimaAgua.amonia : '---'}"></td>
+                            <td th:text="${ultimaAgua.amonia != null ? ultimaAgua.amonia : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.amonia != null ? penultimaAgua.amonia : 'Não coletado'}"></td>
                         </tr>
                         <tr>
                             <th>Nitrito</th>
-                            <td th:text="${ultimaAgua != null ? ultimaAgua.nitrito : '---'}"></td>
-                            <td th:text="${penultimaAgua != null ? penultimaAgua.nitrito : '---'}"></td>
+                            <td th:text="${ultimaAgua.nitrito != null ? ultimaAgua.nitrito : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.nitrito != null ? penultimaAgua.nitrito : 'Não coletado'}"></td>
                         </tr>
                         <tr>
                             <th>pH</th>
-                            <td th:text="${ultimaAgua != null ? ultimaAgua.ph : '---'}"></td>
-                            <td th:text="${penultimaAgua != null ? penultimaAgua.ph : '---'}"></td>
+                            <td th:text="${ultimaAgua.ph != null ? ultimaAgua.ph : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.ph != null ? penultimaAgua.ph : 'Não coletado'}"></td>
                         </tr>
                         <tr>
                             <th>Alcalinidade</th>
-                            <td th:text="${ultimaAgua != null ? ultimaAgua.alcalinidade : '---'}"></td>
-                            <td th:text="${penultimaAgua != null ? penultimaAgua.alcalinidade : '---'}"></td>
+                            <td th:text="${ultimaAgua.alcalinidade != null ? ultimaAgua.alcalinidade : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.alcalinidade != null ? penultimaAgua.alcalinidade : 'Não coletado'}"></td>
                         </tr>
                         <tr>
                             <th>Salinidade</th>
-                            <td th:text="${ultimaAgua != null ? ultimaAgua.salinidade : '---'}"></td>
-                            <td th:text="${penultimaAgua != null ? penultimaAgua.salinidade : '---'}"></td>
+                            <td th:text="${ultimaAgua.salinidade != null ? ultimaAgua.salinidade : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.salinidade != null ? penultimaAgua.salinidade : 'Não coletado'}"></td>
                         </tr>
                         <tr>
                             <th>Oxigênio</th>
-                            <td th:text="${ultimaAgua != null ? ultimaAgua.oxigenio : '---'}"></td>
-                            <td th:text="${penultimaAgua != null ? penultimaAgua.oxigenio : '---'}"></td>
+                            <td th:text="${ultimaAgua.oxigenio != null ? ultimaAgua.oxigenio : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua.oxigenio != null ? penultimaAgua.oxigenio : 'Não coletado'}"></td>
                         </tr>
-
                         </tbody>
                     </table>
                 </div>
@@ -265,7 +264,7 @@
                         Histórico
                     </a>
                     <a th:href="@{/fazenda/{codigo}/viveiro/{id}/qualidade-agua/novo(codigo=${fazenda.codigo}, id=${viveiro.id})}"
-                       class="btn btn-info btn-sm text-white">
+                       class="btn btn-primary btn-sm">
                         Nova Análise
                     </a>
                 </div>
