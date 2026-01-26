@@ -102,15 +102,18 @@ public class ViveiroController {
         BigDecimal biomassa = null;
         BigDecimal sobrevivencia = null;
         List<ConsumoRacao> consumos = null;
+        List<Biometria> biometrias = null;
 
         //Biometria
-        List<Biometria> biometrias = biometriaService.listarBiometrias(viveiroId, usuario);
-        int total = biometrias.size();
-        if (total > 0) {
-            model.addAttribute("ultimaBiometria", biometrias.get(total - 1));
-        }
-        if (total > 1) {
-            model.addAttribute("penultimaBiometria", biometrias.get(total - 2));
+        if (cicloAtivo != null){
+            biometrias = biometriaService.listarBiometrias(viveiroId, usuario);
+            int total = biometrias.size();
+            if (total > 0) {
+                model.addAttribute("ultimaBiometria", biometrias.get(total - 1));
+            }
+            if (total > 1) {
+                model.addAttribute("penultimaBiometria", biometrias.get(total - 2));
+            }
         }
 
         // Qualidade da Água
