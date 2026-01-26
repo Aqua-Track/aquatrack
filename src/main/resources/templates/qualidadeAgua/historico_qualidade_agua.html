@@ -18,6 +18,9 @@
         </div>
     </div>
 
+    <!-- Nav bar -->
+    <div th:replace="fragments/navbar_viveiro :: navbarViveiro( ${codigo}, ${viveiroId}, ${ciclo},${abaAtiva})"></div>
+
     <!-- Tabela de datas -->
     <div class="card shadow-sm p-4">
         <table class="table table-bordered table-striped text-center">
@@ -112,14 +115,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-
-    <div class="text-end mt-3">
-        <a th:href="@{/fazenda/{codigo}/viveiro/{id}/abrirViveiro(codigo=${codigo}, id=${viveiroId})}"
-           class="btn btn-danger btn-sm">
-            Voltar
-        </a>
     </div>
 
 </section>

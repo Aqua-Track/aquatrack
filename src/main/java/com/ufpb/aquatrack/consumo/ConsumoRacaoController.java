@@ -24,10 +24,14 @@ public class ConsumoRacaoController {
 
     private final ConsumoRacaoService consumoRacaoService;
     private final EstoqueRacaoService estoqueRacaoService;
+    private final CicloService cicloService;
 
-    public ConsumoRacaoController(ConsumoRacaoService consumoRacaoService, EstoqueRacaoService estoqueRacaoService) {
+    public ConsumoRacaoController(ConsumoRacaoService consumoRacaoService,
+                 EstoqueRacaoService estoqueRacaoService, CicloService cicloService
+    ) {
         this.consumoRacaoService = consumoRacaoService;
         this.estoqueRacaoService = estoqueRacaoService;
+        this.cicloService = cicloService;
     }
 
     @GetMapping("/novo")
@@ -78,9 +82,11 @@ public class ConsumoRacaoController {
     ) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        model.addAttribute("consumos", consumoRacaoService.listarConsumosDoCiclo(viveiroId, usuario));
         model.addAttribute("codigo", codigo);
         model.addAttribute("viveiroId", viveiroId);
+        model.addAttribute("ciclo", cicloService.buscarCicloAtivo(viveiroId, usuario));
+        model.addAttribute("abaAtiva", "consumo");
+        model.addAttribute("consumos", consumoRacaoService.listarConsumosDoCiclo(viveiroId, usuario));
 
         return "consumo/historico_consumo_racao";
     }

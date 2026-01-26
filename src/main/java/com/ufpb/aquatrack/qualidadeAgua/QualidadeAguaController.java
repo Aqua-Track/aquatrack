@@ -130,9 +130,12 @@ public class QualidadeAguaController {
         if (historico == null) {
             historico = List.of();
         }
-        model.addAttribute("historicoQualidade", historico);
+
         model.addAttribute("codigo", codigo);
         model.addAttribute("viveiroId", viveiroId);
+        model.addAttribute("ciclo", ciclo);
+        model.addAttribute("abaAtiva", "agua");
+        model.addAttribute("historicoQualidade", historico);
 
         return "qualidadeAgua/historico_qualidade_agua";
     }

@@ -18,13 +18,8 @@
         </div>
     </div>
 
-    <!-- Botão Voltar -->
-    <div class="text-end mb-4">
-        <a th:href="@{/fazenda/{codigo}(codigo=${fazenda.codigo})}"
-           class="btn btn-danger btn-sm">
-            Voltar
-        </a>
-    </div>
+    <!-- Nav bar -->
+    <div th:replace="fragments/navbar_viveiro :: navbarViveiro( ${codigo}, ${viveiroId}, ${ciclo},${abaAtiva})"></div>
 
     <!-- Informações Básicas -->
     <div class="mb-4">

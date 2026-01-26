@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="navbarViveiro(codigo,viveiroId, ciclo,abaAtiva)">
+
+    <div class="position-relative mb-3">
+        <ul class="nav nav-tabs justify-content-center">
+
+            <!-- Detalhes -->
+            <li class="nav-item">
+                <a class="nav-link"
+                   th:classappend="${abaAtiva == 'detalhes'} ? 'active'"
+                   th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/abrirViveiro(
+                        codigo=${codigo},viveiroId=${viveiroId}
+                   )}">
+                    Viveiro
+                </a>
+            </li>
+
+            <!-- Biometria -->
+            <li class="nav-item" th:if="${ciclo != null}">
+                <a class="nav-link"
+                   th:classappend="${abaAtiva == 'biometria'} ? 'active'"
+                   th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/biometria/historico(
+                        codigo=${codigo},viveiroId=${viveiroId}
+                   )}">
+                    Biometria
+                </a>
+            </li>
+
+            <!-- Qualidade da Água -->
+            <li class="nav-item" th:if="${ciclo != null}">
+                <a class="nav-link"
+                   th:classappend="${abaAtiva == 'agua'} ? 'active'"
+                   th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/qualidade-agua/historico(
+                        codigo=${codigo},viveiroId=${viveiroId}
+                   )}">
+                    Qualidade da Água
+                </a>
+            </li>
+
+            <!-- Consumo -->
+            <li class="nav-item" th:if="${ciclo != null}">
+                <a class="nav-link"
+                   th:classappend="${abaAtiva == 'consumo'} ? 'active'"
+                   th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/consumo-racao/historico(
+                        codigo=${codigo},viveiroId=${viveiroId}
+                   )}">
+                    Consumo
+                </a>
+            </li>
+        </ul>
+
+        <!-- Voltar -->
+        <a th:href="@{/fazenda/{codigo}(codigo=${codigo})}"
+           class="btn btn-danger btn-sm position-absolute end-0 me-2"
+           style="top:-0.4rem; z-index:2;">
+            Voltar
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>

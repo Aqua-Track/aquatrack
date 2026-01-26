@@ -144,10 +144,12 @@ public class ViveiroController {
         BigDecimal consumoTotal = consumoRacaoService.calcularConsumoTotal(consumos);
         Map<String, BigDecimal> consumoPorTipo = consumoRacaoService.calcularConsumoPorTipo(consumos);
 
-
+        model.addAttribute("codigo", codigo);
+        model.addAttribute("viveiroId", viveiroId);
+        model.addAttribute("ciclo", cicloAtivo);
+        model.addAttribute("abaAtiva", "detalhes");
         model.addAttribute("fazenda", fazenda);
         model.addAttribute("viveiro", viveiro);
-        model.addAttribute("ciclo", cicloAtivo);
         model.addAttribute("biomassa", biomassa);
         model.addAttribute("sobrevivencia", sobrevivencia);
         model.addAttribute("consumos", consumos);
