@@ -101,8 +101,8 @@ public class ViveiroController {
         Ciclo cicloAtivo = cicloService.buscarCicloAtivo(viveiroId, usuario);
         BigDecimal biomassa = null;
         BigDecimal sobrevivencia = null;
-        List<ConsumoRacao> consumos = null;
-        List<Biometria> biometrias = null;
+        List<ConsumoRacao> consumos = List.of();
+        List<Biometria> biometrias = List.of();
 
         //Biometria
         if (cicloAtivo != null){
