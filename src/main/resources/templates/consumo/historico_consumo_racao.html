@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Histórico de Consumo de Ração</title>
+</head>
+
+<body class="bg-light">
+
+<section class="container mt-5">
+
+    <!-- Cabeçalho -->
+    <div class="row my-5">
+        <div class="col">
+            <h1 class="text-center mb-0">Histórico de Consumo de Ração</h1>
+            <p class="text-center mt-0">
+                Aqui você pode acompanhar e gerenciar o consumo de ração do viveiro.
+            </p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm p-4">
+        <h2 class="mb-3">Consumos Registrados</h2>
+        <div class="mt-4">
+            <table class="table table-bordered text-center align-middle">
+                <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Tipo de Ração</th>
+                    <th>Quantidade (Kg)</th>
+                    <th style="width: 180px;">Ações</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="c : ${consumos}">
+                    <td th:text="${#temporals.format(c.dataConsumo, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${c.tipoRacao.nome}"></td>
+                    <td th:text="${c.quantidadeKg}"></td>
+
+                    <td class="d-flex justify-content-center">
+                        <!-- APAGAR -->
+                        <form th:action="@{/fazenda/{codigo}/viveiro/{viveiroId}/consumo-racao/{id}/excluir(
+                                codigo=${codigo},viveiroId=${viveiroId}, id=${c.id})}"
+                              method="post"
+                              onsubmit="return confirm('Deseja realmente excluir este consumo? A quantidade será devolvida ao estoque.');">
+                            <button type="submit"
+                                    class="btn btn-sm btn-danger">
+                                Apagar
+                            </button>
+                        </form>
+
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(consumos)}">
+                    <td colspan="4">Nenhum consumo de ração registrado</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="text-end mt-3">
+            <a th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/abrirViveiro( codigo=${codigo}, viveiroId=${viveiroId})}"
+               class="btn btn-danger btn-sm">
+                Voltar
+            </a>
+        </div>
+    </div>
+</section>
+</body>
+</html>

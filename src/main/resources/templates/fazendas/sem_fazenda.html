@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Bem-vindo ao AquaTrack</title>
+</head>
+
+<body>
+
+<section class="container d-flex justify-content-center align-items-center"
+         style="min-height: 70vh;">
+
+    <div class="card shadow-sm p-5 text-center col-12 col-md-6 col-lg-5">
+
+        <!-- Ícone / Identidade -->
+        <div class="mb-4">
+            <img src="/images/logo-texto.png" alt="AquaShrimp" style="max-width: 280px; width: 100%;">
+        </div>
+
+        <!-- Mensagem principal -->
+        <h3 class="mb-3">Você ainda não possui uma fazenda cadastrada</h3>
+
+        <p class="text-muted mb-4">
+            Para começar a usar o AquaTrack, é necessário cadastrar sua fazenda.
+            Esse será o ambiente onde você irá gerenciar todos os atributos da propriedade.
+        </p>
+
+        <!-- Ação -->
+        <a th:href="@{/fazendas/cadastrar}"
+           class="btn btn-primary btn-lg px-4">
+            Cadastrar Fazenda
+        </a>
+
+    </div>
+
+</section>
+
+</body>
+</html>

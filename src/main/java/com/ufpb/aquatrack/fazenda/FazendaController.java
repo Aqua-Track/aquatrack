@@ -3,6 +3,7 @@ package com.ufpb.aquatrack.fazenda;
 import com.ufpb.aquatrack.ciclo.CicloService;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.estoqueRacao.EstoqueRacaoService;
+import com.ufpb.aquatrack.usuario.UsuarioService;
 import com.ufpb.aquatrack.viveiro.Viveiro;
 import com.ufpb.aquatrack.viveiro.ViveiroService;
 import jakarta.servlet.http.HttpSession;
@@ -26,22 +27,27 @@ public class FazendaController {
     private final ViveiroService viveiroService;
     private final EstoqueRacaoService estoqueRacaoService;
     private final CicloService cicloService;
+    private final UsuarioService usuarioService;
 
     public FazendaController(FazendaService fazendaService, ViveiroService viveiroService,
-                             EstoqueRacaoService estoqueRacaoService, CicloService cicloService) {
+                             EstoqueRacaoService estoqueRacaoService, CicloService cicloService, UsuarioService usuarioService) {
         this.fazendaService = fazendaService;
         this.viveiroService = viveiroService;
         this.estoqueRacaoService = estoqueRacaoService;
         this.cicloService = cicloService;
+        this.usuarioService = usuarioService;
     }
 
-    @GetMapping("/fazendas")
-    public String listarFazendas(HttpSession session, Model model) {
+    @GetMapping("/inicio")
+    public String semFazenda(HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Usuario usuarioAtualizado = usuarioService.buscarUsuarioPorId(usuario.getId());
 
-        model.addAttribute("fazendas", fazendaService.listarFazendasDoUsuario(usuario));
+        if (usuarioAtualizado.getFazenda() != null) {
+            return "redirect:/fazenda/" + usuario.getFazenda().getCodigo();
+        }
 
-        return "fazendas/listar_fazenda";
+        return "fazendas/sem_fazenda"; // tela da imagem
     }
 
     @GetMapping("/fazendas/cadastrar")
@@ -55,10 +61,10 @@ public class FazendaController {
             String localizacao, HttpSession session, Model model
     ) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
-
+        Usuario usuarioAtualizado = usuarioService.buscarUsuarioPorId(usuario.getId());
         try {
-            fazendaService.criarFazenda(nome, localizacao, usuario);
-            return "redirect:/fazendas";
+            Fazenda fazenda = fazendaService.criarFazenda(nome, localizacao, usuarioAtualizado  );
+            return "redirect:/fazenda/" + fazenda.getCodigo();
         } catch (IllegalArgumentException e) {
             model.addAttribute("erro", e.getMessage());
             return "fazendas/formulario_fazendas";
@@ -68,23 +74,23 @@ public class FazendaController {
     @GetMapping("/fazenda/{codigo}")
     public String abrirFazenda(@PathVariable String codigo, HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
-
+        Usuario usuarioAtualizado = usuarioService.buscarUsuarioPorId(usuario.getId());
         Fazenda fazenda = fazendaService.buscarFazendaPorCodigo(codigo);
 
-        if (!fazenda.getUsuario().getId().equals(usuario.getId())) {
+        if (!fazenda.getUsuario().getId().equals(usuarioAtualizado.getId())) {
             throw new IllegalArgumentException("Acesso negado");
         }
 
         model.addAttribute("fazenda", fazenda);
-        List<Viveiro> viveiros = viveiroService.listarViveiros(fazenda.getId(), usuario);
+        List<Viveiro> viveiros = viveiroService.listarViveiros(fazenda.getId(), usuarioAtualizado);
 
         model.addAttribute("viveiros", viveiros);
-        model.addAttribute("estoques", estoqueRacaoService.listarEstoqueDaFazenda(fazenda.getId(), usuario));
+        model.addAttribute("estoques", estoqueRacaoService.listarEstoqueDaFazenda(fazenda.getId(), usuarioAtualizado));
 
         BigDecimal valorTotalEstoque = estoqueRacaoService.totalEstoque(fazenda.getId(), usuario);
         model.addAttribute("valorTotalEstoque", valorTotalEstoque);
 
-        Map<Long, Boolean> statusCicloPorViveiro = cicloService.obterStatusCicloPorViveiro(viveiros, usuario);
+        Map<Long, Boolean> statusCicloPorViveiro = cicloService.obterStatusCicloPorViveiro(viveiros, usuarioAtualizado);
         model.addAttribute("statusCiclo", statusCicloPorViveiro);
 
         return "fazendas/pagina_fazenda";
@@ -101,6 +107,6 @@ public class FazendaController {
         }
 
         fazendaService.deletarFazenda(fazenda.getId());
-        return "redirect:/fazendas";
+        return "redirect:/inicio";
     }
 }

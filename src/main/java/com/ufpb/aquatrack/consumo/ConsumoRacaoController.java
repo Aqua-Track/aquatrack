@@ -1,10 +1,15 @@
 package com.ufpb.aquatrack.consumo;
 
+import com.ufpb.aquatrack.ciclo.Ciclo;
+import com.ufpb.aquatrack.ciclo.CicloService;
 import com.ufpb.aquatrack.estoqueRacao.EstoqueRacao;
 import com.ufpb.aquatrack.estoqueRacao.EstoqueRacaoService;
+import com.ufpb.aquatrack.repository.ConsumoRacaoRepository;
+import com.ufpb.aquatrack.repository.EstoqueRacaoRepository;
 import com.ufpb.aquatrack.tipoRacao.TipoRacao;
 import com.ufpb.aquatrack.usuario.Usuario;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -65,4 +70,32 @@ public class ConsumoRacaoController {
             return "consumo/form_consumo_racao";
         }
     }
+
+    @GetMapping("/historico")
+    public String historico(
+            @PathVariable String codigo, @PathVariable Long viveiroId,
+            HttpSession session, Model model
+    ) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        model.addAttribute("consumos", consumoRacaoService.listarConsumosDoCiclo(viveiroId, usuario));
+        model.addAttribute("codigo", codigo);
+        model.addAttribute("viveiroId", viveiroId);
+
+        return "consumo/historico_consumo_racao";
+    }
+
+
+    @PostMapping("/{id}/excluir")
+    public String excluirConsumo(
+            @PathVariable String codigo, @PathVariable Long viveiroId,
+            @PathVariable Long id, HttpSession session
+    ) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        consumoRacaoService.excluirConsumo(id, usuario);
+
+        return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/consumo-racao/historico";
+    }
+
 }

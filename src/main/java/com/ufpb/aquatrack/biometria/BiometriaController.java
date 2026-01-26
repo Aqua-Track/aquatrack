@@ -26,24 +26,59 @@ public class BiometriaController {
         return "biometria/formulario_biometria";
     }
 
-    @PostMapping
+    @GetMapping("/{id}/editar")
+    public String editarForm(@PathVariable String codigo, @PathVariable Long viveiroId, @PathVariable Long id,
+            HttpSession session, Model model
+    ) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        Biometria biometria = biometriaService.buscarPorId(id, usuario);
+
+        model.addAttribute("biometria", biometria);
+        model.addAttribute("codigo", codigo);
+        model.addAttribute("viveiroId", viveiroId);
+
+        return "biometria/formulario_biometria";
+    }
+
+    @PostMapping("/salvar")
     public String salvar(
-            @PathVariable String codigo, @PathVariable Long viveiroId, @RequestParam LocalDate dataBiometria,
-            @RequestParam Integer quantidadeAmostrada, @RequestParam BigDecimal pesoTotalAmostra,
+            @PathVariable String codigo, @PathVariable Long viveiroId,
+            @RequestParam LocalDate dataBiometria, @RequestParam Integer quantidadeAmostrada,
+            @RequestParam BigDecimal pesoTotalAmostra, @RequestParam(required = false) Long id,
             HttpSession session, Model model
     ) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         try {
-            biometriaService.registrarBiometria(viveiroId, usuario, dataBiometria, quantidadeAmostrada, pesoTotalAmostra);
+            if (id == null) { //Cadastrar
+                biometriaService.registrarBiometria(viveiroId, usuario, dataBiometria, quantidadeAmostrada, pesoTotalAmostra);
+            } else { //Editar
+                biometriaService.atualizarBiometria(id, usuario, dataBiometria, quantidadeAmostrada, pesoTotalAmostra);
+            }
+
             return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/abrirViveiro";
 
         } catch (RuntimeException e) {
             model.addAttribute("erro", e.getMessage());
             model.addAttribute("codigo", codigo);
             model.addAttribute("viveiroId", viveiroId);
+            if (id != null) {
+                model.addAttribute("biometria", biometriaService.buscarPorId(id, usuario));
+            }
             return "biometria/formulario_biometria";
         }
+    }
+
+    @PostMapping("/{id}/excluir")
+    public String excluir(@PathVariable String codigo, @PathVariable Long viveiroId,
+                          @PathVariable Long id, HttpSession session
+    ) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        biometriaService.excluirBiometria(id, usuario);
+
+        return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/biometria/historico";
     }
 
     @GetMapping("/historico")

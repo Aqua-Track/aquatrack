@@ -38,7 +38,12 @@ public class UsuarioController {
             return "redirect:/master"; // Uso de redirect para finalizar o POST e iniciar um novo GET com URL correta
         }
 
-        return "redirect:/fazendas"; //Então é direcionado para suas fazendas
+        if (usuario.getFazenda() != null) {
+            return "redirect:/fazenda/" + usuario.getFazenda().getCodigo();
+        } else {
+            return "redirect:/inicio"; // tela "sem fazenda"
+        }
+
     }
 
     @GetMapping("/logout")

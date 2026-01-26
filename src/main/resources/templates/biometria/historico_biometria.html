@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
 <head>
     <title>Histórico de Biometrias</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body class="bg-light">
 
 <section class="container mt-5">
@@ -13,38 +12,64 @@
     <!-- Cabeçalho -->
     <div class="row my-5">
         <div class="col">
-            <h1 class="text-center mb-0">Histórico Biometria</h1>
-            <p class="text-center mt-0">Aqui você pode gerenciar todas as análises de biometria.</p>
+            <h1 class="text-center mb-0">Histórico de Biometria</h1>
+            <p class="text-center mt-0">
+                Aqui você pode gerenciar todas as análises de biometria.
+            </p>
         </div>
     </div>
 
     <div class="card shadow-sm p-4">
         <h2 class="mb-3">Histórico de Biometria</h2>
 
-        <!-- Tabela do Histórico -->
+        <!-- Tabela -->
         <div class="mt-4">
-            <h4>Tabela de Biometrias</h4>
-            <table class="table table-bordered text-center">
+            <table class="table table-bordered text-center align-middle">
                 <thead>
                 <tr>
                     <th>Data</th>
                     <th>Peso Médio (g)</th>
+                    <th style="width: 260px;">Ações</th>
                 </tr>
                 </thead>
+
                 <tbody>
                 <tr th:each="b : ${biometrias}">
                     <td th:text="${#temporals.format(b.dataBiometria, 'dd/MM/yyyy')}"></td>
                     <td th:text="${b.pesoMedio}"></td>
+
+                    <td class="d-flex justify-content-center gap-2">
+                        <!-- EDITAR -->
+                        <a class="btn btn-primary btn-sm"
+                           th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/biometria/{id}/editar(
+                                codigo=${codigo},viveiroId=${viveiroId},id=${b.id})}">
+                            Editar
+                        </a>
+
+                        <!-- APAGAR -->
+                        <form th:action="@{/fazenda/{codigo}/viveiro/{viveiroId}/biometria/{id}/excluir(
+                                codigo=${codigo},viveiroId=${viveiroId},id=${b.id})}"
+                              method="post"
+                              onsubmit="return confirm('Deseja realmente apagar esta biometria?');">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                Apagar
+                            </button>
+                        </form>
+                    </td>
                 </tr>
-                <tr th:if="${biometrias.isEmpty()}">
-                    <td colspan="2">Nenhuma biometria registrada</td>
+                <tr th:if="${#lists.isEmpty(biometrias)}">
+                    <td colspan="3">Nenhuma biometria registrada</td>
                 </tr>
                 </tbody>
             </table>
         </div>
-
+        <div class="text-end mt-3">
+            <a th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/abrirViveiro(codigo=${codigo}, viveiroId=${viveiroId})}"
+               class="btn btn-danger btn-sm">
+                Voltar
+            </a>
+        </div>
     </div>
 </section>
-
 </body>
 </html>
