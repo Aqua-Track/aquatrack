@@ -1,6 +1,6 @@
 package com.ufpb.aquatrack.infra.auth.tokens;
 
-import com.ufpb.aquatrack.usuario.Usuario;
+import com.ufpb.aquatrack.core.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -2,8 +2,8 @@ package com.ufpb.aquatrack.infra.auth.activation;
 
 import com.ufpb.aquatrack.infra.auth.tokens.TokenService;
 import com.ufpb.aquatrack.infra.auth.tokens.TokenType;
-import com.ufpb.aquatrack.usuario.Usuario;
-import com.ufpb.aquatrack.usuario.UsuarioService;
+import com.ufpb.aquatrack.core.usuario.Usuario;
+import com.ufpb.aquatrack.core.usuario.UsuarioService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

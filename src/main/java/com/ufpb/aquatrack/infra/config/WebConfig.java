@@ -1,0 +1,47 @@
+package com.ufpb.aquatrack.infra.config;
+
+import com.ufpb.aquatrack.infra.auth.interceptors.AuthInterceptor;
+import com.ufpb.aquatrack.infra.auth.interceptors.MasterInterceptor;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+    private final AuthInterceptor authInterceptor;
+    private final MasterInterceptor masterInterceptor;
+
+    public WebConfig(AuthInterceptor authInterceptor, MasterInterceptor masterInterceptor) {
+        this.authInterceptor = authInterceptor;
+        this.masterInterceptor = masterInterceptor;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+
+        // Registra o AuthInterceptor no Spring
+        // A partir daqui o Spring sabe que esse interceptor existe e deve ser executado antes dos controllers
+
+        // Interceptor geral: exige usuário logado
+        registry.addInterceptor(authInterceptor)
+                .addPathPatterns("/**");
+
+        // Interceptor específico: exige role MASTER
+        registry.addInterceptor(masterInterceptor)
+                .addPathPatterns("/master/**");
+
+        // Esses 2 blocos a cima define que o interceptor será aplicado a TODAS as rotas
+        // "/**" significa: qualquer URL da aplicação
+    }
+
+    @Controller
+    public static class PublicController {
+        @GetMapping
+        public String home() {
+            return "redirect:/login";
+        }
+    }
+}
