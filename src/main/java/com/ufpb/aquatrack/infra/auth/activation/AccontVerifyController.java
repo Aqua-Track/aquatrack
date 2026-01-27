@@ -1,5 +1,7 @@
-package com.ufpb.aquatrack.infra.verify.email.tokens;
+package com.ufpb.aquatrack.infra.auth.activation;
 
+import com.ufpb.aquatrack.infra.auth.tokens.TokenService;
+import com.ufpb.aquatrack.infra.auth.tokens.TokenType;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.usuario.UsuarioService;
 import jakarta.servlet.http.HttpSession;
@@ -10,26 +12,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class TokenController {
+public class AccontVerifyController {
 
     private final TokenService tokenService;
     private final UsuarioService usuarioService;
 
-    public TokenController(TokenService tokenService, UsuarioService usuarioService) {
+    public AccontVerifyController(TokenService tokenService, UsuarioService usuarioService) {
         this.tokenService = tokenService;
         this.usuarioService = usuarioService;
     }
 
     @GetMapping("/ativar-conta")
-    public String verificarConta(@RequestParam String token, Model model, HttpSession session) {
-        if (!tokenService.validaToken(token)) {
+    public String verificarConta(@RequestParam String token, Model model) {
+        if (!tokenService.validaToken(token, TokenType.ATIVACAO_CONTA)) {
             model.addAttribute("erro", "Token invalido ou expirado");
             return "login";
         }
 
         // Recupera o usuário associado ao token e armazena o usuário na sessão
-        Usuario usuario = tokenService.getUsuario(token);
-        session.setAttribute("usuario", usuario);
+        //Usuario usuario = tokenService.getUsuario(token);
+        //session.setAttribute("usuario", usuario);
 
         // Passa o token para o modelo para ser usado no formulário
         System.out.println(token);
@@ -40,13 +42,12 @@ public class TokenController {
 
     @PostMapping("/ativar-conta")
     public String confirmarAtivacao(@RequestParam String token, @RequestParam String senha, Model model, HttpSession session) {
-        if (!tokenService.validaToken(token)) {
-            System.out.println("Aqui também");
+        if (!tokenService.validaToken(token, TokenType.ATIVACAO_CONTA)) {
             model.addAttribute("erro", "Token invalido ou expirado");
             return "login";
         }
-        System.out.println("Mas aqui não");
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = tokenService.getUsuario(token, TokenType.ATIVACAO_CONTA);
+        session.setAttribute("usuario", usuario);
 
         // Se o usuário não estiver na sessão, algo deu errado
         if (usuario == null) {

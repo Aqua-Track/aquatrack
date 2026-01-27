@@ -19,7 +19,7 @@
     </div>
 
     <!-- Nav bar -->
-    <div th:replace="fragments/navbar_viveiro :: navbarViveiro( ${codigo}, ${viveiroId}, ${ciclo},${abaAtiva})"></div>
+    <div th:replace="~{fragments/navbar_viveiro :: navbarViveiro( ${codigo}, ${viveiroId}, ${ciclo},${abaAtiva})}"></div>
 
     <!-- Tabela de datas -->
     <div class="card shadow-sm p-4">
