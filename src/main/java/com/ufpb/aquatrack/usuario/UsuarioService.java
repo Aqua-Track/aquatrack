@@ -1,10 +1,10 @@
 package com.ufpb.aquatrack.usuario;
 
 import com.ufpb.aquatrack.exceptions.RecursoNaoEncontradoException;
-import com.ufpb.aquatrack.infra.verify.email.EmailService;
-import com.ufpb.aquatrack.infra.verify.email.tokens.TokenService;
-import com.ufpb.aquatrack.infra.verify.email.tokens.TokenType;
-import com.ufpb.aquatrack.infra.verify.email.tokens.TokenUsuario;
+import com.ufpb.aquatrack.infra.email.EmailService;
+import com.ufpb.aquatrack.infra.auth.tokens.TokenService;
+import com.ufpb.aquatrack.infra.auth.tokens.TokenType;
+import com.ufpb.aquatrack.infra.auth.tokens.TokenUsuario;
 import com.ufpb.aquatrack.repository.UsuarioRepository;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;

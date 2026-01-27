@@ -1,4 +1,4 @@
-package com.ufpb.aquatrack.infra.verify.email;
+package com.ufpb.aquatrack.infra.email;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,7 @@
-package com.ufpb.aquatrack.infra.verify.email.tokens;
+package com.ufpb.aquatrack.infra.auth.activation;
 
+import com.ufpb.aquatrack.infra.auth.tokens.TokenService;
+import com.ufpb.aquatrack.infra.auth.tokens.TokenType;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.usuario.UsuarioService;
 import jakarta.servlet.http.HttpSession;
@@ -10,12 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class TokenController {
+public class AccontVerifyController {
 
     private final TokenService tokenService;
     private final UsuarioService usuarioService;
 
-    public TokenController(TokenService tokenService, UsuarioService usuarioService) {
+    public AccontVerifyController(TokenService tokenService, UsuarioService usuarioService) {
         this.tokenService = tokenService;
         this.usuarioService = usuarioService;
     }

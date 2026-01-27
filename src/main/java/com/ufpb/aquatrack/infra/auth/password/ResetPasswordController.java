@@ -1,9 +1,10 @@
-package com.ufpb.aquatrack.infra.verify.email;
+package com.ufpb.aquatrack.infra.auth.password;
 
 import com.ufpb.aquatrack.exceptions.RecursoNaoEncontradoException;
-import com.ufpb.aquatrack.infra.verify.email.tokens.TokenService;
-import com.ufpb.aquatrack.infra.verify.email.tokens.TokenType;
-import com.ufpb.aquatrack.infra.verify.email.tokens.TokenUsuario;
+import com.ufpb.aquatrack.infra.email.EmailService;
+import com.ufpb.aquatrack.infra.auth.tokens.TokenService;
+import com.ufpb.aquatrack.infra.auth.tokens.TokenType;
+import com.ufpb.aquatrack.infra.auth.tokens.TokenUsuario;
 import com.ufpb.aquatrack.usuario.Usuario;
 import com.ufpb.aquatrack.usuario.UsuarioService;
 import jakarta.servlet.http.HttpSession;
@@ -18,7 +19,7 @@ public class ResetPasswordController {
 
     private final TokenService tokenService;
     private final UsuarioService usuarioService;
-    private final EmailService emailService;
+    private final  EmailService emailService;
 
     public ResetPasswordController(TokenService tokenService, UsuarioService usuarioService, EmailService emailService) {
         this.tokenService = tokenService;
