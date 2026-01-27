@@ -16,29 +16,27 @@ public class TokenService {
         this.tokenRepository = tokenRepository;
     }
 
-    public TokenUsuario gerarToken(Usuario usuario) {
+    public TokenUsuario gerarToken(Usuario usuario, TokenType tipoDeToken) {
         TokenUsuario token = new TokenUsuario();
         token.setToken(UUID.randomUUID().toString());
         token.setUsuario(usuario);
-        token.setExpiraca(LocalDateTime.now().plusDays(7));
+
+        if (tipoDeToken == TokenType.ATIVACAO_CONTA) {
+            token.setExpiraca(LocalDateTime.now().plusDays(7));
+        } else {
+            token.setExpiraca(LocalDateTime.now().plusHours(1));
+        }
+        token.setTokenType(tipoDeToken);
+
         return tokenRepository.save(token);
     }
 
-    public boolean validaToken(String token) {
+    public boolean validaToken(String token, TokenType tipoDoToken) {
         TokenUsuario tokenUsuario = tokenRepository.findByToken(token);
-        if (tokenUsuario == null) {
-            System.out.println("Token null");
+
+        if (tokenUsuario == null || tokenUsuario.isUsado() || tokenUsuario.getExpiraca().isBefore(LocalDateTime.now()) || tipoDoToken != tokenUsuario.getTokenType()) {
             return false;
-        }
-        if (tokenUsuario.isUsado()) {
-            System.out.println("Token usado");
-            return false;
-        }
-        if (tokenUsuario.getExpiraca().isBefore(LocalDateTime.now())) {
-            System.out.println("Token expirado");
-            return false;
-        }
-        return true;
+        } else return true;
        }
 
     public void consumirToken(String token) {
@@ -49,8 +47,10 @@ public class TokenService {
         }
     }
 
-    public Usuario getUsuario(String token) {
-        validaToken(token);
+    public Usuario getUsuario(String token, TokenType tipoDeToken) {
+        if (!validaToken(token, tipoDeToken)) {
+            return null; //Excessão de usuário não localizado pelo token
+        }
         TokenUsuario tokenUsuario = tokenRepository.findByToken(token);
         return tokenUsuario.getUsuario();
     }

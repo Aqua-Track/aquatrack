@@ -19,7 +19,7 @@
             if (uri.equals("/login") || uri.equals("/logout")
                     || uri.startsWith("/css")
                     || uri.startsWith("/js")
-                    || uri.startsWith("/images") || uri.startsWith("/ativar-conta"))  {
+                    || uri.startsWith("/images") || uri.startsWith("/ativar-conta") || uri.startsWith("/redefinir-senha"))  {
                 return true;
             }
 

@@ -21,15 +21,15 @@ public class TokenController {
     }
 
     @GetMapping("/ativar-conta")
-    public String verificarConta(@RequestParam String token, Model model, HttpSession session) {
-        if (!tokenService.validaToken(token)) {
+    public String verificarConta(@RequestParam String token, Model model) {
+        if (!tokenService.validaToken(token, TokenType.ATIVACAO_CONTA)) {
             model.addAttribute("erro", "Token invalido ou expirado");
             return "login";
         }
 
         // Recupera o usuário associado ao token e armazena o usuário na sessão
-        Usuario usuario = tokenService.getUsuario(token);
-        session.setAttribute("usuario", usuario);
+        //Usuario usuario = tokenService.getUsuario(token);
+        //session.setAttribute("usuario", usuario);
 
         // Passa o token para o modelo para ser usado no formulário
         System.out.println(token);
@@ -40,13 +40,12 @@ public class TokenController {
 
     @PostMapping("/ativar-conta")
     public String confirmarAtivacao(@RequestParam String token, @RequestParam String senha, Model model, HttpSession session) {
-        if (!tokenService.validaToken(token)) {
-            System.out.println("Aqui também");
+        if (!tokenService.validaToken(token, TokenType.ATIVACAO_CONTA)) {
             model.addAttribute("erro", "Token invalido ou expirado");
             return "login";
         }
-        System.out.println("Mas aqui não");
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = tokenService.getUsuario(token, TokenType.ATIVACAO_CONTA);
+        session.setAttribute("usuario", usuario);
 
         // Se o usuário não estiver na sessão, algo deu errado
         if (usuario == null) {

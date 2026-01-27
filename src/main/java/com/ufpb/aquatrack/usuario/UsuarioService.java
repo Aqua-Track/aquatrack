@@ -3,6 +3,7 @@ package com.ufpb.aquatrack.usuario;
 import com.ufpb.aquatrack.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.infra.verify.email.EmailService;
 import com.ufpb.aquatrack.infra.verify.email.tokens.TokenService;
+import com.ufpb.aquatrack.infra.verify.email.tokens.TokenType;
 import com.ufpb.aquatrack.infra.verify.email.tokens.TokenUsuario;
 import com.ufpb.aquatrack.repository.UsuarioRepository;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -38,7 +39,7 @@ public class UsuarioService {
         usuario.setContaVerificada(Boolean.FALSE); //Define o novo usuário como "Não ativado"
         usuarioRepository.save(usuario);
 
-        TokenUsuario tokenUsuario = tokenService.gerarToken(usuario);
+        TokenUsuario tokenUsuario = tokenService.gerarToken(usuario, TokenType.ATIVACAO_CONTA);
 
         // Enviar o e-mail de ativação
         emailService.enviarEmailAtivacao(usuario.getLogin(), tokenUsuario.getToken());
@@ -76,6 +77,11 @@ public class UsuarioService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
     }
 
+    public Usuario buscarUsuarioPorLogin(String login) {
+        return usuarioRepository.findByLoginAndDeletadoFalse(login)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
+    }
+
     public void editarUsuario(
             Usuario master, Long idUsuarioEditado, String nome,
             String login, String novaSenhaUsuario, String senhaMaster
@@ -102,9 +108,9 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-    public void definirSenha(Usuario usuario, String senha) {
+    public Usuario definirSenha(Usuario usuario, String senha) {
         usuario.setSenha(BCrypt.hashpw(senha, BCrypt.gensalt()));
+        return usuarioRepository.save(usuario);
     }
-
 }
 
