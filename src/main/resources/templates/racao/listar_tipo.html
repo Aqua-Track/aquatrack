@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Tipos de Ração</title>
+</head>
+<body>
+<section class="container mt-5">
+
+    <div class="text-center mb-1">
+        <h1>Tipos de Ração</h1>
+        <p class="text-muted mb-5">
+            Aqui você pode gerenciar os tipos de ração.
+        </p>
+    </div>
+
+    <div th:if="${#lists.isEmpty(racoes)}"
+         class="alert alert-secondary text-center">
+        Nenhum tipo de ração cadastrado ainda.
+    </div>
+
+    <table th:if="${!#lists.isEmpty(racoes)}"
+           class="table table-striped table-bordered align-middle">
+        <thead class="table-light">
+        <tr>
+            <th>Nome</th>
+            <th>Fabricante</th>
+            <th class="text-center">Kg por saco</th>
+            <th class="text-center">Valor por saco</th>
+            <th class="text-center">Ação</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="racao : ${racoes}">
+            <td th:text="${racao.nome}"></td>
+            <td th:text="${racao.fabricante}"></td>
+            <td class="text-center" th:text="${racao.kgPorSaco}"></td>
+            <td class="text-center">
+                R$ <span th:text="${racao.valorPorSaco}"></span>
+            </td>
+            <td class="text-center">
+                <form th:action="@{/fazenda/{codigo}/racoes/{id}/remover(codigo=${codigo}, id=${racao.id})}"
+                      method="post" class="d-inline">
+                    <a th:href="@{/fazenda/{codigo}/racoes/{id}/editar(codigo=${codigo}, id=${racao.id})}"
+                       class="btn btn-outline-primary btn-sm">
+                        Editar
+                    </a>
+                    <button type="submit"
+                            class="btn btn-outline-danger btn-sm">
+                        Remover
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-end gap-2 mb-3">
+        <a th:href="@{/fazenda/{codigo}(codigo=${codigo})}"
+           class="btn btn-danger">
+            Voltar
+        </a>
+        <a th:href="@{/fazenda/{codigo}/racoes/nova(codigo=${codigo})}"
+           class="btn btn-success">
+            Adicionar tipo de ração
+        </a>
+    </div>
+
+</section>
+</body>
+</html>

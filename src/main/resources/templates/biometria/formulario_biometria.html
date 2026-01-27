@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${biometria != null} ?
+            'Editar Biometria' :
+            'Cadastrar Biometria'">
+        Biometria
+    </title>
+</head>
+
+<body class="bg-light">
+<section class="d-flex justify-content-center mt-5 mb-5">
+
+    <div class="card shadow-sm p-4 col-12 col-md-6 col-lg-4">
+        <h2 class="mb-3 text-center"
+            th:text="${biometria != null} ?
+                'Editar Biometria' :
+                'Cadastrar Biometria'">
+            Biometria
+        </h2>
+
+        <p class="text-muted text-center"
+           th:text="${biometria != null} ?
+                'Atualize os dados da biometria.' :
+                'Registre uma nova biometria para este viveiro.'">
+        </p>
+
+        <div th:if="${erro}" class="alert alert-danger" role="alert">
+            <p th:text="${erro}"></p>
+        </div>
+
+        <form th:action="@{/fazenda/{codigo}/viveiro/{viveiroId}/biometria/salvar(
+                codigo=${codigo}, viveiroId=${viveiroId})}"
+              method="post">
+
+            <!-- ID oculto (define edição) -->
+            <input type="hidden" name="id"
+                   th:if="${biometria != null}"
+                   th:value="${biometria.id}"/>
+
+            <label class="form-label">Data da Coleta</label>
+            <input type="date" name="dataBiometria" class="form-control mb-3" required
+                   th:value="${biometria != null ? biometria.dataBiometria : ''}"/>
+
+            <label class="form-label">Peso total da amostra (g)</label>
+            <input type="number" step="0.01" min="0.01" name="pesoTotalAmostra" class="form-control mb-3" required
+                   th:value="${biometria != null ? biometria.pesoTotalAmostra : ''}"/>
+
+
+            <label class="form-label">Quantidade amostrada</label>
+            <input type="number" min="1" name="quantidadeAmostrada" class="form-control mb-3" required
+                   th:value="${biometria != null ? biometria.quantidadeAmostrada : ''}"/>
+
+            <div class="d-flex justify-content-end gap-2 mt-3">
+                <a th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/abrirViveiro(
+                        codigo=${codigo}, viveiroId=${viveiroId})}"
+                   class="btn btn-danger">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn btn-success"
+                        th:text="${biometria != null} ? 'Atualizar' : 'Salvar'">
+                    Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>
