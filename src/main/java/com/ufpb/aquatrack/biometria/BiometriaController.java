@@ -1,5 +1,7 @@
 package com.ufpb.aquatrack.biometria;
 
+import com.ufpb.aquatrack.ciclo.Ciclo;
+import com.ufpb.aquatrack.ciclo.CicloService;
 import com.ufpb.aquatrack.usuario.Usuario;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -14,9 +16,11 @@ import java.time.LocalDate;
 public class BiometriaController {
 
     private final BiometriaService biometriaService;
+    private final CicloService cicloService;
 
-    public BiometriaController(BiometriaService biometriaService) {
+    public BiometriaController(BiometriaService biometriaService, CicloService cicloService) {
         this.biometriaService = biometriaService;
+        this.cicloService = cicloService;
     }
 
     @GetMapping("/nova")
@@ -84,10 +88,13 @@ public class BiometriaController {
     @GetMapping("/historico")
     public String historico(@PathVariable String codigo, @PathVariable Long viveiroId, HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Ciclo ciclo = cicloService.buscarCicloAtivo(viveiroId, usuario);
 
-        model.addAttribute("biometrias", biometriaService.listarBiometrias(viveiroId, usuario));
         model.addAttribute("codigo", codigo);
         model.addAttribute("viveiroId", viveiroId);
+        model.addAttribute("ciclo", ciclo);
+        model.addAttribute("abaAtiva", "biometria");
+        model.addAttribute("biometrias", biometriaService.listarBiometrias(viveiroId, usuario));
 
         return "biometria/historico_biometria";
     }

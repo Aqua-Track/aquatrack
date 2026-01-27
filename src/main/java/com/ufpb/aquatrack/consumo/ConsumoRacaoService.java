@@ -99,6 +99,7 @@ public class ConsumoRacaoService {
         if (consumos == null || consumos.isEmpty()) {
             return consumoPorTipo;
         }
+
         for (ConsumoRacao consumo : consumos) {
             String nomeRacao = consumo.getTipoRacao().getNome();
             BigDecimal quantidade = consumo.getQuantidadeKg();
