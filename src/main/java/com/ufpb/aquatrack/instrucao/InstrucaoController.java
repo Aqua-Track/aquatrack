@@ -63,7 +63,7 @@ public class InstrucaoController {
 
         instrucaoService.criarInstrucao(codigo, viveiroId, titulo, descricao, usuario);
 
-        return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/instrucoes";
+        return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/abrirViveiro";
     }
 
     @GetMapping("/fazenda/{codigo}/viveiro/{viveiroId}/instrucoes/{tagInstrucao}")

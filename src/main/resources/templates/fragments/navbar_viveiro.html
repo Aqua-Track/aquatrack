@@ -18,6 +18,16 @@
                 </a>
             </li>
 
+            <!-- Instruções -->
+            <li class="nav-item">
+                <a class="nav-link"
+                   th:classappend="${abaAtiva == 'instrucoes'} ? 'active'"
+                   th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/instrucoes(
+                        codigo=${codigo}, viveiroId=${viveiroId} )}">
+                    Instruções
+                </a>
+            </li>
+
             <!-- Biometria -->
             <li class="nav-item" th:if="${ciclo != null}">
                 <a class="nav-link"

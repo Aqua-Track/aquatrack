@@ -19,7 +19,7 @@
     </div>
 
     <!-- Nav bar -->
-    <div th:replace="fragments/navbar_viveiro :: navbarViveiro( ${codigo}, ${viveiroId}, ${ciclo},${abaAtiva})"></div>
+    <div th:replace="~{fragments/navbar_viveiro :: navbarViveiro(${codigo}, ${viveiroId}, ${ciclo}, ${abaAtiva})}"></div>
 
     <!-- Informações Básicas -->
     <div class="mb-4">
@@ -109,6 +109,10 @@
         </div>
     </div>
 
+    <div class="mb-3">
+        <h3>Dados do viveiro</h3>
+        <hr>
+    </div>
 
     <!-- Linha: Ciclo | Consumo -->
     <div th:class="|row g-4 mb-2 ${ciclo != null ? 'row-cols-1 row-cols-md-2' : 'row-cols-1'}|">
@@ -338,19 +342,26 @@
         </div>
     </div>
 
+    <div id="modal-container" class="modal fade" tabindex="-1"></div>
+
     <script>
         function abrirModal(btn) {
             const url = btn.getAttribute('data-url');
+            // Fecha qualquer modal aberto
+            const modalAberto = document.querySelector('.modal.show');
+            if (modalAberto) {
+                bootstrap.Modal.getInstance(modalAberto).hide();
+            }
             fetch(url)
                 .then(res => res.text())
                 .then(html => {
                     const container = document.getElementById('modal-container');
                     container.innerHTML = html;
-
-                    const modal = new bootstrap.Modal(container);
+                    const modalEl = container.querySelector('.modal');
+                    const modal = new bootstrap.Modal(modalEl);
                     modal.show();
 
-                    container.addEventListener(
+                    modalEl.addEventListener(
                         'hidden.bs.modal',
                         () => window.location.reload(),
                         { once: true }

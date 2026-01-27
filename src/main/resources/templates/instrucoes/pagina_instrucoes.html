@@ -9,7 +9,7 @@
 <section class="container mt-4 pb-5">
 
     <!-- NAVBAR DO VIVEIRO -->
-    <div th:replace="fragments/navbar_viveiro :: navbarViveiro( ${codigo}, ${viveiroId},${ciclo}, ${abaAtiva})"></div>
+    <div th:replace="~{fragments/navbar_viveiro :: navbarViveiro( ${codigo}, ${viveiroId},${ciclo}, ${abaAtiva})}"></div>
 
     <!-- Cabeçalho -->
     <div class="row mt-4 mb-3">
@@ -23,10 +23,9 @@
     <div class="d-flex justify-content-end mb-3">
         <button class="btn btn-primary"
                 th:attr="data-url=@{/fazenda/{codigo}/viveiro/{viveiroId}/instrucoes/nova(
-                    codigo=${codigo},viveiroId=${viveiroId}
-                )}"
+                    codigo=${codigo},viveiroId=${viveiroId})}"
                 onclick="abrirModal(this)">
-            + Nova instrução
+            Nova instrução
         </button>
     </div>
 
@@ -69,7 +68,14 @@
                                         codigo=${codigo}, viveiroId=${viveiroId},  tagInstrucao=${instrucao.tag}
                                     )}"
                                     onclick="abrirModal(this)">
-                                Ver
+                                Visualizar
+                            </button>
+                            <button class="btn btn-primary btn-sm"
+                                    th:attr="data-url=@{/fazenda/{codigo}/viveiro/{viveiroId}/instrucoes/{tagInstrucao}/editar(
+                                        codigo=${codigo}, viveiroId=${viveiroId}, tagInstrucao=${instrucao.tag}
+                                     )}"
+                                    onclick="abrirModal(this)">
+                                Editar
                             </button>
                             <button class="btn btn-sm btn-danger"
                                     data-bs-toggle="modal"
@@ -89,7 +95,7 @@
         </div>
     </div>
 
-    <div id="modal-container" class="modal fade" tabindex="-1"></div>
+    <div id="modal-container"></div>
 
     <!-- MODAIS DE EXCLUSÃO -->
     <th:block th:each="instrucao : ${instrucoes}">
@@ -134,9 +140,10 @@
                 .then(html => {
                     const container = document.getElementById('modal-container');
                     container.innerHTML = html;
-                    const modal = new bootstrap.Modal(container);
+                    const modalEl = container.querySelector('.modal');
+                    const modal = new bootstrap.Modal(modalEl);
                     modal.show();
-                    container.addEventListener(
+                    modalEl.addEventListener(
                         'hidden.bs.modal',
                         () => window.location.reload(),
                         { once: true }
