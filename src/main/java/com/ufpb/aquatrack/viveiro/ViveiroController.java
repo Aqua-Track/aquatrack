@@ -7,6 +7,8 @@ import com.ufpb.aquatrack.ciclo.CicloService;
 import com.ufpb.aquatrack.consumo.ConsumoRacao;
 import com.ufpb.aquatrack.consumo.ConsumoRacaoService;
 import com.ufpb.aquatrack.fazenda.Fazenda;
+import com.ufpb.aquatrack.instrucao.Instrucao;
+import com.ufpb.aquatrack.instrucao.InstrucaoService;
 import com.ufpb.aquatrack.qualidadeAgua.QualidadeAgua;
 import com.ufpb.aquatrack.qualidadeAgua.QualidadeAguaService;
 import com.ufpb.aquatrack.usuario.Usuario;
@@ -32,17 +34,21 @@ public class ViveiroController {
     private final ConsumoRacaoService consumoRacaoService;
     private final BiometriaService biometriaService;
     private final QualidadeAguaService qualidadeAguaService;
+    private final InstrucaoService instrucaoService;
 
 
     public ViveiroController(ViveiroService viveiroService, FazendaService fazendaService,
                              CicloService cicloService, ConsumoRacaoService consumoRacaoService,
-                             BiometriaService biometriaService, QualidadeAguaService qualidadeAguaService ) {
+                             BiometriaService biometriaService, QualidadeAguaService qualidadeAguaService,
+                             InstrucaoService instrucaoService
+    ) {
         this.viveiroService = viveiroService;
         this.fazendaService = fazendaService;
         this.cicloService = cicloService;
         this.consumoRacaoService = consumoRacaoService;
         this.biometriaService = biometriaService;
         this.qualidadeAguaService = qualidadeAguaService;
+        this.instrucaoService = instrucaoService;
     }
 
 
@@ -85,10 +91,8 @@ public class ViveiroController {
 
     @GetMapping("/fazenda/{codigo}/viveiro/{viveiroId}/abrirViveiro")
     public String abrirViveiro(
-            @PathVariable String codigo,
-            @PathVariable Long viveiroId,
-            HttpSession session,
-            Model model
+            @PathVariable String codigo, @PathVariable Long viveiroId,
+            HttpSession session, Model model
     ) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
@@ -99,13 +103,14 @@ public class ViveiroController {
 
         Viveiro viveiro = viveiroService.buscarViveiroPorId(viveiroId);
         Ciclo cicloAtivo = cicloService.buscarCicloAtivo(viveiroId, usuario);
+
         BigDecimal biomassa = null;
         BigDecimal sobrevivencia = null;
         List<ConsumoRacao> consumos = List.of();
         List<Biometria> biometrias = List.of();
 
-        //Biometria
-        if (cicloAtivo != null){
+        // ===== BIOMETRIA =====
+        if (cicloAtivo != null) {
             biometrias = biometriaService.listarBiometrias(viveiroId, usuario);
             int total = biometrias.size();
             if (total > 0) {
@@ -116,7 +121,7 @@ public class ViveiroController {
             }
         }
 
-        // Qualidade da Água
+        // ===== QUALIDADE DA ÁGUA =====
         if (cicloAtivo != null) {
             QualidadeAgua ultimaAgua = qualidadeAguaService.buscarUltima(cicloAtivo);
             QualidadeAgua penultimaAgua = qualidadeAguaService.buscarPenultima(cicloAtivo);
@@ -125,8 +130,7 @@ public class ViveiroController {
             model.addAttribute("penultimaAgua", penultimaAgua);
         }
 
-
-        //Consumo Ração e Biomassa/Sobrevivência
+        // ===== CONSUMO / BIOMASSA / SOBREVIVÊNCIA =====
         if (cicloAtivo != null) {
             consumos = consumoRacaoService.listarConsumosDoCiclo(viveiroId, usuario);
             if (!biometrias.isEmpty()) {
@@ -136,28 +140,39 @@ public class ViveiroController {
 
                 if (!consumos.isEmpty()) {
                     sobrevivencia = cicloService.calcularSobrevivencia(
-                            ultimaBiometria, cicloAtivo, consumos.getFirst());
+                            ultimaBiometria, cicloAtivo, consumos.getFirst()
+                    );
                 }
             }
         }
 
         BigDecimal consumoTotal = consumoRacaoService.calcularConsumoTotal(consumos);
-        Map<String, BigDecimal> consumoPorTipo = consumoRacaoService.calcularConsumoPorTipo(consumos);
+        Map<String, BigDecimal> consumoPorTipo =
+                consumoRacaoService.calcularConsumoPorTipo(consumos);
 
+        // ===== INSTRUÇÕES (NÃO DEPENDE DE CICLO) =====
+        List<Instrucao> instrucoesRecentes =
+                instrucaoService.listar3Ultimas(codigo, viveiroId, usuario);
+
+        // ===== MODEL =====
         model.addAttribute("codigo", codigo);
         model.addAttribute("viveiroId", viveiroId);
         model.addAttribute("ciclo", cicloAtivo);
         model.addAttribute("abaAtiva", "detalhes");
         model.addAttribute("fazenda", fazenda);
         model.addAttribute("viveiro", viveiro);
+
         model.addAttribute("biomassa", biomassa);
         model.addAttribute("sobrevivencia", sobrevivencia);
         model.addAttribute("consumos", consumos);
         model.addAttribute("consumoTotal", consumoTotal);
         model.addAttribute("consumoPorTipo", consumoPorTipo);
 
+        model.addAttribute("instrucoes", instrucoesRecentes);
+
         return "viveiros/pagina_viveiro";
     }
+
 
 
     @PostMapping("/fazenda/{codigo}/viveiro/{idViveiro}/remover")

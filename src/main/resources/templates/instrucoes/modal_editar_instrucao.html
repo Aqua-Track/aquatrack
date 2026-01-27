@@ -1,0 +1,71 @@
+<div class="modal-dialog">
+    <div class="modal-content shadow">
+
+        <!-- Cabeçalho -->
+        <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">Editar Instrução</h5>
+            <button type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Formulário -->
+        <form th:action="@{/fazenda/{codigo}/viveiro/{viveiroId}/instrucoes/{tagInstrucao}/editar(
+                codigo=${codigo},viveiroId=${viveiroId}, tagInstrucao=${instrucao.tag}
+        )}"
+              method="post">
+
+            <div class="modal-body">
+
+                <!-- Título -->
+                <div class="mb-3">
+                    <label for="titulo" class="form-label fw-semibold">
+                        Título
+                    </label>
+                    <input type="text" id="titulo"name="titulo" class="form-control"
+                           th:value="${instrucao.titulo}"required>
+                </div>
+
+                <!-- Descrição -->
+                <div class="mb-3">
+                    <label for="descricao" class="form-label fw-semibold">
+                        Descrição
+                    </label>
+                    <textarea id="descricao"name="descricao" class="form-control"
+                              rows="4" required th:text="${instrucao.descricao}"></textarea>
+                </div>
+
+                <!-- Status -->
+                <div class="mb-3">
+                    <label for="status" class="form-label fw-semibold">
+                        Status
+                    </label>
+                    <select id="status"name="status" class="form-select"required>
+                        <option value="PENDENTE"
+                                th:selected="${instrucao.status.name() == 'PENDENTE'}">
+                            Pendente
+                        </option>
+                        <option value="CONCLUIDO"
+                                th:selected="${instrucao.status.name() == 'CONCLUIDO'}">
+                            Concluído
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+
+            <!-- Rodapé -->
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="btn btn-success">
+                    Atualizar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

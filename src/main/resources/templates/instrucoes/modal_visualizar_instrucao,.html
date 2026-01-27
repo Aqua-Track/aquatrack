@@ -1,0 +1,67 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content shadow">
+
+        <!-- Cabeçalho -->
+        <div class="modal-header bg-info text-white">
+            <h5 class="modal-title">Detalhes da Instrução</h5>
+            <button type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+
+            <!-- Título -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Título</label>
+                <input type="text" class="form-control"th:value="${instrucao.titulo}"readonly>
+            </div>
+
+            <!-- Status -->
+            <div class="mb-3 text-center">
+                <label class="form-label fw-semibold d-block">Status</label>
+
+                <span class="badge px-4 py-2 rounded-pill"
+                      th:classappend="${instrucao.status.name() == 'CONCLUIDO'
+                          ? 'bg-success'
+                          : 'bg-warning'}"
+                      th:text="${instrucao.status.name()}">
+                </span>
+            </div>
+
+            <!-- Data -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Data de Criação</label>
+                <input type="text"class="form-control"
+                       th:value="${#temporals.format(instrucao.dataCriacao, 'dd/MM/yyyy')}"
+                       readonly>
+            </div>
+
+            <!-- Descrição -->
+            <div>
+                <label class="form-label fw-semibold">Descrição</label>
+                <textarea class="form-control bg-light"rows="4"
+                          readonlyth:text="${instrucao.descricao}"></textarea>
+            </div>
+
+        </div>
+
+        <!-- Rodapé -->
+        <div class="modal-footer">
+            <button class="btn btn-success"
+                    th:attr="data-url=@{/fazenda/{codigo}/viveiro/{viveiroId}/instrucoes/{tagInstrucao}/editar(
+                        codigo=${codigo},viveiroId=${viveiroId}, tagInstrucao=${instrucao.tag}
+                    )}"
+                    onclick="abrirModal(this)">
+                Editar
+            </button>
+            <button type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+                Fechar
+            </button>
+
+        </div>
+
+    </div>
+</div>

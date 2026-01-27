@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Instruções do Viveiro</title>
+</head>
+<body>
+
+<section class="container mt-4 pb-5">
+
+    <!-- NAVBAR DO VIVEIRO -->
+    <div th:replace="fragments/navbar_viveiro :: navbarViveiro( ${codigo}, ${viveiroId},${ciclo}, ${abaAtiva})"></div>
+
+    <!-- Cabeçalho -->
+    <div class="row mt-4 mb-3">
+        <div class="col text-center">
+            <h2 class="mb-0">Instruções do Viveiro</h2>
+            <p class="text-muted">Gerencie anotações e comandos operacionais.</p>
+        </div>
+    </div>
+
+    <!-- Botão nova instrução -->
+    <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-primary"
+                th:attr="data-url=@{/fazenda/{codigo}/viveiro/{viveiroId}/instrucoes/nova(
+                    codigo=${codigo},viveiroId=${viveiroId}
+                )}"
+                onclick="abrirModal(this)">
+            + Nova instrução
+        </button>
+    </div>
+
+    <!-- Tabela -->
+    <div class="border rounded shadow-sm overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th class="px-4">Título</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Data</th>
+                    <th class="text-center">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="instrucao : ${instrucoes}">
+                    <td class="px-4" th:text="${instrucao.titulo}">Título</td>
+
+                    <td class="text-center">
+                        <span class="badge rounded-pill px-3"
+                              th:classappend="${instrucao.status.name() == 'CONCLUIDO'
+                                  ? 'bg-success'
+                                  : 'bg-warning'}"
+                              th:text="${instrucao.status.name()}">
+                        </span>
+                    </td>
+
+                    <td class="text-center text-nowrap"
+                        th:text="${#temporals.format(instrucao.dataCriacao, 'dd/MM/yyyy')}">
+                        --
+                    </td>
+
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-2">
+                            <button class="btn btn-sm btn-info"
+                                    title="Visualizar"
+                                    th:attr="data-url=@{/fazenda/{codigo}/viveiro/{viveiroId}/instrucoes/{tagInstrucao}(
+                                        codigo=${codigo}, viveiroId=${viveiroId},  tagInstrucao=${instrucao.tag}
+                                    )}"
+                                    onclick="abrirModal(this)">
+                                Ver
+                            </button>
+                            <button class="btn btn-sm btn-danger"
+                                    data-bs-toggle="modal"
+                                    th:attr="data-bs-target='#modalExcluir__' + ${instrucao.tag}">
+                                Excluir
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(instrucoes)}">
+                    <td colspan="4" class="text-center py-4 text-muted">
+                        Nenhuma instrução cadastrada.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="modal-container" class="modal fade" tabindex="-1"></div>
+
+    <!-- MODAIS DE EXCLUSÃO -->
+    <th:block th:each="instrucao : ${instrucoes}">
+        <div class="modal fade"
+             th:id="'modalExcluir__' + ${instrucao.tag}"
+             tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">Confirmar exclusão</h5>
+                        <button type="button" class="btn-close btn-close-white"
+                                data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        Tem certeza que deseja excluir a instrução
+                        <strong th:text="${instrucao.titulo}">—</strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+
+                        <form th:action="@{/fazenda/{codigo}/viveiro/{viveiroId}/instrucoes/{tagInstrucao}/remover(
+                                codigo=${codigo}, viveiroId=${viveiroId},tagInstrucao=${instrucao.tag}
+                        )}"
+                              method="post">
+                            <button class="btn btn-danger">Excluir</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <script>
+        function abrirModal(btn) {
+            const url = btn.getAttribute('data-url');
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.getElementById('modal-container');
+                    container.innerHTML = html;
+                    const modal = new bootstrap.Modal(container);
+                    modal.show();
+                    container.addEventListener(
+                        'hidden.bs.modal',
+                        () => window.location.reload(),
+                        { once: true }
+                    );
+                });
+        }
+    </script>
+</section>
+</body>
+</html>
