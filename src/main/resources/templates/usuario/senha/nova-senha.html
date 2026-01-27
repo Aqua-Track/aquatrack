@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Redefinir senha</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+
+<body>
+<section class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-body p-4">
+
+                    <h2 class="text-center mb-1">
+                        Redefinir senha
+                    </h2>
+
+                    <p class="text-center mt-2 mb-4">
+                        Defina uma nova senha para sua conta.
+                    </p>
+
+                    <!-- alertas -->
+                    <div th:if="${info}" class="alert alert-success mb-3" th:text="${info}"></div>
+                    <div th:if="${erro}" class="alert alert-danger mb-3" th:text="${erro}"></div>
+
+                    <form action="/redefinir-senha/nova-senha"
+                          method="post"
+                          onsubmit="return validarSenha()">
+
+                        <input type="hidden" name="token" th:value="${token}" />
+
+                        <div class="mb-3">
+                            <label for="senha" class="form-label fw-semibold">Nova senha:</label>
+                            <input type="password"
+                                   class="form-control"
+                                   id="senha"
+                                   name="novaSenha"
+                                   required
+                                   autocomplete="new-password"
+                                   placeholder="********">
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="confirmarSenha" class="form-label fw-semibold">Confirmar senha:</label>
+                            <input type="password"
+                                   class="form-control"
+                                   id="confirmarSenha"
+                                   required
+                                   autocomplete="new-password"
+                                   placeholder="********">
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="/login" class="btn btn-danger px-4">Cancelar</a>
+                            <button type="submit" class="btn btn-success px-4">Salvar</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function validarSenha() {
+        const senha = document.getElementById('senha').value;
+        const confirmar = document.getElementById('confirmarSenha').value;
+
+        if (senha !== confirmar) {
+            alert('As senhas não coincidem.');
+            return false;
+        }
+        return true;
+    }
+</script>
+
+</body>
+</html>

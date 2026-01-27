@@ -1,4 +1,4 @@
-package com.ufpb.aquatrack.infra.verify.email.tokens;
+package com.ufpb.aquatrack.infra.auth.tokens;
 
 import com.ufpb.aquatrack.usuario.Usuario;
 import jakarta.persistence.*;

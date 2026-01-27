@@ -1,4 +1,4 @@
-package com.ufpb.aquatrack.infra.verify.email.tokens;
+package com.ufpb.aquatrack.infra.auth.tokens;
 
 public enum TokenType {
     ATIVACAO_CONTA,
