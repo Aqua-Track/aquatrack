@@ -36,12 +36,4 @@ public class WebConfig implements WebMvcConfigurer {
         // Esses 2 blocos a cima define que o interceptor será aplicado a TODAS as rotas
         // "/**" significa: qualquer URL da aplicação
     }
-
-    @Controller
-    public static class PublicController {
-        @GetMapping
-        public String home() {
-            return "redirect:/login";
-        }
-    }
 }
