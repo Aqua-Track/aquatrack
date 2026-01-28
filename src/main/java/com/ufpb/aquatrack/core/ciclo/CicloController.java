@@ -13,9 +13,11 @@ import java.time.LocalDate;
 public class CicloController {
 
     private final CicloService cicloService;
+    private final FinalizacaoCicloService finalizacaoCicloService;
 
-    public CicloController(CicloService cicloService) {
+    public CicloController(CicloService cicloService, FinalizacaoCicloService finalizacaoCicloService) {
         this.cicloService = cicloService;
+        this.finalizacaoCicloService = finalizacaoCicloService;
     }
 
     @GetMapping("/novo")
@@ -49,12 +51,16 @@ public class CicloController {
     }
 
 
-    @PostMapping("/encerrar")
-    public String encerrarCiclo(@PathVariable String codigo, @PathVariable Long viveiroId, HttpSession session) {
-
+    @PostMapping("/finalizar")
+    public String finalizarCiclo(
+            @PathVariable String codigo,
+            @PathVariable Long viveiroId,
+            HttpSession session
+    ) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
-        cicloService.encerrarCiclo(viveiroId, LocalDate.now(), usuario);
 
-        return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/abrirViveiro";
+        finalizacaoCicloService.finalizarCiclo(viveiroId, usuario);
+
+        return "redirect:/fazenda/" + codigo + "/viveiro/" + viveiroId + "/relatorios";
     }
 }

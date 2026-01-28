@@ -159,6 +159,4 @@ public class CicloService {
         return consumoTotalKg.divide(biomassaKg, 2, RoundingMode.HALF_UP);
     }
 
-
-
 }

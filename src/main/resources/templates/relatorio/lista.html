@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Relatórios do Viveiro</title>
+</head>
+
+<body>
+<section class="container my-5">
+
+    <!-- Nav bar -->
+    <div th:replace="~{fragments/navbar_viveiro :: navbarViveiro(${codigo}, ${viveiroId}, ${ciclo}, ${abaAtiva})}"></div>
+
+    <!-- linha divisória suave entre abas e conteúdo -->
+    <hr class="mt-0 mb-4">
+
+    <!-- Card de relatórios (sem remover nada; só centralização/padding) -->
+    <div class="card border">
+        <div class="card-body px-4 py-4">
+            <h2 class="text-center mb-1">Relatórios Passados</h2>
+            <p class="text-center text-muted mb-3">Selecione um relatório para ver os detalhes</p>
+            <table class="table table-striped table-bordered text-center">
+                <thead>
+                <tr>
+                    <th>Data da Venda</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r, iter : ${relatorios}">
+                    <td th:text="${r.dataEncerramento != null ? #temporals.format(r.dataEncerramento, 'dd/MM/yyyy') : '-'}">--/--/----</td>
+                    <td class="d-flex justify-content-center gap-2">
+                        <!-- Botão para abrir modal -->
+                        <button class="btn btn-sm btn-info"
+                                data-bs-toggle="modal"
+                                th:attr="data-bs-target='#modalRelatorio' + ${iter.index}">
+                            Ver Detalhes
+                        </button>
+                        <!-- Botão para abrir PDF -->
+                        <a th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/relatorios/{id}/pdf(
+                        codigo=${codigo}, viveiroId=${viveiroId}, id=${r.id} )}"
+                           class="btn btn-danger">
+                            PDF
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${relatorios.isEmpty()}">
+                    <td colspan="2">Nenhum relatório disponível</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <!-- Modais (inalterados funcionalmente) -->
+    <div th:each="r, iter : ${relatorios}">
+        <div class="modal fade" th:id="'modalRelatorio' + ${iter.index}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-secondary text-white">
+                        <h5 class="modal-title">
+                            Relatório - <span th:text="${r.dataEncerramento != null ? #temporals.format(r.dataEncerramento, 'dd/MM/yyyy') : '-'}"></span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Data Povoamento:</strong> <span th:text="${r.dataPovoamento != null ? #temporals.format(r.dataPovoamento, 'dd/MM/yyyy') : '-'}"></span></p>
+                        <p><strong>Laboratório:</strong> <span th:text="${r.laboratorio} ?: '-'"></span></p>
+                        <p><strong>Quantidade Povoada:</strong> <span th:text="${r.quantidadePovoada} ?: '-'"></span></p>
+                        <p><strong>Biometria Final:</strong> <span th:text="${r.biometriaFinal != null ? #numbers.formatDecimal(r.biometriaFinal, 1, 2) : '-'}"></span> g</p>
+                        <p><strong>Biomassa Final:</strong> <span th:text="${r.biomassaFinal != null ? #numbers.formatDecimal(r.biomassaFinal, 1, 2) : '-'}"></span> kg</p>
+                        <p><strong>Dias de Cultivo:</strong> <span th:text="${r.diasCultivo} ?: '-'"></span></p>
+                        <p><strong>Sobrevivência:</strong> <span th:text="${r.sobrevivencia != null ? #numbers.formatDecimal(r.sobrevivencia, 1, 2) + ' %' : '-'}"></span></p>
+                        <p><strong>FCA:</strong> <span th:text="${r.fca != null ? #numbers.formatDecimal(r.fca, 1, 2) + ' (kg ração/kg biomassa)' : '-'}"></span></p>
+                        <p><strong>Consumo Total de Ração:</strong> <span th:text="${r.consumoTotalRacao != null ? #numbers.formatDecimal(r.consumoTotalRacao, 1, 2) : '-'}"></span> kg</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+</body>
+</html>

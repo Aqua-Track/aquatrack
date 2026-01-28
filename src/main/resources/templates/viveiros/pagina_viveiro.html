@@ -168,14 +168,16 @@
                         Iniciar Ciclo
                     </a>
 
-                    <!-- Encerrar ciclo -->
-                    <form th:if="${ciclo != null}"
-                          th:action="@{/fazenda/{codigo}/viveiro/{id}/ciclo/encerrar(codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                    <!-- FINALIZAR CICLO-->
+                    <form th:action="@{/fazenda/{codigo}/viveiro/{viveiroId}/ciclo/finalizar(
+                                codigo=${fazenda.codigo},
+                                viveiroId=${viveiro.id})}"
                           method="post">
-                        <button type="submit" class="btn btn-sm btn-danger">
-                            Encerrar Ciclo
+                        <button class="btn btn-danger">
+                            Finalizar ciclo
                         </button>
                     </form>
+
                 </div>
             </div>
         </div>
