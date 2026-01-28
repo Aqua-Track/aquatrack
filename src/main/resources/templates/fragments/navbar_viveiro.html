@@ -60,6 +60,17 @@
                     Consumo
                 </a>
             </li>
+
+            <!-- Relatórios -->
+            <li class="nav-item">
+                <a class="nav-link"
+                   th:classappend="${abaAtiva == 'relatorio'} ? 'active'"
+                   th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/relatorios(
+                        codigo=${codigo},viveiroId=${viveiroId}
+                   )}">
+                    Relatórios
+                </a>
+            </li>
         </ul>
 
         <!-- Voltar -->
