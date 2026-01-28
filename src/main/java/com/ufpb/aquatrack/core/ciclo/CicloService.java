@@ -147,4 +147,18 @@ public class CicloService {
         }
     }
 
+    public BigDecimal calcularFca(BigDecimal biomassaKg, BigDecimal consumoTotalKg) {
+        if (biomassaKg == null || biomassaKg.compareTo(BigDecimal.ZERO) <= 0) {
+            return null;
+        }
+
+        if (consumoTotalKg == null || consumoTotalKg.compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+
+        return consumoTotalKg.divide(biomassaKg, 2, RoundingMode.HALF_UP);
+    }
+
+
+
 }
