@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Minha Conta</title>
+</head>
+
+<body>
+<section class="container my-5">
+
+    <!-- TÍTULO -->
+    <div class="position-relative py-2 mb-4">
+        <h1 class="text-center m-0">Minha Conta</h1>
+
+        <a th:href="@{/inicio}"
+           class="btn btn-danger btn-sm position-absolute end-0 top-50 translate-middle-y me-2">
+            Voltar
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- COLUNA ESQUERDA -->
+        <div class="col-md-4 text-center">
+            <div class="position-sticky" style="top:1rem">
+
+                <!-- FOTO -->
+                <button type="button"
+                        class="btn p-0 border-0 bg-transparent position-relative"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalFoto">
+
+                    <img th:src="${usuario.urlFoto}"
+                         class="rounded-circle img-thumbnail mb-3"
+                         style="width:200px;height:200px;object-fit:cover">
+
+                    <span class="position-absolute bottom-0 end-0 translate-middle
+                                 bg-white rounded-circle border shadow-sm p-1">
+                        ✏️
+                    </span>
+                </button>
+
+                <h4 th:text="${usuario.nome}">Nome</h4>
+                <p class="text-muted" th:text="${usuario.login}">email@email.com</p>
+
+            </div>
+        </div>
+
+        <!-- COLUNA DIREITA -->
+        <div class="col-md-8">
+
+            <!-- DADOS PESSOAIS -->
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-primary text-white">
+                    Dados pessoais
+                </div>
+
+                <form th:action="@{/usuario/conta/editar-nome}" method="post">
+                    <div class="card-body">
+                        <label class="form-label">Nome</label>
+                        <input type="text" name="nome" class="form-control" th:value="${usuario.nome}" required>
+                    </div>
+                    <div class="card-footer text-end">
+                        <button class="btn btn-primary btn-sm">Salvar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ALTERAR EMAIL -->
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-info text-white">
+                    Alterar email
+                </div>
+                <form th:action="@{/usuario/conta/alterar-email}" method="post">
+                    <div class="card-body">
+                        <label class="form-label">Novo email</label>
+                        <input type="email" name="email" class="form-control" th:value="${usuario.login}" required>
+                    </div>
+                    <div class="card-footer text-end">
+                        <button class="btn btn-info btn-sm text-white">Salvar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ALTERAR SENHA -->
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-warning">
+                    Alterar senha
+                </div>
+
+                <form th:action="@{/usuario/conta/alterar-senha}" method="post">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Senha atual</label>
+                                <input type="password" name="senhaAtual"
+                                       class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Nova senha</label>
+                                <input type="password" name="novaSenha"
+                                       class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Confirmar senha</label>
+                                <input type="password" name="confirmarSenha"
+                                       class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-end">
+                        <button class="btn btn-warning btn-sm">Salvar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- FAZENDA -->
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-secondary text-white">
+                    Fazenda vinculada
+                </div>
+                <div class="card-body">
+                    <p><strong>Nome:</strong>
+                        <span th:text="${fazenda.nome}">Fazenda</span>
+                    </p>
+                    <p><strong>Código:</strong>
+                        <code th:text="${fazenda.codigo}">F-0000</code>
+                    </p>
+                    <p><strong>Localização:</strong>
+                        <span th:text="${fazenda.localizacao}">Local</span>
+                    </p>
+                    <a th:href="@{/fazenda/{codigo}(codigo=${fazenda.codigo})}"
+                       class="btn btn-outline-primary btn-sm mt-2">
+                        Ir para fazenda
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL FOTO -->
+    <div class="modal fade" id="modalFoto" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alterar foto</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/usuario/conta/remover-foto}" method="post">
+                        <button class="btn btn-danger btn-sm w-100">
+                            Remover foto
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+</body>
+</html>

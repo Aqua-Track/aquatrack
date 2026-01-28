@@ -106,6 +106,7 @@ public class ViveiroController {
 
         BigDecimal biomassa = null;
         BigDecimal sobrevivencia = null;
+        BigDecimal fcaEstimado = null;
         List<ConsumoRacao> consumos = List.of();
         List<Biometria> biometrias = List.of();
 
@@ -150,6 +151,11 @@ public class ViveiroController {
         Map<String, BigDecimal> consumoPorTipo =
                 consumoRacaoService.calcularConsumoPorTipo(consumos);
 
+        // ===== FCA ESTIMADO =====
+        if (biomassa != null) {
+            fcaEstimado = cicloService.calcularFca(biomassa, consumoTotal);
+        }
+
         // ===== INSTRUÇÕES (NÃO DEPENDE DE CICLO) =====
         List<Instrucao> instrucoesRecentes =
                 instrucaoService.listar3Ultimas(codigo, viveiroId, usuario);
@@ -162,6 +168,7 @@ public class ViveiroController {
         model.addAttribute("fazenda", fazenda);
         model.addAttribute("viveiro", viveiro);
 
+        model.addAttribute("fcaEstimado", fcaEstimado);
         model.addAttribute("biomassa", biomassa);
         model.addAttribute("sobrevivencia", sobrevivencia);
         model.addAttribute("consumos", consumos);
