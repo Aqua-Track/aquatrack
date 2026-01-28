@@ -36,11 +36,11 @@
                                 th:attr="data-bs-target='#modalRelatorio' + ${iter.index}">
                             Ver Detalhes
                         </button>
-                        <!-- Botão para abrir PDF -->
-                        <a th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/relatorios/{id}/pdf(
-                        codigo=${codigo}, viveiroId=${viveiroId}, id=${r.id} )}"
-                           class="btn btn-danger">
-                            PDF
+                        <a th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/relatorios/{id}(
+                            codigo=${codigo}, viveiroId=${viveiroId}, id=${r.id})}"
+                           target="_blank"
+                           class="btn btn-primary">
+                            Ver Relatório
                         </a>
                     </td>
                 </tr>
