@@ -6,35 +6,43 @@
           rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
           crossorigin="anonymous">
+
+    <style>
+        /* Estilos idênticos ao que deu certo */
+        .text-success {
+            color: green !important; /* Força o verde */
+        }
+        .text-danger {
+            color: #dc3545 !important;
+        }
+        /* Opcional: estilo para a lista ficar mais limpa */
+        ul#senhaRequisitos li {
+            font-size: 0.9em;
+            margin-bottom: 2px;
+        }
+    </style>
 </head>
 <body class="bg-light">
 <section class="d-flex justify-content-center mt-5 mb-5">
     <div class="card shadow-sm p-4" style="max-width: 500px; width: 100%;">
         <h3 class="text-center mb-4">Cadastro de Usuário</h3>
 
-        <!-- Alerta de erro -->
         <div th:if="${erro}" class="alert alert-danger" role="alert">
             <p th:text="${erro}"></p>
         </div>
 
-        <!-- Formulário -->
-        <form action="/master/cadastrar" method="post" onsubmit="return validarSenha()">
+        <form action="/master/cadastrar" method="post" onsubmit="return podeEnviarFormulario()">
+
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome:</label>
                 <input type="text" class="form-control" id="nome" name="nome" required>
             </div>
+
             <div class="mb-3">
                 <label for="login" class="form-label">Email:</label>
                 <input type="email" class="form-control" id="login" name="login" required>
             </div>
-            <div class="mb-3">
-                <label for="senha" class="form-label">Senha:</label>
-                <input type="password" class="form-control" id="senha" name="senha" required>
-            </div>
-            <div class="mb-3">
-                <label for="confirmarSenha" class="form-label">Confirmar Senha:</label>
-                <input type="password" class="form-control" id="confirmarSenha" name="confirmarSenha" required>
-            </div>
+
             <div class="mb-3">
                 <label for="role" class="form-label">Tipo de Usuário:</label>
                 <select id="role" name="role" class="form-select" required>
@@ -42,7 +50,36 @@
                     <option value="PADRAO">Padrão</option>
                 </select>
             </div>
+
+            <hr>
+
+            <div class="mb-3">
+                <label for="senha" class="form-label">Senha:</label>
+                <input type="password" class="form-control" id="senha" name="senha" required oninput="validarSenha()">
+
+                <ul id="senhaRequisitos" class="list-unstyled mt-2">
+                    <li id="min" class="text-danger">
+                        <span class="icone">✖</span> Mínimo 8 caracteres
+                    </li>
+                    <li id="maiuscula" class="text-danger">
+                        <span class="icone">✖</span> Letra maiúscula
+                    </li>
+                    <li id="minuscula" class="text-danger">
+                        <span class="icone">✖</span> Letra minúscula
+                    </li>
+                    <li id="numero" class="text-danger">
+                        <span class="icone">✖</span> Pelo menos 1 número
+                    </li>
+                </ul>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmarSenha" class="form-label">Confirmar Senha:</label>
+                <input type="password" class="form-control" id="confirmarSenha" name="confirmarSenha" required>
+            </div>
+
             <br>
+
             <div class="d-flex gap-2">
                 <a href="/master" class="btn btn-danger w-50">Cancelar</a>
                 <button type="submit" class="btn btn-primary w-50">Cadastrar</button>
@@ -50,19 +87,72 @@
 
         </form>
     </div>
+    <script>
+        // 1. Função visual (Cópia exata da lógica que deu certo)
+        function validarSenha() {
+            const senha = document.getElementById('senha').value;
+
+            const requisitos = {
+                min: {
+                    el: document.getElementById('min'),
+                    valido: senha.length >= 8
+                },
+                maiuscula: {
+                    el: document.getElementById('maiuscula'),
+                    valido: /[A-Z]/.test(senha)
+                },
+                minuscula: {
+                    el: document.getElementById('minuscula'),
+                    valido: /[a-z]/.test(senha)
+                },
+                numero: {
+                    el: document.getElementById('numero'),
+                    valido: /\d/.test(senha)
+                }
+            };
+
+            let tudoValido = true;
+
+            for (let key in requisitos) {
+                const item = requisitos[key];
+                const spanIcone = item.el.querySelector('.icone');
+
+                if (item.valido) {
+                    item.el.classList.remove('text-danger');
+                    item.el.classList.add('text-success');
+                    spanIcone.innerHTML = '✔';
+                } else {
+                    item.el.classList.remove('text-success');
+                    item.el.classList.add('text-danger');
+                    spanIcone.innerHTML = '✖';
+                    tudoValido = false;
+                }
+            }
+            return tudoValido;
+        }
+
+        // 2. Função de envio (onsubmit)
+        function podeEnviarFormulario() {
+            const requisitosOk = validarSenha(); // Revalida os visuais
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+
+            if (!requisitosOk) {
+                alert('A senha não atende a todos os requisitos listados.');
+                return false;
+            }
+
+            if (senha !== confirmarSenha) {
+                alert('As senhas não coincidem!');
+                document.getElementById('confirmarSenha').classList.add('is-invalid'); // Feedback visual no input
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 </section>
 
-<script>
-    function validarSenha() {
-        const senha = document.getElementById('senha').value;
-        const confirmarSenha = document.getElementById('confirmarSenha').value;
-        if (senha !== confirmarSenha) {
-            alert('As senhas não coincidem.');
-            return false;
-        }
-        return true;
-    }
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

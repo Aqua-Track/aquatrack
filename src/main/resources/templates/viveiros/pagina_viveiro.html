@@ -18,13 +18,8 @@
         </div>
     </div>
 
-    <!-- Botão Voltar -->
-    <div class="text-end mb-4">
-        <a th:href="@{/fazenda/{codigo}(codigo=${fazenda.codigo})}"
-           class="btn btn-danger btn-sm">
-            Voltar
-        </a>
-    </div>
+    <!-- Nav bar -->
+    <div th:replace="~{fragments/navbar_viveiro :: navbarViveiro(${codigo}, ${viveiroId}, ${ciclo}, ${abaAtiva})}"></div>
 
     <!-- Informações Básicas -->
     <div class="mb-4">
@@ -47,6 +42,76 @@
                        readonly>
             </div>
         </form>
+    </div>
+
+    <!-- INSTRUÇÕES DO VIVEIRO -->
+    <div class="row mb-4">
+        <div class="col d-flex">
+            <div class="card h-100 w-100 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    Instruções do Viveiro
+                </div>
+                <div class="card-body p-0">
+                    <div th:if="${instrucoes != null and !instrucoes.isEmpty()}">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item py-2"
+                                th:each="instrucao : ${instrucoes}">
+                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                    <div class="flex-grow-1">
+                                        <div class="fw-semibold"
+                                             th:text="${instrucao.titulo}">
+                                            Título
+                                        </div>
+                                        <div class="text-muted small text-truncate"
+                                             th:text="${instrucao.descricao}">
+                                            descrição
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                    <span class="badge rounded-pill"
+                                          th:classappend="${instrucao.status.name() == 'CONCLUIDO'
+                                              ? 'bg-success'
+                                              : 'bg-warning'}"
+                                          th:text="${instrucao.status.name()}">
+                                    </span>
+                                        <div class="text-muted small"
+                                             th:text="${#temporals.format(instrucao.dataCriacao, 'dd/MM/yyyy')}">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div th:if="${instrucoes == null or instrucoes.isEmpty()}"
+                         class="p-3 text-center text-muted">
+                        Nenhuma instrução registrada ainda.
+                    </div>
+
+                </div>
+
+                <div class="card-footer d-flex justify-content-end gap-2">
+                    <a th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/instrucoes(
+                        codigo=${codigo}, viveiroId=${viveiroId} )}"
+                       class="btn btn-dark btn-sm">
+                        Ver todas
+                    </a>
+                    <button class="btn btn-primary btn-sm"
+                            th:attr="data-url=@{/fazenda/{codigo}/viveiro/{viveiroId}/instrucoes/nova(
+                            codigo=${codigo},viveiroId=${viveiroId})}"
+                            onclick="abrirModal(this)">
+                        Adicionar instrução
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <h3>Dados do viveiro</h3>
+        <hr>
     </div>
 
     <!-- Linha: Ciclo | Consumo -->
@@ -87,6 +152,10 @@
                             <strong>Sobrevivência:</strong>
                             <span th:text="${sobrevivencia != null ? sobrevivencia + ' %' : '100%'}"></span>
                         </p>
+                        <p>
+                            <strong>FCA Estimado:</strong>
+                            <span th:text="${fcaEstimado != null ? fcaEstimado : '---'}"></span>
+                        </p>
                     </div>
                 </div>
 
@@ -99,14 +168,16 @@
                         Iniciar Ciclo
                     </a>
 
-                    <!-- Encerrar ciclo -->
-                    <form th:if="${ciclo != null}"
-                          th:action="@{/fazenda/{codigo}/viveiro/{id}/ciclo/encerrar(codigo=${fazenda.codigo}, id=${viveiro.id})}"
+                    <!-- FINALIZAR CICLO-->
+                    <form th:action="@{/fazenda/{codigo}/viveiro/{viveiroId}/ciclo/finalizar(
+                                codigo=${fazenda.codigo},
+                                viveiroId=${viveiro.id})}"
                           method="post">
-                        <button type="submit" class="btn btn-sm btn-danger">
-                            Encerrar Ciclo
+                        <button class="btn btn-danger">
+                            Finalizar ciclo
                         </button>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -125,7 +196,6 @@
                     <!-- Tabela de consumo -->
                     <table class="table table-bordered table-striped align-middle text-center mb-3">
                         <tbody>
-
                         <!-- Consumo por tipo -->
                         <tr th:each="entry : ${consumoPorTipo}">
                             <th th:text="${entry.key}"></th>
@@ -137,7 +207,6 @@
                             <th>Consumo Total</th>
                             <td th:text="${consumoTotal} + ' Kg'"></td>
                         </tr>
-
                         </tbody>
                     </table>
 
@@ -180,6 +249,11 @@
                             <td th:text="${penultimaBiometria != null ? #temporals.format(penultimaBiometria.dataBiometria,'dd/MM/yyyy') : '---'}"></td>
                         </tr>
                         <tr>
+                            <th>Peso Total (g)</th>
+                            <td th:text="${ultimaBiometria != null ? ultimaBiometria.pesoTotalAmostra : '---'}"></td>
+                            <td th:text="${penultimaBiometria != null ? penultimaBiometria.pesoTotalAmostra : '---'}"></td>
+                        </tr>
+                        <tr>
                             <th>Quantidade</th>
                             <td th:text="${ultimaBiometria != null ? ultimaBiometria.quantidadeAmostrada : '---'}"></td>
                             <td th:text="${penultimaBiometria != null ? penultimaBiometria.quantidadeAmostrada : '---'}"></td>
@@ -209,11 +283,9 @@
         <!-- Qualidade da Água -->
         <div class="col d-flex" th:if="${ciclo != null}">
             <div class="card h-100 w-100 shadow-sm">
-
                 <div class="card-header bg-info text-white">
                     Qualidade da Água
                 </div>
-
                 <div class="card-body">
                     <table class="table table-bordered align-middle">
                         <thead>
@@ -231,33 +303,33 @@
                         </tr>
                         <tr>
                             <th>Amônia</th>
-                            <td th:text="${ultimaAgua.amonia != null ? ultimaAgua.amonia : 'Não coletado'}"></td>
-                            <td th:text="${penultimaAgua.amonia != null ? penultimaAgua.amonia : 'Não coletado'}"></td>
+                            <td th:text="${ultimaAgua != null and ultimaAgua.amonia != null ? ultimaAgua.amonia : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua != null and penultimaAgua.amonia != null ? penultimaAgua.amonia : 'Não coletado'}"></td>
                         </tr>
                         <tr>
                             <th>Nitrito</th>
-                            <td th:text="${ultimaAgua.nitrito != null ? ultimaAgua.nitrito : 'Não coletado'}"></td>
-                            <td th:text="${penultimaAgua.nitrito != null ? penultimaAgua.nitrito : 'Não coletado'}"></td>
+                            <td th:text="${ultimaAgua != null and ultimaAgua.nitrito != null ? ultimaAgua.nitrito : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua != null and penultimaAgua.nitrito != null ? penultimaAgua.nitrito : 'Não coletado'}"></td>
                         </tr>
                         <tr>
                             <th>pH</th>
-                            <td th:text="${ultimaAgua.ph != null ? ultimaAgua.ph : 'Não coletado'}"></td>
-                            <td th:text="${penultimaAgua.ph != null ? penultimaAgua.ph : 'Não coletado'}"></td>
+                            <td th:text="${ultimaAgua != null and ultimaAgua.ph != null ? ultimaAgua.ph : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua != null and penultimaAgua.ph != null ? penultimaAgua.ph : 'Não coletado'}"></td>
                         </tr>
                         <tr>
                             <th>Alcalinidade</th>
-                            <td th:text="${ultimaAgua.alcalinidade != null ? ultimaAgua.alcalinidade : 'Não coletado'}"></td>
-                            <td th:text="${penultimaAgua.alcalinidade != null ? penultimaAgua.alcalinidade : 'Não coletado'}"></td>
+                            <td th:text="${ultimaAgua != null and ultimaAgua.alcalinidade != null ? ultimaAgua.alcalinidade : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua != null and penultimaAgua.alcalinidade != null ? penultimaAgua.alcalinidade : 'Não coletado'}"></td>
                         </tr>
                         <tr>
                             <th>Salinidade</th>
-                            <td th:text="${ultimaAgua.salinidade != null ? ultimaAgua.salinidade : 'Não coletado'}"></td>
-                            <td th:text="${penultimaAgua.salinidade != null ? penultimaAgua.salinidade : 'Não coletado'}"></td>
+                            <td th:text="${ultimaAgua != null and ultimaAgua.salinidade != null ? ultimaAgua.salinidade : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua != null and penultimaAgua.salinidade != null ? penultimaAgua.salinidade : 'Não coletado'}"></td>
                         </tr>
                         <tr>
                             <th>Oxigênio</th>
-                            <td th:text="${ultimaAgua.oxigenio != null ? ultimaAgua.oxigenio : 'Não coletado'}"></td>
-                            <td th:text="${penultimaAgua.oxigenio != null ? penultimaAgua.oxigenio : 'Não coletado'}"></td>
+                            <td th:text="${ultimaAgua != null and ultimaAgua.oxigenio != null ? ultimaAgua.oxigenio : 'Não coletado'}"></td>
+                            <td th:text="${penultimaAgua != null and penultimaAgua.oxigenio != null ? penultimaAgua.oxigenio : 'Não coletado'}"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -272,10 +344,37 @@
                         Nova Análise
                     </a>
                 </div>
-
             </div>
         </div>
     </div>
+
+    <div id="modal-container" class="modal fade" tabindex="-1"></div>
+
+    <script>
+        function abrirModal(btn) {
+            const url = btn.getAttribute('data-url');
+            // Fecha qualquer modal aberto
+            const modalAberto = document.querySelector('.modal.show');
+            if (modalAberto) {
+                bootstrap.Modal.getInstance(modalAberto).hide();
+            }
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.getElementById('modal-container');
+                    container.innerHTML = html;
+                    const modalEl = container.querySelector('.modal');
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+
+                    modalEl.addEventListener(
+                        'hidden.bs.modal',
+                        () => window.location.reload(),
+                        { once: true }
+                    );
+                });
+        }
+    </script>
 
 </section>
 </body>

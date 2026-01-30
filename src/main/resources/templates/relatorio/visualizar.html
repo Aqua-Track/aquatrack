@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório Final do Ciclo</title>
+
+    <style>
+        /* ===== RESET BÁSICO ===== */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 32px;
+            color: #111827;
+            background: #ffffff;
+        }
+
+        /* ===== CORES AQUATRACK ===== */
+        :root {
+            --azul: #0b4fa2;
+            --laranja: #f97316;
+            --cinza: #6b7280;
+            --borda: #e5e7eb;
+        }
+
+        /* ===== CABEÇALHO ===== */
+        .report-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 2px solid var(--borda);
+            padding-bottom: 16px;
+            margin-bottom: 28px;
+        }
+
+        .report-header img {
+            height: 52px;
+        }
+
+        .header-text h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--azul);
+        }
+
+        .header-text p {
+            margin: 4px 0;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .header-text span {
+            font-size: 12px;
+            color: var(--cinza);
+        }
+
+        /* ===== MÉTRICAS (CARDS) ===== */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .metric-card {
+            border: 1px solid var(--borda);
+            border-radius: 10px;
+            padding: 16px;
+            background: #ffffff;
+        }
+
+        .metric-card span {
+            display: block;
+            font-size: 12px;
+            color: var(--cinza);
+            margin-bottom: 6px;
+        }
+
+        .metric-card strong {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--azul);
+        }
+
+        .metric-card.highlight strong {
+            color: var(--laranja);
+        }
+
+        /* ===== SEÇÕES ===== */
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: var(--azul);
+            margin-bottom: 12px;
+        }
+
+        /* ===== TABELA LIMPA ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            font-size: 13px;
+            color: #374151;
+            padding: 8px;
+            width: 35%;
+        }
+
+        td {
+            padding: 8px;
+            font-size: 14px;
+            color: #111827;
+        }
+
+        tr:not(:last-child) {
+            border-bottom: 1px solid var(--borda);
+        }
+
+        /* ===== AÇÕES ===== */
+        .actions {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .actions button,
+        .actions a {
+            padding: 10px 18px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-print {
+            background: var(--azul);
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-back {
+            background: transparent;
+            color: var(--azul);
+            border: 1px solid var(--azul);
+        }
+
+        /* ===== RODAPÉ ===== */
+        footer {
+            margin-top: 48px;
+            font-size: 12px;
+            color: var(--cinza);
+            text-align: center;
+        }
+
+        /* ===== PRINT ===== */
+        @media print {
+            body {
+                margin: 20mm;
+            }
+
+            .actions {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ===== CABEÇALHO ===== -->
+<header class="report-header">
+    <img src="/images/logo-simples.png" alt="AquaTrack">
+
+    <div class="header-text">
+        <h1>Relatório Final do Ciclo</h1>
+        <p>
+            Fazenda: <strong th:text="${fazenda.nome}"></strong> ·
+            Viveiro: <strong th:text="${viveiro.tag}"></strong>
+        </p>
+        <span>
+            Emitido em
+            <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
+        </span>
+    </div>
+</header>
+
+<!-- ===== MÉTRICAS PRINCIPAIS ===== -->
+<section class="metrics">
+    <div class="metric-card highlight">
+        <span>Biomassa Final</span>
+        <strong th:text="${#numbers.formatDecimal(relatorio.biomassaFinal, 1, 2)} + ' kg'"></strong>
+    </div>
+
+    <div class="metric-card">
+        <span>FCA</span>
+        <strong th:text="${#numbers.formatDecimal(relatorio.fca, 1, 2)}"></strong>
+    </div>
+
+    <div class="metric-card">
+        <span>Sobrevivência</span>
+        <strong th:text="${#numbers.formatDecimal(relatorio.sobrevivencia, 1, 2)} + ' %'"></strong>
+    </div>
+
+    <div class="metric-card">
+        <span>Consumo de Ração</span>
+        <strong th:text="${#numbers.formatDecimal(relatorio.consumoTotalRacao, 1, 2)} + ' kg'"></strong>
+    </div>
+</section>
+
+<!-- ===== DADOS DO CICLO ===== -->
+<section class="section">
+    <h2 class="section-title">Dados do Ciclo</h2>
+
+    <table>
+        <tr>
+            <th>Data de Povoamento</th>
+            <td th:text="${#temporals.format(relatorio.dataPovoamento, 'dd/MM/yyyy')}"></td>
+        </tr>
+        <tr>
+            <th>Data de Encerramento</th>
+            <td th:text="${#temporals.format(relatorio.dataEncerramento, 'dd/MM/yyyy')}"></td>
+        </tr>
+        <tr>
+            <th>Dias de Cultivo</th>
+            <td th:text="${relatorio.diasCultivo}"></td>
+        </tr>
+        <tr>
+            <th>Quantidade Povoada</th>
+            <td th:text="${relatorio.quantidadePovoada}"></td>
+        </tr>
+        <tr>
+            <th>Laboratório</th>
+            <td th:text="${relatorio.laboratorio}"></td>
+        </tr>
+    </table>
+</section>
+
+<!-- ===== PRODUÇÃO FINAL ===== -->
+<section class="section">
+    <h2 class="section-title">Produção Final</h2>
+
+    <table>
+        <tr>
+            <th>Biometria Final</th>
+            <td th:text="${#numbers.formatDecimal(relatorio.biometriaFinal, 1, 2)} + ' g'"></td>
+        </tr>
+        <tr>
+            <th>Biomassa Final</th>
+            <td th:text="${#numbers.formatDecimal(relatorio.biomassaFinal, 1, 2)} + ' kg'"></td>
+        </tr>
+    </table>
+</section>
+
+<!-- ===== AÇÕES ===== -->
+<div class="actions">
+    <button class="btn-print" onclick="window.print()">Salvar em PDF</button>
+    <a href="javascript:history.back()" class="btn-back">Voltar</a>
+</div>
+
+<!-- ===== RODAPÉ ===== -->
+<footer>
+    AquaTrack © 2026 · Relatório gerado automaticamente
+</footer>
+
+</body>
+</html>

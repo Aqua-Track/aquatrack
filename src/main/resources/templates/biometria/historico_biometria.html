@@ -19,6 +19,10 @@
         </div>
     </div>
 
+    <!-- Nav bar -->
+    <div th:replace="~{fragments/navbar_viveiro :: navbarViveiro( ${codigo}, ${viveiroId}, ${ciclo},${abaAtiva})}"></div>
+
+
     <div class="card shadow-sm p-4">
         <h2 class="mb-3">Histórico de Biometria</h2>
 
@@ -62,12 +66,6 @@
                 </tr>
                 </tbody>
             </table>
-        </div>
-        <div class="text-end mt-3">
-            <a th:href="@{/fazenda/{codigo}/viveiro/{viveiroId}/abrirViveiro(codigo=${codigo}, viveiroId=${viveiroId})}"
-               class="btn btn-danger btn-sm">
-                Voltar
-            </a>
         </div>
     </div>
 </section>

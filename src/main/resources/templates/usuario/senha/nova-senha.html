@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Redefinir senha</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        .text-success { color: green !important; }
+        .text-danger { color: #dc3545 !important; }
+        ul#senhaRequisitos li { font-size: 0.9em; margin-bottom: 2px; }
+    </style>
+</head>
+
+<body>
+<section class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-body p-4">
+
+                    <h2 class="text-center mb-1">
+                        Redefinir senha
+                    </h2>
+
+                    <p class="text-center mt-2 mb-4">
+                        Defina uma nova senha para sua conta.
+                    </p>
+
+                    <div th:if="${info}" class="alert alert-success mb-3" th:text="${info}"></div>
+                    <div th:if="${erro}" class="alert alert-danger mb-3" th:text="${erro}"></div>
+
+                    <form action="/redefinir-senha/nova-senha"
+                          method="post"
+                          onsubmit="return podeEnviarFormulario()">
+
+                        <input type="hidden" name="token" th:value="${token}" />
+
+                        <div class="mb-3">
+                            <label for="senha" class="form-label fw-semibold">Nova senha:</label>
+                            <input type="password"
+                                   class="form-control"
+                                   id="senha"
+                                   name="novaSenha"
+                                   required
+                                   autocomplete="new-password"
+                                   placeholder="********"
+                                   oninput="validarSenha()">
+
+                            <ul id="senhaRequisitos" class="list-unstyled mt-2">
+                                <li id="min" class="text-danger">
+                                    <span class="icone">✖</span> Mínimo 8 caracteres
+                                </li>
+                                <li id="maiuscula" class="text-danger">
+                                    <span class="icone">✖</span> Letra maiúscula
+                                </li>
+                                <li id="minuscula" class="text-danger">
+                                    <span class="icone">✖</span> Letra minúscula
+                                </li>
+                                <li id="numero" class="text-danger">
+                                    <span class="icone">✖</span> Pelo menos 1 número
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="confirmarSenha" class="form-label fw-semibold">Confirmar senha:</label>
+                            <input type="password"
+                                   class="form-control"
+                                   id="confirmarSenha"
+                                   required
+                                   autocomplete="new-password"
+                                   placeholder="********">
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="/login" class="btn btn-danger px-4">Cancelar</a>
+                            <button type="submit" class="btn btn-success px-4">Salvar</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função visual
+        function validarSenha() {
+            const senha = document.getElementById('senha').value;
+
+            const requisitos = {
+                min: { el: document.getElementById('min'), valido: senha.length >= 8 },
+                maiuscula: { el: document.getElementById('maiuscula'), valido: /[A-Z]/.test(senha) },
+                minuscula: { el: document.getElementById('minuscula'), valido: /[a-z]/.test(senha) },
+                numero: { el: document.getElementById('numero'), valido: /\d/.test(senha) }
+            };
+
+            let tudoValido = true;
+
+            for (let key in requisitos) {
+                const item = requisitos[key];
+                const spanIcone = item.el.querySelector('.icone');
+
+                if (item.valido) {
+                    item.el.classList.remove('text-danger');
+                    item.el.classList.add('text-success');
+                    spanIcone.innerHTML = '✔';
+                } else {
+                    item.el.classList.remove('text-success');
+                    item.el.classList.add('text-danger');
+                    spanIcone.innerHTML = '✖';
+                    tudoValido = false;
+                }
+            }
+            return tudoValido;
+        }
+
+        // Função de envio (onsubmit)
+        function podeEnviarFormulario() {
+            const requisitosOk = validarSenha();
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+
+            if (!requisitosOk) {
+                alert('A senha não atende a todos os requisitos listados.');
+                return false;
+            }
+
+            if (senha !== confirmarSenha) {
+                alert('As senhas não coincidem!');
+                document.getElementById('confirmarSenha').classList.add('is-invalid');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+
+</section>
+</body>
+</html>
