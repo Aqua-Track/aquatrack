@@ -2,7 +2,7 @@ package com.ufpb.aquatrack.core.ciclo;
 
 import com.ufpb.aquatrack.core.biometria.Biometria;
 import com.ufpb.aquatrack.core.racao.consumo.ConsumoRacao;
-import com.ufpb.aquatrack.error.exceptions.RecursoNaoEncontradoException;
+import com.ufpb.aquatrack.infra.error.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.core.usuario.Usuario;
 import com.ufpb.aquatrack.core.viveiro.Viveiro;
 import com.ufpb.aquatrack.core.viveiro.ViveiroRepository;

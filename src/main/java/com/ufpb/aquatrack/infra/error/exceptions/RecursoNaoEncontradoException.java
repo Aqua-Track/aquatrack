@@ -1,4 +1,4 @@
-package com.ufpb.aquatrack.error.exceptions;
+package com.ufpb.aquatrack.infra.error.exceptions;
 
 public class RecursoNaoEncontradoException extends RuntimeException {
 

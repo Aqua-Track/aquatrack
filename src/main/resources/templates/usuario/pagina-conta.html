@@ -3,12 +3,17 @@
       th:replace="~{layout :: layout(~{::title}, ~{::section})}">
 <head>
     <title>Minha Conta</title>
+
+    <style>
+        .text-success { color: green !important; }
+        .text-danger { color: #dc3545 !important; }
+        ul#senhaRequisitos li { font-size: 0.9em; margin-bottom: 2px; }
+    </style>
 </head>
 
 <body>
 <section class="container my-5">
 
-    <!-- TÍTULO -->
     <div class="position-relative py-2 mb-4">
         <h1 class="text-center m-0">Minha Conta</h1>
 
@@ -20,11 +25,9 @@
 
     <div class="row g-4">
 
-        <!-- COLUNA ESQUERDA -->
         <div class="col-md-4 text-center">
             <div class="position-sticky" style="top:1rem">
 
-                <!-- FOTO -->
                 <button type="button"
                         class="btn p-0 border-0 bg-transparent position-relative"
                         data-bs-toggle="modal"
@@ -46,16 +49,20 @@
             </div>
         </div>
 
-        <!-- COLUNA DIREITA -->
         <div class="col-md-8">
 
-            <!-- DADOS PESSOAIS -->
+            <div th:if="${erro}" class="text-center alert alert-danger" role="alert">
+                <p th:text="${erro}"></p>
+            </div>
+            <div th:if="${info}" class="text-center alert alert-info" role="alert">
+                <p th:text="${info}"></p>
+            </div>
+
             <div class="card shadow-sm border-0 rounded-3 mb-4">
                 <div class="card-header bg-primary text-white">
                     Dados pessoais
                 </div>
-
-                <form th:action="@{/usuario/conta/editar-nome}" method="post">
+                <form th:action="@{/usuario/editar-nome}" method="post">
                     <div class="card-body">
                         <label class="form-label">Nome</label>
                         <input type="text" name="nome" class="form-control" th:value="${usuario.nome}" required>
@@ -66,12 +73,11 @@
                 </form>
             </div>
 
-            <!-- ALTERAR EMAIL -->
             <div class="card shadow-sm border-0 rounded-3 mb-4">
                 <div class="card-header bg-info text-white">
                     Alterar email
                 </div>
-                <form th:action="@{/usuario/conta/alterar-email}" method="post">
+                <form th:action="@{/usuario/alterar-email}" method="post">
                     <div class="card-body">
                         <label class="form-label">Novo email</label>
                         <input type="email" name="email" class="form-control" th:value="${usuario.login}" required>
@@ -82,53 +88,69 @@
                 </form>
             </div>
 
-            <!-- ALTERAR SENHA -->
             <div class="card shadow-sm border-0 rounded-3 mb-4">
                 <div class="card-header bg-warning">
                     Alterar senha
                 </div>
 
-                <form th:action="@{/usuario/conta/alterar-senha}" method="post">
+                <form th:action="@{/usuario/alterar-senha}" method="post" onsubmit="return podeSalvarSenha()">
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label">Senha atual</label>
-                                <input type="password" name="senhaAtual"
-                                       class="form-control" required>
+                                <input type="password" name="senhaAtual" class="form-control" required>
                             </div>
+
                             <div class="col-md-4">
                                 <label class="form-label">Nova senha</label>
-                                <input type="password" name="novaSenha"
-                                       class="form-control" required>
+                                <input type="password"
+                                       id="novaSenha"
+                                       name="novaSenha"
+                                       class="form-control"
+                                       required
+                                       oninput="validarSenha()">
                             </div>
+
                             <div class="col-md-4">
                                 <label class="form-label">Confirmar senha</label>
-                                <input type="password" name="confirmarSenha"
-                                       class="form-control" required>
+                                <input type="password"
+                                       id="confirmarSenha"
+                                       name="confirmarSenha"
+                                       class="form-control"
+                                       required>
                             </div>
                         </div>
+
+                        <ul id="senhaRequisitos" class="list-unstyled mt-3 mb-0">
+                            <li id="min" class="text-danger">
+                                <span class="icone">✖</span> Mínimo 8 caracteres
+                            </li>
+                            <li id="maiuscula" class="text-danger">
+                                <span class="icone">✖</span> Letra maiúscula
+                            </li>
+                            <li id="minuscula" class="text-danger">
+                                <span class="icone">✖</span> Letra minúscula
+                            </li>
+                            <li id="numero" class="text-danger">
+                                <span class="icone">✖</span> Pelo menos 1 número
+                            </li>
+                        </ul>
                     </div>
+
                     <div class="card-footer text-end">
                         <button class="btn btn-warning btn-sm">Salvar</button>
                     </div>
                 </form>
             </div>
 
-            <!-- FAZENDA -->
             <div class="card shadow-sm border-0 rounded-3">
                 <div class="card-header bg-secondary text-white">
                     Fazenda vinculada
                 </div>
                 <div class="card-body">
-                    <p><strong>Nome:</strong>
-                        <span th:text="${fazenda.nome}">Fazenda</span>
-                    </p>
-                    <p><strong>Código:</strong>
-                        <code th:text="${fazenda.codigo}">F-0000</code>
-                    </p>
-                    <p><strong>Localização:</strong>
-                        <span th:text="${fazenda.localizacao}">Local</span>
-                    </p>
+                    <p><strong>Nome:</strong> <span th:text="${fazenda.nome}">Fazenda</span></p>
+                    <p><strong>Código:</strong> <code th:text="${fazenda.codigo}">F-0000</code></p>
+                    <p><strong>Localização:</strong> <span th:text="${fazenda.localizacao}">Local</span></p>
                     <a th:href="@{/fazenda/{codigo}(codigo=${fazenda.codigo})}"
                        class="btn btn-outline-primary btn-sm mt-2">
                         Ir para fazenda
@@ -139,7 +161,6 @@
         </div>
     </div>
 
-    <!-- MODAL FOTO -->
     <div class="modal fade" id="modalFoto" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -148,7 +169,7 @@
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/usuario/conta/remover-foto}" method="post">
+                    <form th:action="@{/usuario/remover-foto}" method="post">
                         <button class="btn btn-danger btn-sm w-100">
                             Remover foto
                         </button>
@@ -157,6 +178,57 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function validarSenha() {
+            const senha = document.getElementById('novaSenha').value;
+
+            const requisitos = {
+                min: { el: document.getElementById('min'), valido: senha.length >= 8 },
+                maiuscula: { el: document.getElementById('maiuscula'), valido: /[A-Z]/.test(senha) },
+                minuscula: { el: document.getElementById('minuscula'), valido: /[a-z]/.test(senha) },
+                numero: { el: document.getElementById('numero'), valido: /\d/.test(senha) }
+            };
+
+            let tudoValido = true;
+
+            for (let key in requisitos) {
+                const item = requisitos[key];
+                const spanIcone = item.el.querySelector('.icone');
+
+                if (item.valido) {
+                    item.el.classList.remove('text-danger');
+                    item.el.classList.add('text-success');
+                    spanIcone.innerHTML = '✔';
+                } else {
+                    item.el.classList.remove('text-success');
+                    item.el.classList.add('text-danger');
+                    spanIcone.innerHTML = '✖';
+                    tudoValido = false;
+                }
+            }
+            return tudoValido;
+        }
+
+        function podeSalvarSenha() {
+            const requisitosOk = validarSenha();
+            const senha = document.getElementById('novaSenha').value;
+            const confirmar = document.getElementById('confirmarSenha').value;
+
+            if (!requisitosOk) {
+                alert('A senha não atende a todos os requisitos listados.');
+                return false;
+            }
+
+            if (senha !== confirmar) {
+                alert('As senhas não coincidem!');
+                document.getElementById('confirmarSenha').classList.add('is-invalid');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 
 </section>
 </body>

@@ -77,13 +77,12 @@ public class MasterController {
     ) {
         Usuario master = (Usuario) session.getAttribute("usuario");
         try {
-            usuarioService.editarUsuario(master, id, nome, login, senha, senhaMaster);
+            usuarioService.editarUsuarioPeloMaster(master, id, nome, login, senha, senhaMaster);
         } catch (IllegalArgumentException e) {
             model.addAttribute("erro", e.getMessage());
             model.addAttribute("usuario", usuarioService.buscarUsuarioPorId(id));
             return "master/formulario_usuario_editar";
         }
-
         return "redirect:/master";
     }
 }

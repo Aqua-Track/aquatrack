@@ -1,6 +1,6 @@
 package com.ufpb.aquatrack.core.usuario;
 
-import com.ufpb.aquatrack.error.exceptions.RecursoNaoEncontradoException;
+import com.ufpb.aquatrack.infra.error.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.infra.email.EmailService;
 import com.ufpb.aquatrack.infra.auth.tokens.TokenService;
 import com.ufpb.aquatrack.infra.auth.tokens.TokenType;
@@ -29,6 +29,8 @@ public class UsuarioService {
         if (usuarioRepository.findByLoginAndDeletadoFalse(login).isPresent()) {
             throw new IllegalArgumentException("Já existe um usuário com esse login.");
         }
+
+        validarSenha(senha);
 
         Usuario usuario = new Usuario();
         usuario.setNome(nome);
@@ -81,11 +83,72 @@ public class UsuarioService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
     }
 
-    public void editarUsuario(
-            Usuario master, Long idUsuarioEditado, String nome,
-            String login, String novaSenhaUsuario, String senhaMaster
-    ) {
+    public void editarNomeUsuario(Long idUsuarioParaEditar, String nome) {
+        Usuario usuario = buscarUsuarioPorId(idUsuarioParaEditar);
+        if (nome != null) {
+            usuario.setNome(nome);
+        }
+        usuarioRepository.save(usuario);
+    }
 
+    public void editarLoginUsuario(Long idUsuarioParaEditar, String login) {
+        Usuario usuario = buscarUsuarioPorId(idUsuarioParaEditar);
+        if (login != null) {
+            usuario.setLogin(login);
+        }
+        usuarioRepository.save(usuario);
+    }
+
+    public Usuario editarSenhaUsuario(Usuario usuario, String senha) {
+        validarSenha(senha);
+        usuario.setSenha(BCrypt.hashpw(senha, BCrypt.gensalt()));
+        return usuarioRepository.save(usuario);
+    }
+
+    public Usuario editarSenhaUsuario(Usuario usuario, String senhaAtual, String novaSenha, String confirmarSenha) {
+
+        validarSenha(novaSenha);
+
+        if (senhaAtual == null || novaSenha == null || confirmarSenha == null) throw new IllegalArgumentException("Todos os campos de senha devem ser preenchidos.");
+        if (!BCrypt.checkpw(senhaAtual, usuario.getSenha())) throw new IllegalArgumentException("Senha atual incorreta.");
+        if (!novaSenha.equals(confirmarSenha)) throw new IllegalArgumentException("As senhas não coincidem.");
+        if (BCrypt.checkpw(novaSenha, usuario.getSenha())) throw new IllegalArgumentException("A nova senha não pode ser igual à senha atual.");
+
+        usuario.setSenha(BCrypt.hashpw(novaSenha, BCrypt.gensalt()));
+        return usuarioRepository.save(usuario);
+    }
+
+    public Usuario alterarFoto(Usuario usuario, String urlFoto) {
+        if (urlFoto == null || urlFoto.isBlank()) {
+            throw new IllegalArgumentException("URL da foto inválida.");
+        }
+
+        usuario.setUrlFoto(urlFoto);
+        return usuarioRepository.save(usuario);
+    }
+
+    public Usuario removerFoto(Usuario usuario) {
+        usuario.setUrlFoto("/images/default-user.png");
+        return usuarioRepository.save(usuario);
+    }
+
+    public void editarUsuarioPeloMaster(Usuario master, Long idUsuarioEditado, String nome, String login, String novaSenhaUsuario, String senhaMaster) {
+
+        verificaMaster(master, senhaMaster);
+
+        Usuario usuario = buscarUsuarioPorId(idUsuarioEditado);
+        usuario.setNome(nome);
+        usuario.setLogin(login);
+
+        if (novaSenhaUsuario != null && !novaSenhaUsuario.isBlank()) {
+            validarSenha(novaSenhaUsuario);
+            usuario.setSenha(BCrypt.hashpw(novaSenhaUsuario, BCrypt.gensalt()));
+        }
+
+        usuarioRepository.save(usuario);
+    }
+
+    public void verificaMaster(Usuario master, String senhaMaster) {
         // Segurança básica
         if (master == null || master.getRole() != UsuarioRole.MASTER) {
             throw new IllegalArgumentException("Permissão negada.");
@@ -95,21 +158,14 @@ public class UsuarioService {
         if (!BCrypt.checkpw(senhaMaster, master.getSenha())) {
             throw new IllegalArgumentException("Senha do administrador inválida.");
         }
-
-        Usuario usuario = buscarUsuarioPorId(idUsuarioEditado);
-        usuario.setNome(nome);
-        usuario.setLogin(login);
-
-        if (novaSenhaUsuario != null && !novaSenhaUsuario.isBlank()) {
-            usuario.setSenha(BCrypt.hashpw(novaSenhaUsuario, BCrypt.gensalt()));
-        }
-
-        usuarioRepository.save(usuario);
     }
 
-    public Usuario definirSenha(Usuario usuario, String senha) {
-        usuario.setSenha(BCrypt.hashpw(senha, BCrypt.gensalt()));
-        return usuarioRepository.save(usuario);
+    private void validarSenha(String senha) {
+        if (senha == null || !senha.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")) {
+            throw new IllegalArgumentException(
+                    "A senha deve ter no mínimo 8 caracteres, contendo letras maiúsculas, minúsculas e números."
+            );
+        }
     }
 }
 

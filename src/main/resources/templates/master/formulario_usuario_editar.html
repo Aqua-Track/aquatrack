@@ -6,12 +6,29 @@
           rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
           crossorigin="anonymous">
+
+    <style>
+        /* A cor de texto muda para verde quando o requisito é atendido */
+        .text-success {
+            color: green;
+        }
+
+        .text-muted {
+            color: #6c757d;
+        }
+
+    </style>
 </head>
 <body class="bg-light">
 <section class="container my-5">
     <h2 class="mb-4">Editar Usuário</h2>
 
-    <form th:action="@{/master/editar}" method="post">
+    <!-- Alerta de erro -->
+    <div th:if="${erro}" class="alert alert-danger" role="alert">
+        <p th:text="${erro}"></p>
+    </div>
+
+    <form th:action="@{/master/editar}" method="post" onsubmit="return podeEnviarFormulario()">
         <input type="hidden" name="id" th:value="${usuario.id}" />
 
         <div class="mb-3">
@@ -26,16 +43,106 @@
                    th:value="${usuario.login}" required />
         </div>
 
+        <hr>
+
+        <!-- Senha e requisitos -->
         <div class="mb-3">
-            <label class="form-label">Nova senha</label>
-            <input type="password" name="senha" class="form-control"
-                   placeholder="Deixe em branco para não alterar" />
+            <label for="senha" class="form-label">Senha:</label>
+            <input type="password" class="form-control" id="senha" name="senha" required oninput="validarSenha()">
+            <ul id="senhaRequisitos" class="list-unstyled mt-2">
+                <li id="min" class="text-danger">
+                    <span class="icone">✖</span> Mínimo 8 caracteres
+                </li>
+                <li id="maiuscula" class="text-danger">
+                    <span class="icone">✖</span> Letra maiúscula
+                </li>
+                <li id="minuscula" class="text-danger">
+                    <span class="icone">✖</span> Letra minúscula
+                </li>
+                <li id="numero" class="text-danger">
+                    <span class="icone">✖</span> Pelo menos 1 número
+                </li>
+            </ul>
         </div>
 
-        <div class="d-flex justify-content-end gap-2">
-            <a href="/master" class="btn btn-danger">Cancelar</a>
-            <button type="submit" class="btn btn-primary">Salvar</button>
+        <!-- Confirmar Senha -->
+        <div class="mb-3">
+            <label class="form-label">Confirmar nova senha</label>
+            <input type="password" name="confirmarSenha" class="form-control" id="confirmarNovaSenha" required />
         </div>
+
+        <script>
+            // Função unificada para validar e controlar o visual
+            function validarSenha() {
+                const senha = document.getElementById('senha').value;
+
+                // Definição dos requisitos e seus elementos
+                const requisitos = {
+                    min: {
+                        el: document.getElementById('min'),
+                        valido: senha.length >= 8
+                    },
+                    maiuscula: {
+                        el: document.getElementById('maiuscula'),
+                        valido: /[A-Z]/.test(senha)
+                    },
+                    minuscula: {
+                        el: document.getElementById('minuscula'),
+                        valido: /[a-z]/.test(senha)
+                    },
+                    numero: {
+                        el: document.getElementById('numero'),
+                        valido: /\d/.test(senha)
+                    }
+                };
+
+                let tudoValido = true;
+
+                for (let key in requisitos) {
+                    const item = requisitos[key];
+                    const spanIcone = item.el.querySelector('.icone'); // Seleciona o span do ícone
+
+                    if (item.valido) {
+                        // ESTADO VÁLIDO (Verde + Check)
+                        item.el.classList.remove('text-danger');
+                        item.el.classList.add('text-success');
+                        spanIcone.innerHTML = '✔';
+                    } else {
+                        // ESTADO INVÁLIDO (Vermelho + X)
+                        item.el.classList.remove('text-success');
+                        item.el.classList.add('text-danger');
+                        spanIcone.innerHTML = '✖';
+                        tudoValido = false;
+                    }
+                }
+
+                return tudoValido;
+            }
+
+            // Função final que será chamada no onsubmit do formulário
+            function podeEnviarFormulario() {
+                // 1. Verifica se os requisitos visuais estão ok
+                const requisitosOk = validarSenha();
+
+                // 2. Verifica se as senhas batem
+                const senha = document.getElementById('senha').value;
+                const confirmarSenha = document.getElementById('confirmarNovaSenha').value;
+
+                if (!requisitosOk) {
+                    alert('A senha não atende a todos os requisitos listados.');
+                    return false;
+                }
+
+                if (senha !== confirmarSenha) {
+                    alert('As senhas não coincidem!');
+                    // Destaca o campo de confirmação com erro
+                    document.getElementById('confirmarNovaSenha').classList.add('is-invalid');
+                    return false;
+                }
+
+                return true;
+            }
+        </script>
 
         <hr>
 
@@ -50,9 +157,13 @@
                    required />
         </div>
 
+        <div class="d-flex justify-content-end gap-2">
+            <a href="/master" class="btn btn-danger">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+
     </form>
 </section>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

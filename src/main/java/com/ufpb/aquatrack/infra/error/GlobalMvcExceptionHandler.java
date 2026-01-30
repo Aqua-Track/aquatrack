@@ -1,6 +1,6 @@
-package com.ufpb.aquatrack.error;
+package com.ufpb.aquatrack.infra.error;
 
-import com.ufpb.aquatrack.error.exceptions.RecursoNaoEncontradoException;
+import com.ufpb.aquatrack.infra.error.exceptions.RecursoNaoEncontradoException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
