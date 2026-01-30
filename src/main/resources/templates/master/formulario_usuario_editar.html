@@ -11,6 +11,11 @@
 <section class="container my-5">
     <h2 class="mb-4">Editar Usuário</h2>
 
+    <!-- Alerta de erro -->
+    <div th:if="${erro}" class="alert alert-danger" role="alert">
+        <p th:text="${erro}"></p>
+    </div>
+
     <form th:action="@{/master/editar}" method="post">
         <input type="hidden" name="id" th:value="${usuario.id}" />
 

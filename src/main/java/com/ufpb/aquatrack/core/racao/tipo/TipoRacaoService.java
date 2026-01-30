@@ -1,6 +1,6 @@
 package com.ufpb.aquatrack.core.racao.tipo;
 
-import com.ufpb.aquatrack.error.exceptions.RecursoNaoEncontradoException;
+import com.ufpb.aquatrack.infra.error.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.core.usuario.Usuario;
 import org.springframework.stereotype.Service;
 

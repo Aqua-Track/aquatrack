@@ -1,6 +1,6 @@
 package com.ufpb.aquatrack.infra.auth.password;
 
-import com.ufpb.aquatrack.error.exceptions.RecursoNaoEncontradoException;
+import com.ufpb.aquatrack.infra.error.exceptions.RecursoNaoEncontradoException;
 import com.ufpb.aquatrack.infra.email.EmailService;
 import com.ufpb.aquatrack.infra.auth.tokens.TokenService;
 import com.ufpb.aquatrack.infra.auth.tokens.TokenType;
@@ -80,7 +80,7 @@ public class ResetPasswordController {
 
         Usuario usuario = tokenService.getUsuario(token, TokenType.RESET_SENHA);
 
-        usuarioService.definirSenha(usuario, novaSenha);
+        usuarioService.editarSenhaUsuario(usuario, novaSenha);
 
         tokenService.consumirToken(token);
 

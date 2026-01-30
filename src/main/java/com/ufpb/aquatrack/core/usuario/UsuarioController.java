@@ -5,8 +5,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@RequestMapping("/usuario")
 @Controller
 public class UsuarioController {
 
@@ -16,40 +18,77 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    @GetMapping("/login")
-    public String abrirPaginaDelogin() {
-        return "login";
+    @GetMapping
+    public String paginaConta(HttpSession session, Model model) {
+        Usuario usuarioSessao = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioSessao.getId());
+
+        String erro = (String) session.getAttribute("erro");
+        if (erro != null) {
+            model.addAttribute("erro", erro);
+            session.removeAttribute("erro");
+        }
+
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("fazenda", usuario.getFazenda());
+
+        return "usuario/pagina-conta";
     }
 
-    @PostMapping("/login")
-    public String processarLogin(
-        @RequestParam String login, @RequestParam String senha,
-        HttpSession session, Model model
-    ){
-        Usuario usuario = usuarioService.autenticar(login, senha);
+    @PostMapping("/editar-nome")
+    public String editarNome(
+            @RequestParam String nome,
+            HttpSession session
+    ) {
+        Usuario usuario = usuarioLogado(session);
 
-        if (usuario == null) {
-            model.addAttribute("erro", "Usuário ou senha inválidos");
-            return "login";
-        }
+        usuarioService.editarNomeUsuario(usuario.getId(), nome);
+        session.setAttribute("usuario", usuario);
+
+        return "redirect:/usuario";
+    }
+
+    @PostMapping("/alterar-email")
+    public String alterarEmail(@RequestParam String email, HttpSession session) {
+        Usuario usuario = usuarioLogado(session);
+
+        usuarioService.editarLoginUsuario(usuario.getId(), email);
+        session.setAttribute("usuario", usuario);
+
+        return "redirect:/usuario";
+    }
+
+    @PostMapping("/alterar-senha")
+    public String alterarSenha(
+            @RequestParam String senhaAtual, @RequestParam String novaSenha,
+            @RequestParam String confirmarSenha, HttpSession session,
+            Model model) {
+        Usuario usuario = usuarioLogado(session);
 
         session.setAttribute("usuario", usuario);
-        if (usuario.getRole() == UsuarioRole.MASTER) { //Se o usuário não for Master ele é padrão
-            return "redirect:/master"; // Uso de redirect para finalizar o POST e iniciar um novo GET com URL correta
+        try {
+            usuarioService.editarSenhaUsuario(usuario, senhaAtual, novaSenha, confirmarSenha);
+        } catch (Exception e) {
+            session.setAttribute("erro", e.getMessage());
+            return "redirect:/usuario";
         }
 
-        if (usuario.getFazenda() != null) {
-            return "redirect:/fazenda/" + usuario.getFazenda().getCodigo();
-        } else {
-            return "redirect:/inicio"; // tela "sem fazenda"
-        }
 
+        return "redirect:/usuario";
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login";
+    @PostMapping("/remover-foto")
+    public String removerFoto(HttpSession session) {
+        Usuario usuario = usuarioLogado(session);
+
+        usuarioService.removerFoto(usuario);
+        session.setAttribute("usuario", usuario);
+
+        return "redirect:/usuario";
     }
 
+    private Usuario usuarioLogado(HttpSession session) {
+        Usuario usuarioSessao = (Usuario) session.getAttribute("usuario");
+        return usuarioService.buscarUsuarioPorId(usuarioSessao.getId());
+    }
 }

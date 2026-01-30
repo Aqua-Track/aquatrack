@@ -1,7 +1,7 @@
 package com.ufpb.aquatrack.core.qualidadeAgua;
 
 import com.ufpb.aquatrack.core.ciclo.Ciclo;
-import com.ufpb.aquatrack.error.exceptions.RecursoNaoEncontradoException;
+import com.ufpb.aquatrack.infra.error.exceptions.RecursoNaoEncontradoException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
