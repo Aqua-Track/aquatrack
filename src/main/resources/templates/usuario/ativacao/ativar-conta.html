@@ -7,6 +7,12 @@
           rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
           crossorigin="anonymous">
+
+    <style>
+        .text-success { color: green !important; }
+        .text-danger { color: #dc3545 !important; }
+        ul#senhaRequisitos li { font-size: 0.9em; margin-bottom: 2px; }
+    </style>
 </head>
 <body>
 <section class="container py-5">
@@ -15,7 +21,6 @@
             <div class="card shadow-sm rounded-3">
                 <div class="card-body p-4">
 
-                    <!-- título -->
                     <h2 class="text-center mb-1">
                         <span class="ms-1"> Ativar conta</span>
                     </h2>
@@ -24,22 +29,42 @@
                         Você poderá alterar essa senha posteriormente no seu perfil.
                     </p>
 
-                    <!-- alertas -->
                     <div th:if="${info}" class="alert alert-success mb-3" th:text="${info}"></div>
                     <div th:if="${erro}" class="alert alert-danger mb-3" th:text="${erro}"></div>
 
                     <div class="mt-4 mb-3">
-                        <!-- formulário -->
-                        <form action="/ativar-conta" method="post" onsubmit="return validarSenha()">
+                        <form action="/ativar-conta" method="post" onsubmit="return podeEnviarFormulario()">
                             <input type="hidden" id="token" name="token" th:value="${token}" />
+
                             <div class="mb-3">
                                 <label for="senha" class="form-label fw-semibold">Definir senha de acesso:</label>
-                                <input type="password" class="form-control" id="senha" name="senha" required autocomplete="new-password" placeholder="****">
+                                <input type="password"
+                                       class="form-control"
+                                       id="senha"
+                                       name="senha"
+                                       required
+                                       autocomplete="new-password"
+                                       oninput="validarSenha()">
+
+                                <ul id="senhaRequisitos" class="list-unstyled mt-2">
+                                    <li id="min" class="text-danger">
+                                        <span class="icone">✖</span> Mínimo 8 caracteres
+                                    </li>
+                                    <li id="maiuscula" class="text-danger">
+                                        <span class="icone">✖</span> Letra maiúscula
+                                    </li>
+                                    <li id="minuscula" class="text-danger">
+                                        <span class="icone">✖</span> Letra minúscula
+                                    </li>
+                                    <li id="numero" class="text-danger">
+                                        <span class="icone">✖</span> Pelo menos 1 número
+                                    </li>
+                                </ul>
                             </div>
 
                             <div class="mb-2">
                                 <label for="confirmarSenha" class="form-label fw-semibold">Confirmar Senha:</label>
-                                <input type="password" class="form-control" id="confirmarSenha" name="confirmarSenha" required autocomplete="new-password" placeholder="****">
+                                <input type="password" class="form-control" id="confirmarSenha" name="confirmarSenha" required autocomplete="new-password">
                             </div>
 
                             <div class="d-flex justify-content-end gap-2 mt-4">
@@ -53,19 +78,58 @@
             </div>
         </div>
     </div>
-</section>
 
-<script>
-    function validarSenha() {
-        const senha = document.getElementById('senha').value;
-        const confirmarSenha = document.getElementById('confirmarSenha').value;
-        if (senha !== confirmarSenha) {
-            alert('As senhas não coincidem.');
-            return false;
+    <script>
+        function validarSenha() {
+            const senha = document.getElementById('senha').value;
+
+            const requisitos = {
+                min: { el: document.getElementById('min'), valido: senha.length >= 8 },
+                maiuscula: { el: document.getElementById('maiuscula'), valido: /[A-Z]/.test(senha) },
+                minuscula: { el: document.getElementById('minuscula'), valido: /[a-z]/.test(senha) },
+                numero: { el: document.getElementById('numero'), valido: /\d/.test(senha) }
+            };
+
+            let tudoValido = true;
+
+            for (let key in requisitos) {
+                const item = requisitos[key];
+                const spanIcone = item.el.querySelector('.icone');
+
+                if (item.valido) {
+                    item.el.classList.remove('text-danger');
+                    item.el.classList.add('text-success');
+                    spanIcone.innerHTML = '✔';
+                } else {
+                    item.el.classList.remove('text-success');
+                    item.el.classList.add('text-danger');
+                    spanIcone.innerHTML = '✖';
+                    tudoValido = false;
+                }
+            }
+            return tudoValido;
         }
-        return true;
-    }
-</script>
+
+        function podeEnviarFormulario() {
+            const requisitosOk = validarSenha();
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+
+            if (!requisitosOk) {
+                alert('A senha não atende a todos os requisitos listados.');
+                return false;
+            }
+
+            if (senha !== confirmarSenha) {
+                alert('As senhas não coincidem!');
+                document.getElementById('confirmarSenha').classList.add('is-invalid');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</section>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

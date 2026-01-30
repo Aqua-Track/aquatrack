@@ -4,6 +4,12 @@
 <head>
     <title>Redefinir senha</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        .text-success { color: green !important; }
+        .text-danger { color: #dc3545 !important; }
+        ul#senhaRequisitos li { font-size: 0.9em; margin-bottom: 2px; }
+    </style>
 </head>
 
 <body>
@@ -21,13 +27,12 @@
                         Defina uma nova senha para sua conta.
                     </p>
 
-                    <!-- alertas -->
                     <div th:if="${info}" class="alert alert-success mb-3" th:text="${info}"></div>
                     <div th:if="${erro}" class="alert alert-danger mb-3" th:text="${erro}"></div>
 
                     <form action="/redefinir-senha/nova-senha"
                           method="post"
-                          onsubmit="return validarSenha()">
+                          onsubmit="return podeEnviarFormulario()">
 
                         <input type="hidden" name="token" th:value="${token}" />
 
@@ -39,7 +44,23 @@
                                    name="novaSenha"
                                    required
                                    autocomplete="new-password"
-                                   placeholder="********">
+                                   placeholder="********"
+                                   oninput="validarSenha()">
+
+                            <ul id="senhaRequisitos" class="list-unstyled mt-2">
+                                <li id="min" class="text-danger">
+                                    <span class="icone">✖</span> Mínimo 8 caracteres
+                                </li>
+                                <li id="maiuscula" class="text-danger">
+                                    <span class="icone">✖</span> Letra maiúscula
+                                </li>
+                                <li id="minuscula" class="text-danger">
+                                    <span class="icone">✖</span> Letra minúscula
+                                </li>
+                                <li id="numero" class="text-danger">
+                                    <span class="icone">✖</span> Pelo menos 1 número
+                                </li>
+                            </ul>
                         </div>
 
                         <div class="mb-2">
@@ -62,20 +83,60 @@
             </div>
         </div>
     </div>
-</section>
 
-<script>
-    function validarSenha() {
-        const senha = document.getElementById('senha').value;
-        const confirmar = document.getElementById('confirmarSenha').value;
+    <script>
+        // Função visual
+        function validarSenha() {
+            const senha = document.getElementById('senha').value;
 
-        if (senha !== confirmar) {
-            alert('As senhas não coincidem.');
-            return false;
+            const requisitos = {
+                min: { el: document.getElementById('min'), valido: senha.length >= 8 },
+                maiuscula: { el: document.getElementById('maiuscula'), valido: /[A-Z]/.test(senha) },
+                minuscula: { el: document.getElementById('minuscula'), valido: /[a-z]/.test(senha) },
+                numero: { el: document.getElementById('numero'), valido: /\d/.test(senha) }
+            };
+
+            let tudoValido = true;
+
+            for (let key in requisitos) {
+                const item = requisitos[key];
+                const spanIcone = item.el.querySelector('.icone');
+
+                if (item.valido) {
+                    item.el.classList.remove('text-danger');
+                    item.el.classList.add('text-success');
+                    spanIcone.innerHTML = '✔';
+                } else {
+                    item.el.classList.remove('text-success');
+                    item.el.classList.add('text-danger');
+                    spanIcone.innerHTML = '✖';
+                    tudoValido = false;
+                }
+            }
+            return tudoValido;
         }
-        return true;
-    }
-</script>
 
+        // Função de envio (onsubmit)
+        function podeEnviarFormulario() {
+            const requisitosOk = validarSenha();
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+
+            if (!requisitosOk) {
+                alert('A senha não atende a todos os requisitos listados.');
+                return false;
+            }
+
+            if (senha !== confirmarSenha) {
+                alert('As senhas não coincidem!');
+                document.getElementById('confirmarSenha').classList.add('is-invalid');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+
+</section>
 </body>
 </html>
