@@ -29,7 +29,7 @@ public class ResetPasswordController {
 
     @GetMapping("/redefinir-senha")
     public String redfinirSenha() {
-        return "/usuario/senha/redefinir-senha";
+        return "usuario/senha/redefinir-senha";
     }
 
     @GetMapping("/redefinir-senha/nova-senha")
@@ -37,11 +37,11 @@ public class ResetPasswordController {
 
         if (!tokenService.validaToken(token, TokenType.RESET_SENHA)) {
             model.addAttribute("erro", "Token inválido ou expirado.");
-            return "/usuario/senha/redefinir-senha";
+            return "usuario/senha/redefinir-senha";
         }
 
         model.addAttribute("token", token);
-        return "/usuario/senha/nova-senha";
+        return "usuario/senha/nova-senha";
     }
 
     @PostMapping("/redefinir-senha")
@@ -53,12 +53,12 @@ public class ResetPasswordController {
             usuario = usuarioService.buscarUsuarioPorLogin(login);
         } catch (RecursoNaoEncontradoException e) {
             model.addAttribute("erro", "Não existe um usuário com esse login");
-            return "/usuario/senha/redefinir-senha";
+            return "usuario/senha/redefinir-senha";
         }
 
         if (usuario == null) {
             model.addAttribute("erro", "Não existe um usuário com esse login");
-            return "/usuario/senha/redefinir-senha";
+            return "usuario/senha/redefinir-senha";
         }
 
         TokenUsuario tokenUsuario = tokenService.gerarToken(usuario, TokenType.RESET_SENHA);
@@ -67,7 +67,7 @@ public class ResetPasswordController {
 
         model.addAttribute("info", "Enviamos um email com o link para redefinir sua senha!");
 
-        return "/usuario/senha/email-enviado";
+        return "usuario/senha/email-enviado";
     }
 
     @PostMapping("/redefinir-senha/nova-senha")
@@ -75,7 +75,7 @@ public class ResetPasswordController {
 
         if (!tokenService.validaToken(token, TokenType.RESET_SENHA)) {
             model.addAttribute("erro", "Token inválido ou expirado.");
-            return "/usuario/senha/redefinir-senha";
+            return "usuario/senha/redefinir-senha";
         }
 
         Usuario usuario = tokenService.getUsuario(token, TokenType.RESET_SENHA);

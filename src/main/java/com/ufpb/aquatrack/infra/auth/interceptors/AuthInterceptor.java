@@ -13,18 +13,7 @@
         //Esse metodo vai rodar antes de qualquer controller, para proteger as rotas, dizendo se é bloqueada ou não
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-            String uri = request.getRequestURI(); //Aqui ele vai pegar a requisição (url) que está send
-            String contextPath = request.getContextPath(); //Aqui ele pega o path da aplicação
-            // localhost → ""
-            // produção → "/aquatrack"
-
-            // Se existir contextPath, remove ele da URI
-            // "/aquatrack/redefinir-senha" vira "/redefinir-senha"
-            if (contextPath != null && !contextPath.isEmpty()) {
-                uri = uri.substring(contextPath.length());
-            }
-
-            //A partir daqui a url fica padronizada tanto para localhost tanto para aquatrackpb
+	    String uri = request.getServletPath(); //Aqui ele vai pegar a requisição (url) que está send
 
             // Rotas públicas
             if (uri.equals("/login")
@@ -33,7 +22,7 @@
                     || uri.equals("/logout")
                     || uri.startsWith("/css")
                     || uri.startsWith("/js")
-                    || uri.startsWith("/images") )  {
+                    || uri.startsWith("/images")) {
                 return true;
             }
 
