@@ -13,13 +13,16 @@
         //Esse metodo vai rodar antes de qualquer controller, para proteger as rotas, dizendo se é bloqueada ou não
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-            String uri = request.getRequestURI(); //Aqui ele vai pegar a requisição (url) que está sendo usada
+	    String uri = request.getServletPath(); //Aqui ele vai pegar a requisição (url) que está send
 
             // Rotas públicas
-            if (uri.equals("/login") || uri.equals("/logout")
+            if (uri.equals("/login")
+                    || uri.startsWith("/redefinir-senha")
+                    || uri.startsWith("/ativar-conta")
+                    || uri.equals("/logout")
                     || uri.startsWith("/css")
                     || uri.startsWith("/js")
-                    || uri.startsWith("/images") || uri.startsWith("/ativar-conta") || uri.startsWith("/redefinir-senha"))  {
+                    || uri.startsWith("/images")) {
                 return true;
             }
 
@@ -31,13 +34,13 @@
                     : null;
 
             if (usuario == null) { //Caso não tenha usuário é direcionado para login
-                response.sendRedirect("/login");
+                response.sendRedirect(request.getContextPath() + "/login");
                 return false;
             }
 
             // Se a conta não estiver verificada, redireciona para a página de verificação
             if (!usuario.isContaVerificada() && !uri.contains("/conta-inativa")) {  // Impede o redirecionamento dentro da página de verificação
-                response.sendRedirect("/conta-inativa");
+                response.sendRedirect(request.getContextPath() + "/conta-inativa");
                 return false;
             }
 
