@@ -27,10 +27,13 @@
             //A partir daqui a url fica padronizada tanto para localhost tanto para aquatrackpb
 
             // Rotas públicas
-            if (uri.equals("/login") || uri.equals("/logout")
+            if (uri.equals("/login")
+                    || uri.startsWith("/redefinir-senha")
+                    || uri.startsWith("/ativar-conta")
+                    || uri.equals("/logout")
                     || uri.startsWith("/css")
                     || uri.startsWith("/js")
-                    || uri.startsWith("/images") || uri.startsWith("/ativar-conta") || uri.startsWith("/redefinir-senha"))  {
+                    || uri.startsWith("/images") )  {
                 return true;
             }
 
@@ -42,13 +45,13 @@
                     : null;
 
             if (usuario == null) { //Caso não tenha usuário é direcionado para login
-                response.sendRedirect("/login");
+                response.sendRedirect(request.getContextPath() + "/login");
                 return false;
             }
 
             // Se a conta não estiver verificada, redireciona para a página de verificação
             if (!usuario.isContaVerificada() && !uri.contains("/conta-inativa")) {  // Impede o redirecionamento dentro da página de verificação
-                response.sendRedirect("/conta-inativa");
+                response.sendRedirect(request.getContextPath() + "/conta-inativa");
                 return false;
             }
 
