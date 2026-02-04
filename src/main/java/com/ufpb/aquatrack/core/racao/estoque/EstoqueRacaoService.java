@@ -44,7 +44,7 @@ public class EstoqueRacaoService {
             throw new IllegalArgumentException("Acesso negado");
         }
 
-        TipoRacao tipoRacao = tipoRacaoService.buscarRacaoPorId(tipoRacaoId, usuario);
+        TipoRacao tipoRacao = tipoRacaoService.buscarRacaoPorId(tipoRacaoId, fazenda);
 
         // converte sacos -> KG
         BigDecimal kgParaAdicionar = tipoRacao.getKgPorSaco().multiply(BigDecimal.valueOf(quantidadeSacos));

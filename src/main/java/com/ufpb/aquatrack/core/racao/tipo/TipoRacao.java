@@ -1,5 +1,6 @@
 package com.ufpb.aquatrack.core.racao.tipo;
 
+import com.ufpb.aquatrack.core.fazenda.Fazenda;
 import com.ufpb.aquatrack.core.usuario.Usuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -45,19 +46,19 @@ public class TipoRacao {
     private boolean deletado;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "fazenda_id", nullable = false)
+    private Fazenda fazenda;
 
     protected TipoRacao() {
         this.deletado = false;
     }
 
-    public TipoRacao(String nome, String fabricante, BigDecimal kgPorSaco, BigDecimal valorPorSaco, Usuario usuario) {
+    public TipoRacao(String nome, String fabricante, BigDecimal kgPorSaco, BigDecimal valorPorSaco, Fazenda fazenda) {
         this.nome = nome;
         this.fabricante = fabricante;
         this.kgPorSaco = kgPorSaco;
         this.valorPorSaco = valorPorSaco;
-        this.usuario = usuario;
+        this.fazenda = fazenda;
         this.deletado = false;
     }
 }

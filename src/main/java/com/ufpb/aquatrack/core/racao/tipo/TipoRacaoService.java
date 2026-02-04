@@ -1,7 +1,7 @@
 package com.ufpb.aquatrack.core.racao.tipo;
 
+import com.ufpb.aquatrack.core.fazenda.Fazenda;
 import com.ufpb.aquatrack.infra.error.exceptions.RecursoNaoEncontradoException;
-import com.ufpb.aquatrack.core.usuario.Usuario;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,35 +18,35 @@ public class TipoRacaoService {
 
     public TipoRacao cadastrarRacao(
             String nome, String fabricante,
-            BigDecimal kgPorSaco, BigDecimal valorPorSaco, Usuario usuario
+            BigDecimal kgPorSaco, BigDecimal valorPorSaco, Fazenda fazenda
     ) {
-        if (tipoRacaoRepository.existsByUsuarioAndNomeAndDeletadoFalse(usuario, nome)) {
+        if (tipoRacaoRepository.existsByFazendaAndNomeAndDeletadoFalse(fazenda, nome)) {
             throw new IllegalArgumentException("Já existe uma ração com esse nome");
         }
 
-        TipoRacao racao = new TipoRacao(nome, fabricante, kgPorSaco, valorPorSaco, usuario);
+        TipoRacao racao = new TipoRacao(nome, fabricante, kgPorSaco, valorPorSaco, fazenda);
 
         return tipoRacaoRepository.save(racao);
     }
 
-    public List<TipoRacao> listarRacoesDoUsuario(Usuario usuario) {
-        return tipoRacaoRepository.findByUsuarioAndDeletadoFalse(usuario);
+    public List<TipoRacao> listarRacoesDaFazenda(Fazenda fazenda) {
+        return tipoRacaoRepository.findByFazendaAndDeletadoFalse(fazenda);
     }
 
-    public TipoRacao buscarRacaoPorId(Long id, Usuario usuario) {
+    public TipoRacao buscarRacaoPorId(Long id, Fazenda fazenda) {
         return tipoRacaoRepository
-                .findByIdAndUsuarioAndDeletadoFalse(id, usuario)
+                .findByIdAndFazendaAndDeletadoFalse(id, fazenda)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Ração não encontrada"));
     }
 
     public void editarRacao(
             Long id, String nome, String fabricante,
-            BigDecimal kgPorSaco, BigDecimal valorPorSaco, Usuario usuario
+            BigDecimal kgPorSaco, BigDecimal valorPorSaco, Fazenda fazenda
     ) {
-        TipoRacao racao = buscarRacaoPorId(id, usuario);
+        TipoRacao racao = buscarRacaoPorId(id, fazenda);
 
         if (!racao.getNome().equals(nome) &&
-                tipoRacaoRepository.existsByUsuarioAndNomeAndDeletadoFalse(usuario, nome)) {
+                tipoRacaoRepository.existsByFazendaAndNomeAndDeletadoFalse(fazenda, nome)) {
             throw new IllegalArgumentException("Já existe uma ração com esse nome");
         }
 
@@ -58,8 +58,8 @@ public class TipoRacaoService {
         tipoRacaoRepository.save(racao);
     }
 
-    public void removerRacao(Long id, Usuario usuario) {
-        TipoRacao racao = buscarRacaoPorId(id, usuario);
+    public void removerRacao(Long id, Fazenda fazenda) {
+        TipoRacao racao = buscarRacaoPorId(id, fazenda);
         racao.setDeletado(true);
         tipoRacaoRepository.save(racao);
     }
