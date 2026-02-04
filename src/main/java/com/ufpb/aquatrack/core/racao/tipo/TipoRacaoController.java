@@ -1,5 +1,6 @@
 package com.ufpb.aquatrack.core.racao.tipo;
 
+import com.ufpb.aquatrack.core.fazenda.Fazenda;
 import com.ufpb.aquatrack.core.usuario.Usuario;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -22,8 +23,9 @@ public class TipoRacaoController {
     @GetMapping
     public String listar(@PathVariable String codigo, HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Fazenda fazenda = usuario.getFazenda();
 
-        model.addAttribute("racoes", tipoRacaoService.listarRacoesDoUsuario(usuario));
+        model.addAttribute("racoes", tipoRacaoService.listarRacoesDaFazenda(fazenda));
         model.addAttribute("codigo", codigo);
 
         return "racao/listar_tipo";
@@ -44,9 +46,10 @@ public class TipoRacaoController {
             @RequestParam BigDecimal valorPorSaco, HttpSession session, Model model
     ) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Fazenda fazenda = usuario.getFazenda();
 
         try {
-            tipoRacaoService.cadastrarRacao(nome, fabricante, kgPorSaco, valorPorSaco, usuario);
+            tipoRacaoService.cadastrarRacao(nome, fabricante, kgPorSaco, valorPorSaco, fazenda);
 
             return "redirect:/fazenda/" + codigo + "/racoes";
 
@@ -60,8 +63,9 @@ public class TipoRacaoController {
     @PostMapping("/{id}/remover")
     public String remover(@PathVariable String codigo, @PathVariable Long id, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Fazenda fazenda = usuario.getFazenda();
 
-        tipoRacaoService.removerRacao(id, usuario);
+        tipoRacaoService.removerRacao(id, fazenda);
 
         return "redirect:/fazenda/" + codigo + "/racoes";
     }
@@ -69,8 +73,9 @@ public class TipoRacaoController {
     @GetMapping("/{id}/editar")
     public String editarForm(@PathVariable String codigo, @PathVariable Long id, HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Fazenda fazenda = usuario.getFazenda();
 
-        TipoRacao racao = tipoRacaoService.buscarRacaoPorId(id, usuario);
+        TipoRacao racao = tipoRacaoService.buscarRacaoPorId(id, fazenda);
 
         model.addAttribute("racao", racao);
         model.addAttribute("codigo", codigo);
@@ -84,15 +89,16 @@ public class TipoRacaoController {
             HttpSession session, Model model
     ) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Fazenda fazenda = usuario.getFazenda();
 
         try {
-            tipoRacaoService.editarRacao(id, nome, fabricante, kgPorSaco, valorPorSaco, usuario);
+            tipoRacaoService.editarRacao(id, nome, fabricante, kgPorSaco, valorPorSaco, fazenda);
             return "redirect:/fazenda/" + codigo + "/racoes";
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("erro", e.getMessage());
             model.addAttribute("codigo", codigo);
-            model.addAttribute("racao", tipoRacaoService.buscarRacaoPorId(id, usuario));
+            model.addAttribute("racao", tipoRacaoService.buscarRacaoPorId(id, fazenda));
             return "racao/formulario_tipo";
         }
     }

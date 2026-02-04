@@ -31,9 +31,10 @@ public class EstoqueRacaoController {
     @GetMapping("/fazenda/{codigo}/abastecer-racao")
     public String abrirAbastecimento(@PathVariable String codigo, HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Fazenda fazenda = usuario.getFazenda();
 
         // lista de tipos de ração do usuário
-        List<TipoRacao> tiposRacao = tipoRacaoService.listarRacoesDoUsuario(usuario);
+        List<TipoRacao> tiposRacao = tipoRacaoService.listarRacoesDaFazenda(fazenda);
 
         model.addAttribute("codigo", codigo);
         model.addAttribute("tiposRacao", tiposRacao);
@@ -56,7 +57,7 @@ public class EstoqueRacaoController {
         } catch (IllegalArgumentException e) {
             model.addAttribute("erro", e.getMessage());
             model.addAttribute("codigo", codigo);
-            model.addAttribute("tiposRacao", tipoRacaoService.listarRacoesDoUsuario(usuario));
+            model.addAttribute("tiposRacao", tipoRacaoService.listarRacoesDaFazenda(fazenda));
 
             return "racao/formulario_adicionar_racao";
         }
