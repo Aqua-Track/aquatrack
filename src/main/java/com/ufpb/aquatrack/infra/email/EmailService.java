@@ -16,7 +16,7 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
 
-    @Value("aquatrackpb.site")
+    @Value("${aquaTrack.domain}")
     private String dominio;
 
     public EmailService(JavaMailSender mailSender, TemplateEngine templateEngine) {
